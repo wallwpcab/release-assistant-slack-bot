@@ -2,6 +2,7 @@ const express = require('express');
 const { pathOr } = require('ramda');
 
 const { handleIfEditDialogAction } = require('../config/actions');
+const { handleIfCancelRequestAction } = require('../progress/actions');
 const {
   handleIfRequestDialogAction,
   handleIfInitiateRequestAction,
@@ -25,7 +26,7 @@ router.post('/slack/actions', async (req, res) => {
   } if (type === 'interactive_message') {
     handleIfInitiateRequestAction(payload);
     handleIfRejectRequestAction(payload);
-    // handleIfCancelRequest(payload);
+    handleIfCancelRequestAction(payload);
   }
 
   res.send();

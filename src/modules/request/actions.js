@@ -51,7 +51,7 @@ const handleIfRequestDialogAction = async ({ callback_id, response_url, submissi
 
 const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], user }) => {
   const { name, value: requestId } = action || {};
-  if (callback_id !== approvalMapping.callback_id || name !== approvalMapping.proceed) return;
+  if (callback_id !== approvalMapping.callback_id || name !== approvalMapping.initiate) return;
 
   const { releaseManagers, requests } = await readConfig();
   const requestData = pathOr(null, [requestId], requests);
@@ -70,7 +70,7 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
 
   const updatedRequest = {
     ...requestData,
-    progress: approvalMapping.proceed,
+    progress: approvalMapping.initiate,
     baseCommit: info.gitCommitAbbrev,
     initiator: user
   }

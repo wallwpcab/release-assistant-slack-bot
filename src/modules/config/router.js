@@ -45,7 +45,7 @@ const handleIfUpdateConfig = async (args, res, req) => {
     await openDialog(trigger_id, configDialogView(configValue))
     res.send();
   } catch (err) {
-    log.error('handleIfEditConfig() > openDialog failed', err);
+    log.error('handleIfUpdateConfig() > openDialog failed', err);
     res.sendStatus(500);
   }
 }

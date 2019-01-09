@@ -17,7 +17,7 @@ const requestMapping = {
 
 const approvalMapping = {
   callback_id: 'aproval',
-  proceed: 'proceed',
+  initiate: 'initiate',
   reject: 'reject'
 }
 

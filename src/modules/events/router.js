@@ -33,3 +33,10 @@ const handleIfChannelTopicChanged = async ({ type, subtype, text, topic, channel
 }
 
 module.exports = router;
+
+// [*LIVE*] Deployed *master* (auth: glass/Glass-Passw0rd) version `786251e`.
+// Build #689 status is: *SUCCESS*. test results / artifacts / commits / changelog
+
+// ```786251e - (HEAD, origin/master) Merge pull request #2378 in GLASS/glass from CHK-7316 to master (2018-12-12T15:31:05+01:00) <Gomes, Yuri>```
+
+// Click *here* to promote `786251e` to `staging` environment. deployment plan

@@ -1,4 +1,4 @@
-const { usersLabel } = require('./views');
+const { usersLabel } = require('./labels');
 
 describe('Slack Views', () => {
   it('UsersLabel should create for primary user', () => {
