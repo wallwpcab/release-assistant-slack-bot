@@ -1,0 +1,35 @@
+{
+  "name": "release-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Jonayet Hossain",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "nodemon src/index.js --ignore 'store.json'",
+    "tsc": "tsc",
+    "lint": "eslint src/**/*.js --fix",
+    "test": "jest"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "config": "^3.0.0",
+    "crypto": "^1.0.1",
+    "express": "^4.16.4",
+    "minimist": "^1.2.0",
+    "morgan": "^1.9.1",
+    "querystring": "^0.2.0",
+    "ramda": "^0.26.1",
+    "tracer": "^0.9.6",
+    "tsscmp": "^1.0.6"
+  },
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "jest": "^23.6.0",
+    "nock": "^10.0.4",
+    "nodemon": "^1.18.7"
+  }
+}

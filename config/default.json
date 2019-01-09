@@ -1,0 +1,12 @@
+{
+  "baseUrl": "http://127.0.0.1:8000",
+  "host": "127.0.0.1",
+  "port": 8080,
+  "slack": {
+    "apiUrl": "https://glass-project.slack.com/api",
+    "signingSecret": "SIGNING_SECRET",
+    "bot": {
+      "accessToken": "BOT_USER_ACCESS_TOKEN"
+    }
+  }
+}
