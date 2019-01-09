@@ -4,7 +4,8 @@ const qs = require('querystring');
 const { pathOr } = require('ramda');
 
 const { readConfig } = require('../../bot-config');
-const { log, extractSlackChannelId, extractSlackUserId } = require('../../utils');
+const { extractSlackChannelId, extractSlackUserId } = require('../../utils');
+const log = require('../../utils/log');
 
 const slackConfig = config.get('slack');
 
@@ -13,10 +14,32 @@ const authedAxios = axios.create({
 })
 authedAxios.defaults.headers.common['Authorization'] = 'Bearer ' + slackConfig.bot.token;
 
+const postMessage = async (url, message) => {
+  await axios.post(url, message);
+}
+
+const sendMessage = async (userId, message, ephemeral) => {
+  try {
+    const { data } = await authedAxios.post('/conversations.open', {
+      users: userId
+    });
+    const channel = pathOr('', ['channel', 'id'], data)
+    const postUrl = ephemeral ? '/chat.postEphemeral' : '/chat.postMessage';
+
+    await authedAxios.post(postUrl, {
+      ...message,
+      channel,
+      user: ephemeral ? userId : undefined
+    });
+  } catch (err) {
+    log.error('error in sendMessage()', err);
+  }
+}
+
 const sendMessageToUsers = async (users, message) => {
   try {
     const { data } = await authedAxios.post('/conversations.open', {
-      users: users.map(u => extractSlackUserId(u))
+      users: users.map(u => extractSlackUserId(u)).join(',')
     });
     const channel = pathOr('', ['channel', 'id'], data)
 
@@ -29,15 +52,15 @@ const sendMessageToUsers = async (users, message) => {
   }
 }
 
-const sendMessageToBotChannel = async (message) => {
+const postMessageToBotChannel = async (message) => {
   const { botChannelWebhook = '' } = await readConfig();
   if (!botChannelWebhook) {
-    log.error('error in sendMessageToBotChannel()', 'botChannelWebhook is not configured.');
+    log.error('error in postMessageToBotChannel()', 'botChannelWebhook is not configured.');
   }
   try {
-    await axios.post(botChannelWebhook, message);
+    await postMessage(botChannelWebhook, message);
   } catch (err) {
-    log.error('error in sendMessageToBotChannel()', err);
+    log.error('error in postMessageToBotChannel()', err);
   }
 }
 
@@ -98,8 +121,10 @@ const addCommentOnFile = async (file, comment) => {
 module.exports = {
   authedAxios,
   openDialog,
+  sendMessage,
   sendMessageToUsers,
-  sendMessageToBotChannel,
+  postMessage,
+  postMessageToBotChannel,
   uploadFile,
   uploadRequestData,
   addCommentOnFile

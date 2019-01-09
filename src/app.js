@@ -2,7 +2,7 @@ const config = require('config');
 const express = require('express');
 
 const bootstrap = require('./bootstrap');
-const { log } = require('./utils');
+const log = require('./utils/log');
 
 const app = express();
 const port = config.get('port');
