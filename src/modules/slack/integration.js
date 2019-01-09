@@ -119,7 +119,6 @@ const addCommentOnFile = async (file, comment) => {
 }
 
 module.exports = {
-  authedAxios,
   openDialog,
   sendMessage,
   sendMessageToUsers,
