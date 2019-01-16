@@ -6,10 +6,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "nodemon src/index.js --ignore 'store.json'",
+    "start": "export NODE_ENV=dev; nodemon src/index.js --ignore 'store.json'",
     "tsc": "tsc",
     "lint": "eslint src/**/*.js --fix",
-    "test": "jest"
+    "test": "jest src/modules/slack/integration.spec.js --coverage"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -30,6 +30,7 @@
     "eslint-plugin-import": "^2.14.0",
     "jest": "^23.6.0",
     "nock": "^10.0.4",
-    "nodemon": "^1.18.7"
+    "nodemon": "^1.18.7",
+    "supertest": "^3.3.0"
   }
 }

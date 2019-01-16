@@ -1,7 +1,7 @@
-const initiatedViews = require('./initiated');
-const rejectedViews = require('./rejected');
-const { requestIdLabel, typeLabel, commitsLabel, requestLabel, usersLabel } = require('./labels');
-const { requestMapping, approvalMapping, requestTypes } = require('../mappings');
+const initiatedViews = require('./initiated')
+const rejectedViews = require('./rejected')
+const { requestIdLabel, typeLabel, commitsLabel, requestLabel, usersLabel } = require('./labels')
+const { requestMapping, approvalMapping, requestTypes } = require('../mappings')
 
 const requestFormView = (text) => ({
   title: 'Request a relesase',
@@ -59,17 +59,17 @@ const requestFormView = (text) => ({
       hint: "Please dont make any change here! Use '/request-release' arguments."
     }
   ]
-});
+})
 
 const requestReceivedAuthorView = ({ id, type, commits, subscribers, fileLink }) => ({
   response_type: 'ephemeral',
   text: `I've received your ${typeLabel(type)} request with following commits: ${commitsLabel(commits)} Your request id is: ${requestIdLabel(id, fileLink)}.\nI'll notify ${usersLabel(subscribers)} about further updates.`,
   mrkdwn: true,
   mrkdwn_in: ['text'],
-});
+})
 
 const requestReceivedManagerView = (requestData) => {
-  const { callback_id, initiate, reject } = approvalMapping;
+  const { callback_id, initiate, reject } = approvalMapping
   return {
     text: `You've got following release request.\n ${requestLabel(requestData)}`,
     attachments: [
@@ -114,7 +114,7 @@ const requestInvalidIdView = (id) => {
 }
 
 const requestAlreadyInitiatedView = (requestData) => {
-  const { id, fileLink, initiator } = requestData;
+  const { id, fileLink, initiator } = requestData
   return {
     response_type: 'ephemeral',
     text: `<@${initiator.id}> already initiated ${requestIdLabel(id, fileLink)} release request.`

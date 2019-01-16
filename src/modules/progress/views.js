@@ -1,8 +1,8 @@
-const { cancelRequestMappings } = require('./mappings');
-const { requestIdLabel } = require('../request/views/labels');
+const { cancelRequestMappings } = require('./mappings')
+const { requestIdLabel } = require('../request/views/labels')
 
 const showProgressView = (requests = []) => {
-  const progress = requests.map(({ id, fileLink, progress }) => `Request Id: ${requestIdLabel(id, fileLink)} \nProgress: *\`${progress || 'requested'}\`*`).join('\n\n');
+  const progress = requests.map(({ id, fileLink, progress }) => `Request Id: ${requestIdLabel(id, fileLink)} \nProgress: *\`${progress || 'requested'}\`*`).join('\n\n')
   return {
     response_type: 'ephemeral',
     text: progress || 'Progress:\n*`No pending request`*'
@@ -10,7 +10,7 @@ const showProgressView = (requests = []) => {
 }
 
 const confirmRequestCancelView = ({ id, fileLink }) => {
-  const { callback_id, yes, no } = cancelRequestMappings;
+  const { callback_id, yes, no } = cancelRequestMappings
   return {
     response_type: 'ephemeral',
     text: '',

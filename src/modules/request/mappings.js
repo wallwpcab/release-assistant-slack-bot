@@ -25,4 +25,4 @@ module.exports = {
   requestTypes,
   requestMapping,
   approvalMapping,
-};
+}

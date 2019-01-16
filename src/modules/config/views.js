@@ -5,7 +5,7 @@ const configReadView = (store) => ({
   text: `Config: \`\`\`${JSON.stringify(store, null, 2)}\`\`\``,
   mrkdwn: true,
   mrkdwn_in: ['text'],
-});
+})
 
 const configDialogView = (value) => ({
   title: 'Set config',
@@ -19,9 +19,9 @@ const configDialogView = (value) => ({
       value
     }
   ]
-});
+})
 
 module.exports = {
   configReadView,
   configDialogView
-};
+}

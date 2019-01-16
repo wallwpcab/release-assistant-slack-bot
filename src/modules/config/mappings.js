@@ -4,4 +4,4 @@ const configMapping = {
 
 module.exports = {
   configMapping
-};
+}

@@ -1,15 +1,15 @@
-const { mergeDeepLeft, mergeRight } = require('ramda');
+const { mergeDeepLeft, mergeRight } = require('ramda')
 
-const { readStore, writeStore } = require('./persistence');
+const { readStore, writeStore } = require('./persistence')
 
 const readConfig = async () => {
-  return readStore();
+  return readStore()
 }
 
 const updateConfig = async (config, overwrite = false) => {
-  const currentValue = await readConfig();
+  const currentValue = await readConfig()
   const updatedValue = overwrite ? mergeRight(currentValue, config) : mergeDeepLeft(currentValue, config)
-  return writeStore(updatedValue);
+  return writeStore(updatedValue)
 }
 
 module.exports = {

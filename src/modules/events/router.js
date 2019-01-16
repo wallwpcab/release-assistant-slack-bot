@@ -1,38 +1,38 @@
-const express = require('express');
-const { pathOr } = require('ramda');
+const express = require('express')
+const { pathOr } = require('ramda')
 
-const { releaseManagerUpdatedView } = require('./views');
-const { readConfig, updateConfig } = require('../../bot-config');
-const { sendMessageToBotChannel } = require('../slack/integration');
-const { extractSlackChannelId, extractSlackUsers } = require('../../utils');
+const { releaseManagerUpdatedView } = require('./views')
+const { readConfig, updateConfig } = require('../../bot-config')
+const { sendMessageToBotChannel } = require('../slack/integration')
+const { extractSlackChannelId, extractSlackUsers } = require('../../utils')
 
-const router = express.Router();
+const router = express.Router()
 
 router.post('/slack/events', async (req, res) => {
-  const event = pathOr({}, ['body', 'event'], req);
+  const event = pathOr({}, ['body', 'event'], req)
 
-  handleIfChannelTopicChanged(event);
-  res.send(req.body.challenge);
-});
+  handleIfChannelTopicChanged(event)
+  res.send(req.body.challenge)
+})
 
 const handleIfChannelTopicChanged = async ({ type, subtype, text, topic, channel }) => {
-  const { botChannel } = await readConfig();
+  const { botChannel } = await readConfig()
 
   if (
     channel !== extractSlackChannelId(botChannel)
     || type !== 'message'
     || !['group_topic', 'channel_topic'].includes(subtype)
   ) {
-    return;
+    return
   }
 
-  const [author] = extractSlackUsers(text);
-  const releaseManagers = extractSlackUsers(topic);
+  const [author] = extractSlackUsers(text)
+  const releaseManagers = extractSlackUsers(topic)
   await updateConfig({ releaseManagers })
-  await sendMessageToBotChannel(releaseManagerUpdatedView(author, releaseManagers));
+  await sendMessageToBotChannel(releaseManagerUpdatedView(author, releaseManagers))
 }
 
-module.exports = router;
+module.exports = router
 
 // [*LIVE*] Deployed *master* (auth: glass/Glass-Passw0rd) version `786251e`.
 // Build #689 status is: *SUCCESS*. test results / artifacts / commits / changelog

@@ -1,8 +1,8 @@
-const _axios = require('axios');
-const https = require('https');
+const _axios = require('axios')
+const https = require('https')
 
-const { readConfig } = require('./bot-config');
-const { log } = require('./utils');
+const { readConfig } = require('./bot-config')
+const { log } = require('./utils')
 
 const axios = _axios.create({
   httpsAgent: new https.Agent({
@@ -11,10 +11,10 @@ const axios = _axios.create({
 })
 
 const getStagingInfo = async () => {
-  const { stagingInfoUrl } = await readConfig();
+  const { stagingInfoUrl } = await readConfig()
   try {
-    const { data } = await axios.get(stagingInfoUrl);
-    return data;
+    const { data } = await axios.get(stagingInfoUrl)
+    return data
   } catch (err) {
     log.error('getStagingInfo()', err)
     return {}
@@ -22,10 +22,10 @@ const getStagingInfo = async () => {
 }
 
 const getProductionInfo = async () => {
-  const { productionInfoUrl } = await readConfig();
+  const { productionInfoUrl } = await readConfig()
   try {
-    const { data } = await axios.get(productionInfoUrl);
-    return data;
+    const { data } = await axios.get(productionInfoUrl)
+    return data
   } catch (err) {
     log.error('getProductionInfo()', err)
     return {}
@@ -34,9 +34,9 @@ const getProductionInfo = async () => {
 
 const getGitInfo = (production) => {
   if(production) {
-    return getProductionInfo();
+    return getProductionInfo()
   } else {
-    return getStagingInfo();
+    return getStagingInfo()
   }
 }
 
