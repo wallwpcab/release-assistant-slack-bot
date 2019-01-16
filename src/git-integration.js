@@ -2,7 +2,7 @@ const _axios = require('axios')
 const https = require('https')
 
 const { readConfig } = require('./bot-config')
-const { log } = require('./utils')
+const log = require('./utils/log')
 
 const axios = _axios.create({
   httpsAgent: new https.Agent({

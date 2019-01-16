@@ -5,7 +5,7 @@ const getLevel = (env) => {
   switch(env) {
     case 'development': return 'log'
     case 'production': return 'error'
-    case 'test':
+    case 'test': return Number.MAX_VALUE
     default: return Number.MAX_VALUE
   }
 }

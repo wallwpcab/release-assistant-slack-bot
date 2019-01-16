@@ -30,23 +30,29 @@ const handleIfRequestDialogAction = async ({ callback_id, response_url, submissi
   if (callback_id !== requestMapping.callback_id) return
 
   const requestSubmissionData = getRequestData(submission, user)
-  const { id: fileId, permalink: fileLink } = await uploadRequestData(requestSubmissionData)
+  const [
+    { id: fileId, permalink: fileLink },
+    { releaseManagers }
+  ] = await Promise.all([
+    uploadRequestData(requestSubmissionData),
+    readConfig()
+  ])
+
   const requestData = {
     ...requestSubmissionData,
     fileId,
     fileLink
   }
 
-  const { id } = requestData
-  await updateConfig({
-    requests: {
-      [id]: requestData
-    }
-  })
-
-  const { releaseManagers } = await readConfig()
-  await postMessage(response_url, requestReceivedAuthorView(requestData))
-  // await sendMessageToUsers(releaseManagers, requestReceivedManagerView(requestData))
+  await Promise.all([
+    updateConfig({
+      requests: {
+        [requestData.id]: requestData
+      }
+    }),
+    postMessage(response_url, requestReceivedAuthorView(requestData)),
+    sendMessageToUsers(releaseManagers, requestReceivedManagerView(requestData))
+  ])
 }
 
 const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], user }) => {
@@ -86,7 +92,7 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   await addCommentOnFile(fileId, requestInitiatedCommentView(user))
 }
 
-const handleIfRejectRequestAction  = async ({ callback_id, actions: [action], user }) => {
+const handleIfRejectRequestAction = async ({ callback_id, actions: [action], user }) => {
   const { name, value: requestId } = action || {}
   if (callback_id !== approvalMapping.callback_id || name !== approvalMapping.reject) return
 

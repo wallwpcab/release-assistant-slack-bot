@@ -13,7 +13,8 @@ const mockUser = {
 
 const mockConfig = {
   botChannel: '<#GEL8D0QRG|release-bot-test>',
-  botChannelWebhook: 'http://webhook.slack/bot-channel'
+  botChannelWebhook: 'http://webhook.slack/bot-channel',
+  releaseManagers:["<@UC29BCUN6>"]
 }
 
 const mockFile = {

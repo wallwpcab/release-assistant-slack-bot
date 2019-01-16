@@ -9,7 +9,7 @@
     "start": "export NODE_ENV=dev; nodemon src/index.js --ignore 'store.json'",
     "tsc": "tsc",
     "lint": "eslint src/**/*.js --fix",
-    "test": "jest src/modules/slack/integration.spec.js --coverage"
+    "test": "jest --coverage"
   },
   "dependencies": {
     "axios": "^0.18.0",

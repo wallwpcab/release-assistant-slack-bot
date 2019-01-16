@@ -25,14 +25,14 @@ const mockFilesUploadApi = (payloadCallback) => {
     })
 }
 
-const mockDialogOpenApi = () => {
+const mockDialogOpenApi = (payloadCallback) => {
   const payload = {
     trigger_id: /^\S+/,
     dialog: /^\S+/
   }
 
   return nock
-    .post('/dialog.open', payload)
+    .post('/dialog.open', payloadCallback ? payloadCallback : payload)
     .reply(200)
 }
 
@@ -89,14 +89,14 @@ const mockPostMessageApi = (url, payloadCallback) => {
     .reply(200)
 }
 
-const mockFilesCommentsAddApi = () => {
+const mockFilesCommentsAddApi = (payloadCallback) => {
   const payload = {
     file: /^\S+/,
     comment: /^\S+/
   }
 
   return nock
-    .post('/files.comments.add', payload)
+    .post('/files.comments.add', payloadCallback ? payloadCallback : payload)
     .reply(200)
 }
 
