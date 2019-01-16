@@ -8,13 +8,12 @@ const mcokHotfixRequest = {
 }
 
 const mockUser = {
-  user: {
-    id: 'user'
-  }
+  id: 'user'
 }
 
 const mockConfig = {
-  botChannel: '<#GEL8D0QRG|release-bot-test>'
+  botChannel: '<#GEL8D0QRG|release-bot-test>',
+  botChannelWebhook: 'http://webhook.slack/bot-channel'
 }
 
 const mockFile = {

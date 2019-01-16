@@ -46,7 +46,7 @@ const handleIfRequestDialogAction = async ({ callback_id, response_url, submissi
 
   const { releaseManagers } = await readConfig()
   await postMessage(response_url, requestReceivedAuthorView(requestData))
-  await sendMessageToUsers(releaseManagers, requestReceivedManagerView(requestData))
+  // await sendMessageToUsers(releaseManagers, requestReceivedManagerView(requestData))
 }
 
 const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], user }) => {

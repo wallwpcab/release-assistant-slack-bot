@@ -7,9 +7,10 @@ const { apiUrl } = config.get('slack')
 
 const nock = Nock(apiUrl)
   .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+  .log(console.log)
 
-const mockFileUploadApi = (callback) => {
-  const filePayload = {
+const mockFilesUploadApi = (payloadCallback) => {
+  const payload = {
     filename: /^\S+/,
     title: /^\S+/,
     content: /^\S+/,
@@ -18,12 +19,92 @@ const mockFileUploadApi = (callback) => {
   }
 
   return nock
-    .post('/files.upload', callback ? callback : filePayload)
+    .post('/files.upload', payloadCallback ? payloadCallback : payload)
     .reply(200, {
       file: mockFile
     })
 }
 
+const mockDialogOpenApi = () => {
+  const payload = {
+    trigger_id: /^\S+/,
+    dialog: /^\S+/
+  }
+
+  return nock
+    .post('/dialog.open', payload)
+    .reply(200)
+}
+
+const mockConversationsOpensApi = () => {
+  const payload = {
+    users: /^\S+/
+  }
+
+  return nock
+    .post('/conversations.open', payload)
+    .reply(200, {
+      channel: {
+        id: 'channel-1'
+      }
+    })
+}
+
+const mockChatPostMessageApi = (payloadCallback) => {
+  const payload = {
+    text: /^\S+/,
+    channel: /^\S+/
+  }
+
+  mockConversationsOpensApi()
+  return nock
+    .post('/chat.postMessage', payloadCallback ? payloadCallback : payload)
+    .reply(200)
+}
+
+const mockChatPostEphemeralApi = (payloadCallback) => {
+  const payload = {
+    text: /^\S+/,
+    channel: /^\S+/,
+    user: /^\S+/
+  }
+
+  mockConversationsOpensApi()
+  return nock
+    .post('/chat.postEphemeral', payloadCallback ? payloadCallback : payload)
+    .reply(200)
+}
+
+const mockPostMessageApi = (url, payloadCallback) => {
+  const nock = Nock(url)
+    .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+    .log(console.log)
+
+  const payload = {
+    text: /^\S+/
+  }
+
+  return nock
+    .post('', payloadCallback ? payloadCallback : payload)
+    .reply(200)
+}
+
+const mockFilesCommentsAddApi = () => {
+  const payload = {
+    file: /^\S+/,
+    comment: /^\S+/
+  }
+
+  return nock
+    .post('/files.comments.add', payload)
+    .reply(200)
+}
+
 module.exports = {
-  mockFileUploadApi
+  mockFilesUploadApi,
+  mockDialogOpenApi,
+  mockChatPostMessageApi,
+  mockChatPostEphemeralApi,
+  mockPostMessageApi,
+  mockFilesCommentsAddApi
 }
