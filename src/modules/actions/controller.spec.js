@@ -30,16 +30,20 @@ describe('Actions controller', async () => {
       send: jest.fn()
     }
 
-    // start mock api
+    // generate a different slack api url
     mockSlackApiUrl()
+
+    /** mock api **/
     const fileApi = mockFilesUploadApi()
     const chatApi = mockChatPostMessageApi(
       ({ text, channel }) => /^\S+/.test(text) && /^\S+/.test(channel)
     )
+
     const messageApi = mockPostMessageApi(
       responseUrl,
       ({ text }) => /^\S+/.test(text)
     )
+    /** mock api **/
 
     // simulate controller method call
     await postActions(req, res)
@@ -84,7 +88,7 @@ describe('Actions controller', async () => {
       send: jest.fn()
     }
 
-    // start mock api
+    /** mock api **/
     const messageApi = mockPostMessageApi(
       responseUrl,
       ({ text }) => /^\S+/.test(text)

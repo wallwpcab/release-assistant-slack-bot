@@ -11,7 +11,6 @@ describe('Git Integration', () => {
 
   it('Can get git staging info', async () => {
     const api = mockGitStagingApi()
-
     const { info } = await getStagingInfo()
 
     expect(api.isDone()).toBe(true)
@@ -32,7 +31,6 @@ describe('Git Integration', () => {
 
   it('Can get git production info', async () => {
     const api = mockGitProductionApi()
-
     const { info } = await getProductionInfo()
 
     expect(api.isDone()).toBe(true)
@@ -53,7 +51,6 @@ describe('Git Integration', () => {
 
   it('Can get git staging info based on the flag', async () => {
     const api = mockGitStagingApi()
-
     const { info } = await getGitInfo()
 
     expect(api.isDone()).toBe(true)
@@ -62,7 +59,6 @@ describe('Git Integration', () => {
 
   it('Can get git production info based on the flag', async () => {
     const api = mockGitProductionApi()
-    
     const { info } = await getGitInfo(true)
 
     expect(api.isDone()).toBe(true)

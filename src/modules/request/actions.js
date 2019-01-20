@@ -110,12 +110,14 @@ const handleIfRejectRequestAction = async ({ callback_id, actions: [action], use
     return
   }
 
-  const { fileId } = requestData
+  const { file } = requestData
   delete requests[requestId]
-  await updateConfig({ requests }, true)
-  await sendMessage(requestData.user.id, requestRejectedAuthorView(requestData, user))
-  await sendMessageToUsers(releaseManagers, requestRejectedManagerView(requestData, user))
-  await addCommentOnFile(fileId, requestRejectedCommentView(user))
+  await Promise.all([
+    updateConfig({ requests }, true),
+    sendMessage(requestData.user.id, requestRejectedAuthorView(requestData, user)),
+    sendMessageToUsers(releaseManagers, requestRejectedManagerView(requestData, user)),
+    addCommentOnFile(file.id, requestRejectedCommentView(user))
+  ])
 }
 
 module.exports = {
