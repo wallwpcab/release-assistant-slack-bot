@@ -10,8 +10,7 @@ const requestInitiatedAuthorView = (requestData, approver) => {
 const requestInitiatedManagerView = (requests, requestData, approver) => {
   const { id, type, fileLink } = requestData
   return {
-    text: `
-<@${approver.id}> approved ${requestIdLabel(id, fileLink)} request.
+    text: `<@${approver.id}> approved ${requestIdLabel(id, fileLink)} request.
 Please follow these steps:
 \`\`\`
 # Checkout the new brance from ${type === 'activation' ? 'Staging' : 'Production'}
@@ -29,8 +28,7 @@ git push origin HEAD
 const requestInitiatedChannelView = (requestData, approver) => {
   const { id, fileLink, user, subscribers } = requestData
   return {
-    text: `
-<@${approver.id}> initiated ${requestIdLabel(id, fileLink)} release request of <@${user.id}>.  :tada:
+    text: `<@${approver.id}> initiated ${requestIdLabel(id, fileLink)} release request of <@${user.id}>.  :tada:
 ${subscribersLabel(subscribers)}
 `
   }

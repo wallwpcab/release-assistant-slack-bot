@@ -1,4 +1,4 @@
-const { mergeDeepLeft, mergeRight } = require('ramda')
+const { mergeDeepRight, mergeRight } = require('ramda')
 
 const { readStore, writeStore } = require('./persistence')
 
@@ -8,7 +8,14 @@ const readConfig = async () => {
 
 const updateConfig = async (config, overwrite = false) => {
   const currentValue = await readConfig()
-  const updatedValue = overwrite ? mergeRight(currentValue, config) : mergeDeepLeft(currentValue, config)
+
+  let updatedValue
+  if(overwrite) {
+    updatedValue = Object.keys(config).length ? mergeRight(currentValue, config) : {}
+  } else {
+    updatedValue = mergeDeepRight(currentValue, config)
+  }
+
   return writeStore(updatedValue)
 }
 

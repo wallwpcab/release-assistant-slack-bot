@@ -22,8 +22,8 @@ const postActions = async (req, res) => {
     }
   } if (type === 'interactive_message') {
     handleIfInitiateRequestAction(payload)
-    handleIfRejectRequestAction(payload)
-    handleIfCancelRequestAction(payload)
+    // handleIfRejectRequestAction(payload)
+    // handleIfCancelRequestAction(payload)
   }
 
   res.send()

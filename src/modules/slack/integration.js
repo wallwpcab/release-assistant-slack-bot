@@ -1,19 +1,11 @@
 const axios = require('axios')
-const config = require('config')
 const qs = require('querystring')
 const { pathOr } = require('ramda')
 
-const { setAuthHeader } = require('./auth')
+const { httpClient } = require('./http')
 const { readConfig } = require('../../bot-config')
 const { extractSlackChannelId, extractSlackUserId } = require('../../utils')
 const log = require('../../utils/log')
-
-const slackConfig = config.get('slack')
-
-const authedAxios = axios.create({
-  baseURL: slackConfig.apiUrl
-})
-setAuthHeader(authedAxios)
 
 const postMessage = async (url, message) => {
   await axios.post(url, message)
@@ -21,13 +13,13 @@ const postMessage = async (url, message) => {
 
 const sendMessage = async (userId, message, ephemeral) => {
   try {
-    const { data } = await authedAxios.post('/conversations.open', {
+    const { data } = await httpClient().post('/conversations.open', {
       users: userId
     })
     const channel = pathOr('', ['channel', 'id'], data)
     const postUrl = ephemeral ? '/chat.postEphemeral' : '/chat.postMessage'
 
-    await authedAxios.post(postUrl, {
+    await httpClient().post(postUrl, {
       ...message,
       channel,
       user: ephemeral ? userId : undefined
@@ -39,12 +31,12 @@ const sendMessage = async (userId, message, ephemeral) => {
 
 const sendMessageToUsers = async (users, message) => {
   try {
-    const { data } = await authedAxios.post('/conversations.open', {
+    const { data } = await httpClient().post('/conversations.open', {
       users: users.map(u => extractSlackUserId(u)).join(',')
     })
     const channel = pathOr('', ['channel', 'id'], data)
 
-    await authedAxios.post('/chat.postMessage', {
+    await httpClient().post('/chat.postMessage', {
       ...message,
       channel
     })
@@ -67,7 +59,7 @@ const postMessageToBotChannel = async (message) => {
 
 const openDialog = async (trigger_id, dialog) => {
   try {
-    await authedAxios.post('/dialog.open', {
+    await httpClient().post('/dialog.open', {
       trigger_id,
       dialog: JSON.stringify(dialog)
     })
@@ -78,7 +70,7 @@ const openDialog = async (trigger_id, dialog) => {
 
 const uploadFile = async (filename, title, content, filetype = 'text', channels = '') => {
   try {
-    const { data } = await authedAxios.post(
+    const { data } = await httpClient().post(
       '/files.upload',
       qs.stringify({
         filename,
@@ -107,7 +99,7 @@ const uploadRequestData = async (requestData) => {
 
 const addCommentOnFile = async (file, comment) => {
   try {
-    await authedAxios.post(
+    await httpClient().post(
       '/files.comments.add',
       {
         file,

@@ -29,19 +29,18 @@ const {
 const handleIfRequestDialogAction = async ({ callback_id, response_url, submission, user }) => {
   if (callback_id !== requestMapping.callback_id) return
 
-  const requestSubmissionData = getRequestData(submission, user)
+  const requestData = getRequestData(submission, user)
   const [
     { id: fileId, permalink: fileLink },
     { releaseManagers }
   ] = await Promise.all([
-    uploadRequestData(requestSubmissionData),
+    uploadRequestData(requestData),
     readConfig()
   ])
 
-  const requestData = {
-    ...requestSubmissionData,
-    fileId,
-    fileLink
+  requestData.file = {
+    id: fileId,
+    link: fileLink
   }
 
   await Promise.all([
@@ -71,7 +70,7 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
     return
   }
 
-  const { type, fileId } = requestData
+  const { type, file } = requestData
   const { info } = await getGitInfo(type === requestTypes.hotfix.value)
 
   const updatedRequest = {
@@ -85,11 +84,13 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
     [requestId]: updatedRequest
   }
 
-  await updateConfig({ requests: updatedRequests })
-  await sendMessage(updatedRequest.user.id, requestInitiatedAuthorView(updatedRequest, user))
-  await sendMessageToUsers(releaseManagers, requestInitiatedManagerView(requests, updatedRequest, user))
-  await postMessageToBotChannel(requestInitiatedChannelView(updatedRequest, user))
-  await addCommentOnFile(fileId, requestInitiatedCommentView(user))
+  await Promise.all([
+    updateConfig({ requests: updatedRequests }),
+    sendMessage(updatedRequest.user.id, requestInitiatedAuthorView(updatedRequest, user)),
+    sendMessageToUsers(releaseManagers, requestInitiatedManagerView(requests, updatedRequest, user)),
+    postMessageToBotChannel(requestInitiatedChannelView(updatedRequest, user)),
+    addCommentOnFile(file.id, requestInitiatedCommentView(user))
+  ])
 }
 
 const handleIfRejectRequestAction = async ({ callback_id, actions: [action], user }) => {

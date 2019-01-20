@@ -1,9 +1,8 @@
-require('../../test-utils/mock-implementations')
-
+const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { openDialog, sendMessage, sendMessageToUsers, postMessage, postMessageToBotChannel, uploadFile, uploadRequestData, addCommentOnFile } = require('../slack/integration')
 const { mockDialogOpenApi, mockFilesUploadApi, mockChatPostMessageApi, mockChatPostEphemeralApi, mockPostMessageApi, mockFilesCommentsAddApi } = require('../../test-utils/mock-api')
-const { mcokHotfixRequest, mockConfig, mockFile } = require('../../test-utils/mock-data')
+const { mockRequest, mockConfig, mockFile } = require('../../test-utils/mock-data')
 
 
 describe('Slack integration', async () => {
@@ -12,6 +11,7 @@ describe('Slack integration', async () => {
   })
 
   it('Open Dialog', async () => {
+    mockSlackApiUrl()
     const api = mockDialogOpenApi()
     const dialog = {
       title: 'Request a relesase',
@@ -33,18 +33,21 @@ describe('Slack integration', async () => {
   })
 
   it('Send message', async () => {
+    mockSlackApiUrl()
     const api = mockChatPostMessageApi()
     await sendMessage('user-1', { text: 'test-message' })
     expect(api.isDone()).toBe(true)
   })
 
   it('Send ephemeral message', async () => {
+    mockSlackApiUrl()
     const api = mockChatPostEphemeralApi()
     await sendMessage('user-1', { text: 'test-message' }, true)
     expect(api.isDone()).toBe(true)
   })
 
   it('Send message to users', async () => {
+    mockSlackApiUrl()
     const api = mockChatPostMessageApi()
     await sendMessageToUsers(['<@user-1>'], { text: 'test-message' })
     expect(api.isDone()).toBe(true)
@@ -65,20 +68,29 @@ describe('Slack integration', async () => {
   })
 
   it('Can upload a file', async () => {
+    mockSlackApiUrl()
     const api = mockFilesUploadApi()
     const { file } = await uploadFile('test-file.txt', 'Test File', 'Some message', 'json', 'channel-1')
     expect(api.isDone()).toBe(true)
-    expect(file).toEqual(mockFile)
+    expect(file).toEqual({
+      id: mockFile.id,
+      permalink: mockFile.link
+    })
   })
 
   it('Can upload a request file', async () => {
+    mockSlackApiUrl()
     const api = mockFilesUploadApi()
-    const file = await uploadRequestData(mcokHotfixRequest)
+    const file = await uploadRequestData(mockRequest)
     expect(api.isDone()).toBe(true)
-    expect(file).toEqual(mockFile)
+    expect(file).toEqual({
+      id: mockFile.id,
+      permalink: mockFile.link
+    })
   })
 
   it('Add comment on file', async () => {
+    mockSlackApiUrl()
     const api = mockFilesCommentsAddApi()
     await addCommentOnFile('file-1', 'comment-1')
     expect(api.isDone()).toBe(true)

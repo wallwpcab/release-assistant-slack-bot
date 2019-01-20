@@ -1,13 +1,16 @@
-const Nock = require('nock')
+const nock = require('nock')
 const config = require('config')
 
-const { mockFile } = require('./mock-data')
+const { mockFile, mockConfig, mockGitCommit } = require('./mock-data')
 
-const { apiUrl } = config.get('slack')
-
-const nock = Nock(apiUrl)
+const mockServer = (url) => nock(url)
   .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
   .log(console.log)
+
+const mockSlackServer = () => {
+  const { apiUrl } = config.get('slack')
+  return mockServer(apiUrl)
+}
 
 const mockFilesUploadApi = (payloadCallback) => {
   const payload = {
@@ -18,10 +21,13 @@ const mockFilesUploadApi = (payloadCallback) => {
     channels: /^\S+/
   }
 
-  return nock
+  return mockSlackServer()
     .post('/files.upload', payloadCallback ? payloadCallback : payload)
     .reply(200, {
-      file: mockFile
+      file: {
+        id: mockFile.id,
+        permalink: mockFile.link
+      }
     })
 }
 
@@ -31,7 +37,7 @@ const mockDialogOpenApi = (payloadCallback) => {
     dialog: /^\S+/
   }
 
-  return nock
+  return mockSlackServer()
     .post('/dialog.open', payloadCallback ? payloadCallback : payload)
     .reply(200)
 }
@@ -41,7 +47,7 @@ const mockConversationsOpensApi = () => {
     users: /^\S+/
   }
 
-  return nock
+  return mockSlackServer()
     .post('/conversations.open', payload)
     .reply(200, {
       channel: {
@@ -57,7 +63,7 @@ const mockChatPostMessageApi = (payloadCallback) => {
   }
 
   mockConversationsOpensApi()
-  return nock
+  return mockSlackServer()
     .post('/chat.postMessage', payloadCallback ? payloadCallback : payload)
     .reply(200)
 }
@@ -70,21 +76,17 @@ const mockChatPostEphemeralApi = (payloadCallback) => {
   }
 
   mockConversationsOpensApi()
-  return nock
+  return mockSlackServer()
     .post('/chat.postEphemeral', payloadCallback ? payloadCallback : payload)
     .reply(200)
 }
 
 const mockPostMessageApi = (url, payloadCallback) => {
-  const nock = Nock(url)
-    .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
-    .log(console.log)
-
   const payload = {
     text: /^\S+/
   }
 
-  return nock
+  return mockServer(url)
     .post('', payloadCallback ? payloadCallback : payload)
     .reply(200)
 }
@@ -95,16 +97,29 @@ const mockFilesCommentsAddApi = (payloadCallback) => {
     comment: /^\S+/
   }
 
-  return nock
+  return mockSlackServer()
     .post('/files.comments.add', payloadCallback ? payloadCallback : payload)
     .reply(200)
 }
 
+const mockGitStagingApi = () => mockServer(mockConfig.stagingInfoUrl).get('')
+  .reply(200, {
+    info: mockGitCommit
+  })
+
+const mockGitProductionApi = () => mockServer(mockConfig.productionInfoUrl).get('')
+  .reply(200, {
+    info: mockGitCommit
+  })
+
 module.exports = {
+  mockServer,
   mockFilesUploadApi,
   mockDialogOpenApi,
   mockChatPostMessageApi,
   mockChatPostEphemeralApi,
   mockPostMessageApi,
-  mockFilesCommentsAddApi
+  mockFilesCommentsAddApi,
+  mockGitStagingApi,
+  mockGitProductionApi
 }
