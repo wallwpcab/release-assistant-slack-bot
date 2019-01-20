@@ -4,19 +4,13 @@ const { approvalMapping } = require('../request/mappings')
 const { mockRequest, mockRequestInitiated, mockUser, mockConfig, mockInitiator } = require('../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
+const { generateActionRequest } = require('./test-utils')
 const { mockChatPostMessageApi, mockChatPostEphemeralApi, mockPostMessageApi, mockGitProductionApi, mockFilesCommentsAddApi } = require('../../test-utils/mock-api')
 
-const payload = (callback_id, actionName, requestId, user = mockUser) => ({
-  type: 'interactive_message',
-  callback_id,
-  actions: [
-    {
-      name: actionName,
-      value: requestId
-    }
-  ],
-  user
-})
+const actionRequest = generateActionRequest(
+  approvalMapping.callback_id,
+  mockUser
+)
 
 describe('Initiate request actions', async () => {
   beforeEach(async () => {
@@ -27,18 +21,10 @@ describe('Initiate request actions', async () => {
   })
 
   it('can handle initiate request action with invalid request id', async () => {
-    const req = {
-      body: {
-        payload: JSON.stringify(
-          payload(
-            approvalMapping.callback_id,
-            approvalMapping.initiate,
-            'invalid-id'
-          )
-        )
-      }
-    }
-
+    const req = actionRequest(
+      approvalMapping.initiate,
+      'invalid-id'
+    )
     const res = {
       send: jest.fn()
     }
@@ -65,18 +51,10 @@ describe('Initiate request actions', async () => {
     }
     await updateConfig({ requests }, true)
 
-    const req = {
-      body: {
-        payload: JSON.stringify(
-          payload(
-            approvalMapping.callback_id,
-            approvalMapping.initiate,
-            mockRequestInitiated.id
-          )
-        )
-      }
-    }
-
+    const req = actionRequest(
+      approvalMapping.initiate,
+      mockRequestInitiated.id
+    )
     const res = {
       send: jest.fn()
     }
@@ -98,19 +76,14 @@ describe('Initiate request actions', async () => {
   })
 
   it('can handle initiate request action', async () => {
-    const req = {
-      body: {
-        payload: JSON.stringify(
-          payload(
-            approvalMapping.callback_id,
-            approvalMapping.initiate,
-            mockRequest.id,
-            mockInitiator
-          )
-        )
-      }
-    }
-
+    const actionRequest = generateActionRequest(
+      approvalMapping.callback_id,
+      mockInitiator
+    )
+    const req = actionRequest(
+      approvalMapping.initiate,
+      mockRequest.id
+    )
     const res = {
       send: jest.fn()
     }
@@ -122,11 +95,11 @@ describe('Initiate request actions', async () => {
     const filesCommentsApi = mockFilesCommentsAddApi()
     const gitApi = mockGitProductionApi()
     const chatApi = mockChatPostMessageApi(
-      ({ text, channel }) => /approved|initiated/.test(text) && /^\S+/.test(channel)
+      ({ text, channel }) => /initiated/.test(text) && /^\S+/.test(channel)
     )
 
     const chatApiForUsers = mockChatPostMessageApi(
-      ({ text, channel }) => /approved|initiated/.test(text) && /^\S+/.test(channel)
+      ({ text, channel }) => /initiated/.test(text) && /^\S+/.test(channel)
     )
 
     const messageApi = mockPostMessageApi(

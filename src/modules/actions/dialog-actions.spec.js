@@ -5,27 +5,22 @@ const { configMapping } = require('../config/mappings')
 const { mockRequestFormData, mockRequest, mockUser, mockConfig, mockFile } = require('../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
+const { generateDialogRequest } = require('./test-utils')
 const { mockFilesUploadApi, mockChatPostMessageApi, mockPostMessageApi } = require('../../test-utils/mock-api')
 
-describe('Actions controller', async () => {
+const responseUrl = 'http://response.slack.com/message'
+const dialogRequest = generateDialogRequest(responseUrl, mockUser)
+
+describe('Dialog actions', async () => {
   beforeAll(async () => {
     await updateConfig(mockConfig, true)
   })
 
   it('can handle dialog action', async () => {
-    const responseUrl = 'http://response.slack.com/message'
-    const req = {
-      body: {
-        payload: JSON.stringify({
-          type: 'dialog_submission',
-          callback_id: requestMapping.callback_id,
-          response_url: responseUrl,
-          submission: mockRequestFormData,
-          user: mockUser
-        })
-      }
-    }
-
+    const req = dialogRequest(
+      requestMapping.callback_id,
+      mockRequestFormData
+    )
     const res = {
       send: jest.fn()
     }
@@ -70,20 +65,12 @@ describe('Actions controller', async () => {
   })
 
   it('can handle edit dialog action', async () => {
-    const responseUrl = 'http://response.slack.com/message'
-    const req = {
-      body: {
-        payload: JSON.stringify({
-          type: 'dialog_submission',
-          callback_id: configMapping.callback_id,
-          response_url: responseUrl,
-          submission: {
-            config: JSON.stringify(mockConfig)
-          }
-        })
+    const req = dialogRequest(
+      configMapping.callback_id,
+      {
+        config: JSON.stringify(mockConfig)
       }
-    }
-
+    )
     const res = {
       send: jest.fn()
     }

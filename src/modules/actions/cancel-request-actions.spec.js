@@ -1,18 +1,18 @@
+const { cancelRequestMappings } = require('../progress/mappings')
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
 const { postActions } = require('./controller')
-const { approvalMapping } = require('../request/mappings')
-const { mockRequest, mockRequestInitiated, mockUser, mockConfig, mockRejector } = require('../../test-utils/mock-data')
+const { mockRequest, mockRequestInitiated, mockUser, mockConfig } = require('../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
 const { generateActionRequest } = require('./test-utils')
 const { mockChatPostMessageApi, mockChatPostEphemeralApi, mockFilesCommentsAddApi } = require('../../test-utils/mock-api')
 
 const actionRequest = generateActionRequest(
-  approvalMapping.callback_id,
+  cancelRequestMappings.callback_id,
   mockUser
 )
 
-describe('Reject request actions', async () => {
+describe('Cancel request actions', async () => {
   beforeEach(async () => {
     const requests = {
       [mockRequest.id]: mockRequest
@@ -20,9 +20,9 @@ describe('Reject request actions', async () => {
     await updateConfig({ ...mockConfig, requests }, true)
   })
 
-  it('can handle reject request action with invalid request id', async () => {
+  it('can handle cancel request action with invalid request id', async () => {
     const req = actionRequest(
-      approvalMapping.reject,
+      cancelRequestMappings.yes,
       'invalid-id'
     )
     const res = {
@@ -45,14 +45,15 @@ describe('Reject request actions', async () => {
     expect(messageApi.isDone()).toBe(true)
   })
 
-  it('can handle reject request action for already initiated request', async () => {
+  it('can handle cancel request action for already initiated request', async () => {
     const requests = {
       [mockRequestInitiated.id]: mockRequestInitiated
     }
     await updateConfig({ requests }, true)
 
+
     const req = actionRequest(
-      approvalMapping.reject,
+      cancelRequestMappings.yes,
       mockRequestInitiated.id
     )
     const res = {
@@ -75,13 +76,9 @@ describe('Reject request actions', async () => {
     expect(messageApi.isDone()).toBe(true)
   })
 
-  it('can handle reject request action', async () => {
-    const actionRequest = generateActionRequest(
-      approvalMapping.callback_id,
-      mockRejector
-    )
+  it('can handle cancel request action', async () => {
     const req = actionRequest(
-      approvalMapping.reject,
+      cancelRequestMappings.yes,
       mockRequest.id
     )
     const res = {
@@ -94,11 +91,11 @@ describe('Reject request actions', async () => {
     /** mock api **/
     const filesCommentsApi = mockFilesCommentsAddApi()
     const chatApi = mockChatPostMessageApi(
-      ({ text, channel }) => /rejected/.test(text) && /^\S+/.test(channel)
+      ({ text, channel }) => /canceled/.test(text) && /^\S+/.test(channel)
     )
 
     const chatApiForUsers = mockChatPostMessageApi(
-      ({ text, channel }) => /rejected/.test(text) && /^\S+/.test(channel)
+      ({ text, channel }) => /canceled/.test(text) && /^\S+/.test(channel)
     )
     /** mock api **/
 

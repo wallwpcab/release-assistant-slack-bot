@@ -1,9 +1,16 @@
 const { pathOr } = require('ramda')
 
 const { cancelRequestMappings } = require('./mappings')
-const { requestCanceledAuthorView, requestCanceledManagerView, requestCanceledCommentView } = require('./views')
+const {
+  requestCanceledAuthorView,
+  requestCanceledManagerView,
+  requestCanceledCommentView
+} = require('./views')
+const {
+  requestInvalidIdView,
+  requestAlreadyInitiatedView
+} = require('../request/views')
 const { readConfig, updateConfig } = require('../../bot-config')
-const log = require('../../utils/log')
 const {
   sendMessage,
   sendMessageToUsers,
@@ -17,17 +24,25 @@ const handleIfCancelRequestAction = async ({ callback_id, actions: [action], use
   const config = await readConfig()
   const { releaseManagers, requests } = config
   const requestData = pathOr(null, [requestId], requests)
-  if (!requestData || requestData.progress) {
-    log.info(`handleIfCancelRequestAction() invalid request: ${requestId}`, requestData)
+  if (!requestData) {
+    await sendMessage(user.id, requestInvalidIdView(requestId), true)
     return
   }
 
-  const { fileId } = requestData
+  if (requestData.progress) {
+    await sendMessage(user.id, requestAlreadyInitiatedView(requestData), true)
+    return
+  }
+
+  const { file } = requestData
   delete requests[requestId]
-  await updateConfig({ requests }, true)
-  await sendMessage(user.id, requestCanceledAuthorView(requestData))
-  await sendMessageToUsers(releaseManagers, requestCanceledManagerView(requestData, user))
-  await addCommentOnFile(fileId, requestCanceledCommentView(user))
+
+  await Promise.all([
+    updateConfig({ requests }, true),
+    sendMessage(user.id, requestCanceledAuthorView(requestData)),
+    sendMessageToUsers(releaseManagers, requestCanceledManagerView(requestData, user)),
+    addCommentOnFile(file.id, requestCanceledCommentView(user))
+  ])
 }
 
 module.exports = {
