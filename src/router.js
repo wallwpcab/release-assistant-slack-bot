@@ -1,20 +1,19 @@
 const { Router } = require('express')
 
-// const actionsRouter = require('./modules/actions/router')
-const configRouter = require('./modules/config/router')
 const eventsRouter = require('./modules/events/router')
 const progressRouter = require('./modules/progress/router')
 const requestRouter = require('./modules/request/router')
 
-const { postActions } = require('./modules/actions/controller')
+const { actionsPost } = require('./modules/actions/controller')
+const { configPost } = require('./modules/config/controller')
 
 const router = Router()
 
-router.post('/slack/actions', postActions)
+router.post('/slack/actions', actionsPost)
+router.post('/slack/command/config', configPost)
 
 module.exports = [
   router,
-  configRouter,
   eventsRouter,
   progressRouter,
   requestRouter

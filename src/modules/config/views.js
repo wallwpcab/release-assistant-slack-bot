@@ -1,8 +1,8 @@
 const { configMapping } = require('./mappings')
 
-const configReadView = (store) => ({
+const configReadView = (config) => ({
   response_type: 'ephemeral',
-  text: `Config: \`\`\`${JSON.stringify(store, null, 2)}\`\`\``,
+  text: `Config: \`\`\`${JSON.stringify(config, null, 2)}\`\`\``,
   mrkdwn: true,
   mrkdwn_in: ['text'],
 })

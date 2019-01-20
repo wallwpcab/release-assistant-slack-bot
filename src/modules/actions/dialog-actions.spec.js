@@ -1,5 +1,5 @@
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
-const { postActions } = require('./controller')
+const { actionsPost } = require('./controller')
 const { requestMapping } = require('../request/mappings')
 const { configMapping } = require('../config/mappings')
 const { mockRequestFormData, mockRequest, mockUser, mockConfig, mockFile } = require('../../test-utils/mock-data')
@@ -41,7 +41,7 @@ describe('Dialog actions', async () => {
     /** mock api **/
 
     // simulate controller method call
-    await postActions(req, res)
+    await actionsPost(req, res)
     await waitForInternalPromises()
     const { requests } = await readConfig()
     const [request] = Object.values(requests)
@@ -85,7 +85,7 @@ describe('Dialog actions', async () => {
     await updateConfig({}, true)
 
     // simulate controller method call
-    await postActions(req, res)
+    await actionsPost(req, res)
     await waitForInternalPromises()
     const config = await readConfig()
 

@@ -1,5 +1,5 @@
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
-const { postActions } = require('./controller')
+const { actionsPost } = require('./controller')
 const { approvalMapping } = require('../request/mappings')
 const { mockRequest, mockRequestInitiated, mockUser, mockConfig, mockInitiator } = require('../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../bot-config')
@@ -38,7 +38,7 @@ describe('Initiate request actions', async () => {
     )
 
     // simulate controller method call
-    await postActions(req, res)
+    await actionsPost(req, res)
     await waitForInternalPromises()
 
     // should call following api
@@ -68,7 +68,7 @@ describe('Initiate request actions', async () => {
     )
 
     // simulate controller method call
-    await postActions(req, res)
+    await actionsPost(req, res)
     await waitForInternalPromises()
 
     // should call following api
@@ -109,7 +109,7 @@ describe('Initiate request actions', async () => {
     /** mock api **/
 
     // simulate controller method call
-    await postActions(req, res)
+    await actionsPost(req, res)
     await waitForInternalPromises()
 
     // should call following api

@@ -9,7 +9,7 @@ const {
 } = require('../request/actions')
 const log = require('../../utils/log')
 
-const postActions = async (req, res) => {
+const actionsPost = async (req, res) => {
   const payload = JSON.parse(pathOr('{}', ['body', 'payload'], req))
   const { type } = payload
 
@@ -18,7 +18,7 @@ const postActions = async (req, res) => {
       handleIfRequestDialogAction(payload)
       handleIfEditDialogAction(payload)
     } catch (err) {
-      log.error('actions > postActions() > sendMessage() failed', err)
+      log.error('actions > actionsPost() > sendMessage() failed', err)
     }
   } if (type === 'interactive_message') {
     handleIfInitiateRequestAction(payload)
@@ -30,5 +30,5 @@ const postActions = async (req, res) => {
 }
 
 module.exports = {
-  postActions
+  actionsPost
 }

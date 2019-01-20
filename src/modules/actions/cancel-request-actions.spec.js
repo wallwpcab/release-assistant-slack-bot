@@ -1,6 +1,6 @@
 const { cancelRequestMappings } = require('../progress/mappings')
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
-const { postActions } = require('./controller')
+const { actionsPost } = require('./controller')
 const { mockRequest, mockRequestInitiated, mockUser, mockConfig } = require('../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
@@ -38,7 +38,7 @@ describe('Cancel request actions', async () => {
     )
 
     // simulate controller method call
-    await postActions(req, res)
+    await actionsPost(req, res)
     await waitForInternalPromises()
 
     // should call following api
@@ -69,7 +69,7 @@ describe('Cancel request actions', async () => {
     )
 
     // simulate controller method call
-    await postActions(req, res)
+    await actionsPost(req, res)
     await waitForInternalPromises()
 
     // should call following api
@@ -100,7 +100,7 @@ describe('Cancel request actions', async () => {
     /** mock api **/
 
     // simulate controller method call
-    await postActions(req, res)
+    await actionsPost(req, res)
     await waitForInternalPromises()
 
     const { requests } = await readConfig()
