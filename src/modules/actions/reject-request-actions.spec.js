@@ -35,7 +35,7 @@ describe('Reject request actions', async () => {
     await updateConfig({ ...mockConfig, requests }, true)
   })
 
-  it('can handle reject request action with invalid request id', async () => {
+  it('Can handle reject request action with invalid request id', async () => {
     const requestId = 'invalid-id'
     const req = actionRequest(
       approvalMapping.reject,
@@ -63,7 +63,7 @@ describe('Reject request actions', async () => {
     expect(messageApi.isDone()).toBe(true)
   })
 
-  it('can handle reject request action for already initiated request', async () => {
+  it('Can handle reject request action for already initiated request', async () => {
     const requests = {
       [mockRequestInitiated.id]: mockRequestInitiated
     }
@@ -95,7 +95,7 @@ describe('Reject request actions', async () => {
     expect(messageApi.isDone()).toBe(true)
   })
 
-  it('can handle reject request action', async () => {
+  it('Can handle reject request action', async () => {
     const actionRequest = generateActionRequest(
       approvalMapping.callback_id,
       mockRejector

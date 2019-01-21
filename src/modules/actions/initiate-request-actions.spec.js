@@ -37,7 +37,7 @@ describe('Initiate request actions', async () => {
     await updateConfig({ ...mockConfig, requests }, true)
   })
 
-  it('can handle initiate request action with invalid request id', async () => {
+  it('Can handle initiate request action with invalid request id', async () => {
     const requestId = 'invalid-id'
     const req = actionRequest(
       approvalMapping.initiate,
@@ -65,7 +65,7 @@ describe('Initiate request actions', async () => {
     expect(messageApi.isDone()).toBe(true)
   })
 
-  it('can handle initiate request action for already initiated request', async () => {
+  it('Can handle initiate request action for already initiated request', async () => {
     const requests = {
       [mockRequestInitiated.id]: mockRequestInitiated
     }
@@ -97,7 +97,7 @@ describe('Initiate request actions', async () => {
     expect(messageApi.isDone()).toBe(true)
   })
 
-  it('can handle initiate request action', async () => {
+  it('Can handle initiate request action', async () => {
     const actionRequest = generateActionRequest(
       approvalMapping.callback_id,
       mockInitiator

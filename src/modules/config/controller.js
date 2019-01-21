@@ -8,10 +8,14 @@ const log = require('../../utils/log')
 
 const configPost = async (req, res) => {
   const { text } = req.body
-  const args = minimist(splitValues(text))
-
-  handleIfReadConfig(args, res)
-  handleIfUpdateConfig(args, res, req)
+  try {
+    const args = minimist(splitValues(text))
+    handleIfReadConfig(args, res)
+    handleIfUpdateConfig(args, res, req)
+  } catch (err) {
+    log.error('handleIfUpdateConfig() > openDialog failed', err)
+    res.sendStatus(500)
+  }
 }
 
 const handleIfReadConfig = async (args, res) => {
@@ -38,13 +42,8 @@ const handleIfUpdateConfig = async (args, res, req) => {
 
   const { trigger_id } = req.body
 
-  try {
-    await openDialog(trigger_id, configDialogView(configValue))
-    res.send()
-  } catch (err) {
-    log.error('handleIfUpdateConfig() > openDialog failed', err)
-    res.sendStatus(500)
-  }
+  await openDialog(trigger_id, configDialogView(configValue))
+  res.send()
 }
 
 module.exports = {

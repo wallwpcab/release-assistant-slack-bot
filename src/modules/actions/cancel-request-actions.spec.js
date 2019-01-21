@@ -34,7 +34,7 @@ describe('Cancel request actions', async () => {
     await updateConfig({ ...mockConfig, requests }, true)
   })
 
-  it('can handle cancel request action with invalid request id', async () => {
+  it('Can handle cancel request action with invalid request id', async () => {
     const requestId = 'invalid-id'
     const req = actionRequest(
       cancelRequestMappings.yes,
@@ -62,7 +62,7 @@ describe('Cancel request actions', async () => {
     expect(messageApi.isDone()).toBe(true)
   })
 
-  it('can handle cancel request action for already initiated request', async () => {
+  it('Can handle cancel request action for already initiated request', async () => {
     const requests = {
       [mockRequestInitiated.id]: mockRequestInitiated
     }
@@ -95,7 +95,7 @@ describe('Cancel request actions', async () => {
     expect(messageApi.isDone()).toBe(true)
   })
 
-  it('can handle cancel request action', async () => {
+  it('Can handle cancel request action', async () => {
     const req = actionRequest(
       cancelRequestMappings.yes,
       mockRequest.id

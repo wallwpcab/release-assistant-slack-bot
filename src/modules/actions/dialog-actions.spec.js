@@ -16,7 +16,7 @@ describe('Dialog actions', async () => {
     await updateConfig(mockConfig, true)
   })
 
-  it('can handle dialog action', async () => {
+  it('Can handle dialog action', async () => {
     const req = dialogRequest(
       requestMapping.callback_id,
       mockRequestFormData
@@ -64,7 +64,7 @@ describe('Dialog actions', async () => {
     expect(request.file).toEqual(mockFile)
   })
 
-  it('can handle edit dialog action', async () => {
+  it('Can handle edit dialog action', async () => {
     const req = dialogRequest(
       configMapping.callback_id,
       {

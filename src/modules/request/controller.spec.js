@@ -29,4 +29,20 @@ describe('Request controller', async () => {
     expect(api.isDone()).toBe(true)
     expect(res.send).toBeCalled()
   })
+
+  it('Can handle error', async () => {
+    const req = {
+      body: null
+    }
+
+    const res = {
+      send: jest.fn(),
+      sendStatus: jest.fn()
+    }
+
+    await requestPost(req, res)
+    await waitForInternalPromises()
+
+    expect(res.sendStatus).toBeCalledWith(500)
+  })
 })

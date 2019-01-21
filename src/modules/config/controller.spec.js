@@ -6,7 +6,7 @@ const { configReadView } = require('./views')
 const { mockDialogOpenApi } = require('../../test-utils/mock-api')
 
 describe('Config controller', async () => {
-  it('can handle read config', async () => {
+  it('Can handle read config', async () => {
     const req = {
       body: {
         text: ''
@@ -25,7 +25,7 @@ describe('Config controller', async () => {
     expect(res.send).toBeCalledWith(configReadView(config))
   })
 
-  it('can handle update config', async () => {
+  it('Can handle update config', async () => {
     const req = {
       body: {
         text: '--update --deployChannel #deploy --botChannel #bot-channel'
@@ -50,5 +50,23 @@ describe('Config controller', async () => {
     await waitForInternalPromises()
 
     expect(api.isDone()).toBe(true)
+  })
+
+  it('Can handle update config internal error', async () => {
+    const req = {
+      body: {
+        text: null
+      }
+    }
+
+    const res = {
+      send: jest.fn(),
+      sendStatus: jest.fn()
+    }
+
+    await configPost(req, res)
+    await waitForInternalPromises()
+
+    expect(res.sendStatus).toBeCalledWith(500)
   })
 })

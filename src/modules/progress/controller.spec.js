@@ -57,7 +57,7 @@ describe('Progress controller', async () => {
     expect(res.send).toBeCalledWith(showProgressView([mockRequest]))
   })
 
-  it('can handle cancel progress with invalid request id', async () => {
+  it('Can handle cancel progress with invalid request id', async () => {
     const requestId = 'invalid-id'
     const req = {
       body: {
@@ -75,7 +75,7 @@ describe('Progress controller', async () => {
     expect(res.send).toBeCalledWith(requestInvalidIdView(requestId))
   })
 
-  it('can handle cancel progress for already initiated request', async () => {
+  it('Can handle cancel progress for already initiated request', async () => {
     const req = {
       body: {
         text: `--id ${mockRequestInitiated.id} --cancel`
@@ -92,7 +92,7 @@ describe('Progress controller', async () => {
     expect(res.send).toBeCalledWith(requestAlreadyInitiatedView(mockRequestInitiated))
   })
 
-  it('can handle cancel progress', async () => {
+  it('Can handle cancel progress', async () => {
     const req = {
       body: {
         text: `--id ${mockRequest.id} --cancel`
