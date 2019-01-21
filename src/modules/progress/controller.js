@@ -1,4 +1,3 @@
-const express = require('express')
 const minimist = require('minimist')
 
 const { showProgressView, confirmRequestCancelView } = require('./views')
@@ -7,15 +6,13 @@ const { readConfig } = require('../../bot-config')
 const { splitValues } = require('../../utils')
 const log = require('../../utils/log')
 
-const router = express.Router()
-
-router.post('/slack/command/progress', async (req, res) => {
+const progressPost = async (req, res) => {
   const { text } = req.body
   const args = minimist(splitValues(text))
 
   handleIfViewProgress(args, res)
   handleIfCancelProgress(args, res)
-})
+}
 
 const handleIfViewProgress = async (args, res) => {
   if (args.cancel) return
@@ -58,4 +55,6 @@ const handleIfCancelProgress = async (args, res) => {
   res.send(confirmRequestCancelView(request))
 }
 
-module.exports = router
+module.exports = {
+  progressPost
+}

@@ -1,12 +1,8 @@
-const express = require('express')
-
-const log = require('../../utils/log')
-const { openDialog } = require('../slack/integration')
 const { requestFormView } = require('./views')
+const { openDialog } = require('../slack/integration')
+const log = require('../../utils/log')
 
-const router = express.Router()
-
-router.post('/slack/command/request', async (req, res) => {
+const requestPost = async (req, res) => {
   const { text, trigger_id } = req.body || {}
 
   try {
@@ -16,6 +12,8 @@ router.post('/slack/command/request', async (req, res) => {
     log.error('/slack/command/request > openDialog() failed', err)
     res.sendStatus(500)
   }
-})
+}
 
-module.exports = router
+module.exports = {
+  requestPost
+}

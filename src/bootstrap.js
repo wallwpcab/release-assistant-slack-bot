@@ -24,7 +24,7 @@ function bootstrap(app) {
   app.use(slackGuard)
 
   // register route
-  router.forEach(r => app.use(r))
+  app.use(router)
 
   // 404
   app.use((_, res) => {
