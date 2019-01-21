@@ -11,7 +11,6 @@ describe('Slack integration', async () => {
   })
 
   it('Open Dialog', async () => {
-    mockSlackApiUrl()
     const api = mockDialogOpenApi()
     const dialog = {
       title: 'Request a relesase',
