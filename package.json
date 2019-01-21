@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "export NODE_ENV=dev; nodemon src/index.js --ignore 'store.json'",
+    "start": "nodemon src/index.js --ignore 'store.json'",
     "tsc": "tsc",
     "lint": "eslint src/**/*.js --fix",
     "test": "jest --coverage"
