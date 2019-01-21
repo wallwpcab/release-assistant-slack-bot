@@ -1,8 +1,24 @@
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
 const { readConfig, updateConfig } = require('../../bot-config')
-const { openDialog, sendMessage, sendMessageToUsers, postMessage, postMessageToBotChannel, uploadFile, uploadRequestData, addCommentOnFile } = require('../slack/integration')
-const { mockDialogOpenApi, mockFilesUploadApi, mockChatPostMessageApi, mockChatPostEphemeralApi, mockPostMessageApi, mockFilesCommentsAddApi } = require('../../test-utils/mock-api')
 const { mockRequest, mockConfig, mockFile } = require('../../test-utils/mock-data')
+const {
+  openDialog,
+  sendMessage,
+  sendMessageToUsers,
+  postMessage,
+  postMessageToBotChannel,
+  uploadFile,
+  uploadRequestData,
+  addCommentOnFile
+} = require('../slack/integration')
+const {
+  mockDialogOpenApi,
+  mockFilesUploadApi,
+  mockChatPostMessageApi,
+  mockChatPostEphemeralApi,
+  mockPostMessageApi,
+  mockFilesCommentsAddApi
+} = require('../../test-utils/mock-api')
 
 
 describe('Slack integration', async () => {

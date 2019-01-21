@@ -1,8 +1,7 @@
 require('../../test-utils/mock-implementations')
 const { progressPost } = require('./controller')
 const { waitForInternalPromises } = require('../../test-utils')
-const { readConfig, updateConfig } = require('../../bot-config')
-const { mockPostMessageApi } = require('../../test-utils/mock-api')
+const { updateConfig } = require('../../bot-config')
 const { mockConfig, mockRequest, mockRequestInitiated } = require('../../test-utils/mock-data')
 const { showProgressView, confirmRequestCancelView } = require('./views')
 const {
