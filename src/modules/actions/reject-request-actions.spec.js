@@ -1,11 +1,26 @@
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
 const { actionsPost } = require('./controller')
+const { generateActionRequest } = require('./test-utils')
 const { approvalMapping } = require('../request/mappings')
-const { mockRequest, mockRequestInitiated, mockUser, mockConfig, mockRejector } = require('../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
-const { generateActionRequest } = require('./test-utils')
-const { mockChatPostMessageApi, mockChatPostEphemeralApi, mockFilesCommentsAddApi } = require('../../test-utils/mock-api')
+const {
+  requestInvalidIdView,
+  requestAlreadyInitiatedView
+} = require('../request/views')
+const {
+  mockRequest,
+  mockRequestInitiated,
+  mockUser,
+  mockConfig,
+  mockRejector,
+  mockChannel
+} = require('../../test-utils/mock-data')
+const {
+  mockChatPostMessageApi,
+  mockChatPostEphemeralApi,
+  mockFilesCommentsAddApi
+} = require('../../test-utils/mock-api')
 
 const actionRequest = generateActionRequest(
   approvalMapping.callback_id,
@@ -21,9 +36,10 @@ describe('Reject request actions', async () => {
   })
 
   it('can handle reject request action with invalid request id', async () => {
+    const requestId = 'invalid-id'
     const req = actionRequest(
       approvalMapping.reject,
-      'invalid-id'
+      requestId
     )
     const res = {
       send: jest.fn()
@@ -33,9 +49,11 @@ describe('Reject request actions', async () => {
     mockSlackApiUrl()
 
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(
-      ({ text, channel }) => /is invalid/.test(text) && /^\S+/.test(channel)
-    )
+    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+      expect(text).toBe(requestInvalidIdView(requestId).text)
+      expect(channel).toBe(mockChannel.id)
+      return true
+    })
 
     // simulate controller method call
     await actionsPost(req, res)
@@ -63,9 +81,11 @@ describe('Reject request actions', async () => {
     mockSlackApiUrl()
 
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(
-      ({ text, channel }) => /already initiated/.test(text) && /^\S+/.test(channel)
-    )
+    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+      expect(text).toBe(requestAlreadyInitiatedView(mockRequestInitiated).text)
+      expect(channel).toBe(mockChannel.id)
+      return true
+    })
 
     // simulate controller method call
     await actionsPost(req, res)

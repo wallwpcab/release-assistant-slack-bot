@@ -1,7 +1,7 @@
 const nock = require('nock')
 const config = require('config')
 
-const { mockFile, mockConfig, mockGitCommit } = require('./mock-data')
+const { mockFile, mockConfig, mockGitCommit, mockChannel } = require('./mock-data')
 
 const mockServer = (url) => nock(url)
   .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
@@ -50,9 +50,7 @@ const mockConversationsOpensApi = () => {
   return mockSlackServer()
     .post('/conversations.open', payload)
     .reply(200, {
-      channel: {
-        id: 'channel-1'
-      }
+      channel: mockChannel
     })
 }
 

@@ -12,6 +12,10 @@ const mockRejector = {
   id: 'rejector'
 }
 
+const mockChannel = { 
+  id: 'channel-1'
+}
+
 const mockFile = {
   id: 'file-1',
   link: 'http://files.com/file-1'
@@ -72,5 +76,6 @@ module.exports = {
   mockRequestRejected,
   mockUser,
   mockFile,
-  mockGitCommit
+  mockGitCommit,
+  mockChannel
 }

@@ -1,11 +1,25 @@
-const { cancelRequestMappings } = require('../progress/mappings')
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
 const { actionsPost } = require('./controller')
-const { mockRequest, mockRequestInitiated, mockUser, mockConfig } = require('../../test-utils/mock-data')
+const { generateActionRequest } = require('./test-utils')
+const { cancelRequestMappings } = require('../progress/mappings')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
-const { generateActionRequest } = require('./test-utils')
-const { mockChatPostMessageApi, mockChatPostEphemeralApi, mockFilesCommentsAddApi } = require('../../test-utils/mock-api')
+const {
+  requestInvalidIdView,
+  requestAlreadyInitiatedView
+} = require('../request/views')
+const {
+  mockRequest,
+  mockRequestInitiated,
+  mockUser,
+  mockConfig,
+  mockChannel
+} = require('../../test-utils/mock-data')
+const {
+  mockChatPostMessageApi,
+  mockChatPostEphemeralApi,
+  mockFilesCommentsAddApi
+} = require('../../test-utils/mock-api')
 
 const actionRequest = generateActionRequest(
   cancelRequestMappings.callback_id,
@@ -21,9 +35,10 @@ describe('Cancel request actions', async () => {
   })
 
   it('can handle cancel request action with invalid request id', async () => {
+    const requestId = 'invalid-id'
     const req = actionRequest(
       cancelRequestMappings.yes,
-      'invalid-id'
+      requestId
     )
     const res = {
       send: jest.fn()
@@ -33,9 +48,11 @@ describe('Cancel request actions', async () => {
     mockSlackApiUrl()
 
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(
-      ({ text, channel }) => /is invalid/.test(text) && /^\S+/.test(channel)
-    )
+    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+      expect(text).toBe(requestInvalidIdView(requestId).text)
+      expect(channel).toBe(mockChannel.id)
+      return true
+    })
 
     // simulate controller method call
     await actionsPost(req, res)
@@ -64,9 +81,11 @@ describe('Cancel request actions', async () => {
     mockSlackApiUrl()
 
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(
-      ({ text, channel }) => /already initiated/.test(text) && /^\S+/.test(channel)
-    )
+    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+      expect(text).toBe(requestAlreadyInitiatedView(mockRequestInitiated).text)
+      expect(channel).toBe(mockChannel.id)
+      return true
+    })
 
     // simulate controller method call
     await actionsPost(req, res)

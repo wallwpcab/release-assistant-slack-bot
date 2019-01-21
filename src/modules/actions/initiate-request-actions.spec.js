@@ -1,11 +1,28 @@
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
 const { actionsPost } = require('./controller')
+const { generateActionRequest } = require('./test-utils')
 const { approvalMapping } = require('../request/mappings')
-const { mockRequest, mockRequestInitiated, mockUser, mockConfig, mockInitiator } = require('../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
-const { generateActionRequest } = require('./test-utils')
-const { mockChatPostMessageApi, mockChatPostEphemeralApi, mockPostMessageApi, mockGitProductionApi, mockFilesCommentsAddApi } = require('../../test-utils/mock-api')
+const {
+  requestInvalidIdView,
+  requestAlreadyInitiatedView,
+  requestInitiatedChannelView
+} = require('../request/views')
+const { mockRequest,
+  mockRequestInitiated,
+  mockUser,
+  mockConfig,
+  mockInitiator,
+  mockChannel
+} = require('../../test-utils/mock-data')
+const {
+  mockChatPostMessageApi,
+  mockChatPostEphemeralApi,
+  mockPostMessageApi,
+  mockGitProductionApi,
+  mockFilesCommentsAddApi
+} = require('../../test-utils/mock-api')
 
 const actionRequest = generateActionRequest(
   approvalMapping.callback_id,
@@ -21,9 +38,10 @@ describe('Initiate request actions', async () => {
   })
 
   it('can handle initiate request action with invalid request id', async () => {
+    const requestId = 'invalid-id'
     const req = actionRequest(
       approvalMapping.initiate,
-      'invalid-id'
+      requestId
     )
     const res = {
       send: jest.fn()
@@ -33,9 +51,11 @@ describe('Initiate request actions', async () => {
     mockSlackApiUrl()
 
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(
-      ({ text, channel }) => /is invalid/.test(text) && /^\S+/.test(channel)
-    )
+    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+      expect(text).toBe(requestInvalidIdView(requestId).text)
+      expect(channel).toBe(mockChannel.id)
+      return true
+    })
 
     // simulate controller method call
     await actionsPost(req, res)
@@ -63,9 +83,11 @@ describe('Initiate request actions', async () => {
     mockSlackApiUrl()
 
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(
-      ({ text, channel }) => /already initiated/.test(text) && /^\S+/.test(channel)
-    )
+    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+      expect(text).toBe(requestAlreadyInitiatedView(mockRequestInitiated).text)
+      expect(channel).toBe(mockChannel.id)
+      return true
+    })
 
     // simulate controller method call
     await actionsPost(req, res)
@@ -104,7 +126,10 @@ describe('Initiate request actions', async () => {
 
     const messageApi = mockPostMessageApi(
       mockConfig.botChannelWebhook,
-      ({ text }) => /initiated/.test(text)
+      ({ text }) => {
+        expect(text).toBe(requestInitiatedChannelView(mockRequest, mockInitiator).text)
+        return true
+      }
     )
     /** mock api **/
 
