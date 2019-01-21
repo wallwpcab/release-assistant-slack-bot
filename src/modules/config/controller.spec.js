@@ -12,6 +12,7 @@ describe('Config controller', async () => {
         text: ''
       }
     }
+
     const res = {
       send: jest.fn()
     }
@@ -30,6 +31,7 @@ describe('Config controller', async () => {
         text: '--update --deployChannel #deploy --botChannel #bot-channel'
       }
     }
+
     const res = {
       send: jest.fn()
     }

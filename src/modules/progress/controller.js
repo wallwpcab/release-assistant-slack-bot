@@ -32,7 +32,7 @@ const handleIfViewProgress = async (args, res) => {
   }
 
   res.send(requestInvalidIdView(id))
-  log.info('handleIfViewProgress() error')
+  log.error('handleIfViewProgress() error')
 }
 
 const handleIfCancelProgress = async (args, res) => {
@@ -42,7 +42,6 @@ const handleIfCancelProgress = async (args, res) => {
   const { requests } = await readConfig()
 
   if(!requests[id]) {
-    log.info('handleIfCancelProgress() error')
     res.send(requestInvalidIdView(id))
     return
   }
@@ -52,6 +51,7 @@ const handleIfCancelProgress = async (args, res) => {
     res.send(requestAlreadyInitiatedView(request))
     return
   }
+
   res.send(confirmRequestCancelView(request))
 }
 

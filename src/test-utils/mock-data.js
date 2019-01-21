@@ -47,6 +47,7 @@ const mockRequest = {
 
 const mockRequestInitiated = {
   ...mockRequest,
+  id: 'req-2',
   progress: 'initiate',
   initiator: mockInitiator,
   baseCommit: mockGitCommit.gitCommitAbbrev
@@ -54,6 +55,7 @@ const mockRequestInitiated = {
 
 const mockRequestRejected = {
   ...mockRequest,
+  id: 'req-3',
   progress: 'reject',
   rejector: mockRejector
 }
@@ -63,7 +65,8 @@ const mockConfig = {
   botChannelWebhook: 'http://webhook.slack/bot-channel',
   stagingInfoUrl: 'http://staging.git.com/info',
   productionInfoUrl: 'http://production.git.com/info',
-  releaseManagers:['<@UC29BCUN6>']
+  releaseManagers:['<@UC29BCUN6>'],
+  requests: {}
 }
 
 module.exports = {

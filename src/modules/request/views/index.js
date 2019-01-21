@@ -61,9 +61,9 @@ const requestFormView = (text) => ({
   ]
 })
 
-const requestReceivedAuthorView = ({ id, type, commits, subscribers, fileLink }) => ({
+const requestReceivedAuthorView = ({ id, type, commits, subscribers, file }) => ({
   response_type: 'ephemeral',
-  text: `I've received your ${typeLabel(type)} request with following commits: ${commitsLabel(commits)} Your request id is: ${requestIdLabel(id, fileLink)}.\nI'll notify ${usersLabel(subscribers)} about further updates.`,
+  text: `I've received your ${typeLabel(type)} request with following commits: ${commitsLabel(commits)} Your request id is: ${requestIdLabel(id, file.link)}.\nI'll notify ${usersLabel(subscribers)} about further updates.`,
   mrkdwn: true,
   mrkdwn_in: ['text'],
 })
@@ -114,10 +114,10 @@ const requestInvalidIdView = (id) => {
 }
 
 const requestAlreadyInitiatedView = (requestData) => {
-  const { id, fileLink, initiator } = requestData
+  const { id, file, initiator } = requestData
   return {
     response_type: 'ephemeral',
-    text: `<@${initiator.id}> already initiated ${requestIdLabel(id, fileLink)} release request.`
+    text: `<@${initiator.id}> already initiated ${requestIdLabel(id, file.link)} release request.`
   }
 }
 

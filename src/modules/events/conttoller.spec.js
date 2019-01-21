@@ -17,6 +17,7 @@ describe('Events controller', async () => {
         challenge: 'challenge-1'
       }
     }
+
     const res = {
       send: jest.fn()
     }
@@ -42,6 +43,7 @@ describe('Events controller', async () => {
         }
       }
     }
+
     const res = {
       send: jest.fn()
     }

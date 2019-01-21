@@ -1,7 +1,7 @@
 
 const { requestTypes } = require('../mappings')
 
-const requestIdLabel = (id, fileLink) => fileLink ? `*<${fileLink}|\`${id}\`>*` : `*\`${id}\`*`
+const requestIdLabel = (id, file) => file.link ? `*<${file.link}|\`${id}\`>*` : `*\`${id}\`*`
 
 const typeLabel = (type) => {
   const { label, icon } = requestTypes[type]
@@ -26,11 +26,11 @@ const requestLabel = ({
   commits,
   description,
   approval,
-  fileLink,
+  file,
   user
 }) => {
   return `
-Id:\t\t\t\t${requestIdLabel(id, fileLink)}
+Id:\t\t\t\t${requestIdLabel(id, file)}
 Author:\t\t<@${user.id}>
 Type:\t\t\t${typeLabel(type)}
 Approval:\t${approvalLabel(approval)}
