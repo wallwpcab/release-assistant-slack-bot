@@ -16,7 +16,7 @@ const updateConfig = async (config, overwrite = false) => {
     updatedValue = mergeDeepRight(currentValue, config)
   }
 
-  return writeStore(updatedValue)
+  writeStore(updatedValue)
 }
 
 module.exports = {

@@ -5,7 +5,6 @@ const { mockFile, mockConfig, mockGitCommit, mockChannel } = require('./mock-dat
 
 const mockServer = (url) => nock(url)
   .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
-  .log(console.log)
 
 const mockSlackServer = () => {
   const { apiUrl } = config.get('slack')

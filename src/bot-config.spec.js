@@ -15,11 +15,6 @@ describe('Bot Config', () => {
     expect(await readConfig()).toEqual({ test: 'test' })
   })
 
-  it('Can update and read the updated config', async () => {
-    const updatedConfig = await updateConfig({ test: 'test' })
-    expect(updatedConfig).toEqual({ test: 'test' })
-  })
-
   it('Can partially update the config', async () => {
     await updateConfig({ test1: 'test1' })
     await updateConfig({ test2: 'test2' })
