@@ -2,7 +2,7 @@ require('../../test-utils/mock-implementations')
 const { progressPost } = require('./controller')
 const { waitForInternalPromises } = require('../../test-utils')
 const { updateConfig } = require('../../bot-config')
-const { mockConfig, mockRequest, mockRequestInitiated } = require('../../test-utils/mock-data')
+const { mockConfig, mockRequest, mockApprovedRequest } = require('../../test-utils/mock-data')
 const { showProgressView, confirmRequestCancelView } = require('./views')
 const {
   requestInvalidIdView,
@@ -11,7 +11,7 @@ const {
 
 const requests = {
   [mockRequest.id]: mockRequest,
-  [mockRequestInitiated.id]: mockRequestInitiated
+  [mockApprovedRequest.id]: mockApprovedRequest
 }
 
 describe('Progress controller', async () => {
@@ -78,9 +78,11 @@ describe('Progress controller', async () => {
   it('Can handle cancel progress for already initiated request', async () => {
     const req = {
       body: {
-        text: `--id ${mockRequestInitiated.id} --cancel`
+        text: `--id ${mockApprovedRequest.id} --cancel`
       }
     }
+
+
 
     const res = {
       send: jest.fn()
@@ -89,7 +91,7 @@ describe('Progress controller', async () => {
     await progressPost(req, res)
     await waitForInternalPromises()
 
-    expect(res.send).toBeCalledWith(requestAlreadyInitiatedView(mockRequestInitiated))
+    expect(res.send).toBeCalledWith(requestAlreadyInitiatedView(mockApprovedRequest))
   })
 
   it('Can handle cancel progress', async () => {

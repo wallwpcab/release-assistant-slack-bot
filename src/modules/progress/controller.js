@@ -1,6 +1,7 @@
 const minimist = require('minimist')
 
 const { showProgressView, confirmRequestCancelView } = require('./views')
+const { RequestStatus } = require('../request/mappings')
 const { requestInvalidIdView, requestAlreadyInitiatedView } = require('../request/views')
 const { readConfig } = require('../../bot-config')
 const { splitValues } = require('../../utils')
@@ -47,7 +48,7 @@ const handleIfCancelProgress = async (args, res) => {
   }
 
   const request = requests[id]
-  if(request.progress) {
+  if(request.status !== RequestStatus.initial) {
     res.send(requestAlreadyInitiatedView(request))
     return
   }

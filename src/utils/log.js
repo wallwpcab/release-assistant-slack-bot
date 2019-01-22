@@ -13,7 +13,7 @@ const getLevel = (env) => {
 const log = (() => {
   const env = process.env.NODE_ENV
   const logger = tracer.colorConsole({
-    // level: getLevel(env)
+    level: getLevel(env)
   })
   logger.requestLogger = morgan('dev')
   return logger

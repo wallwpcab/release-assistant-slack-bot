@@ -1,7 +1,7 @@
-const configMapping = {
+const Config = {
   callback_id: 'config'
 }
 
 module.exports = {
-  configMapping
+  Config
 }

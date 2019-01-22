@@ -1,6 +1,8 @@
 const { pathOr } = require('ramda')
 
-const { cancelRequestMappings } = require('./mappings')
+const { CancelRequest } = require('./mappings')
+const { readConfig, updateConfig } = require('../../bot-config')
+const { RequestStatus } = require('../request/mappings')
 const {
   requestCanceledAuthorView,
   requestCanceledManagerView,
@@ -10,7 +12,6 @@ const {
   requestInvalidIdView,
   requestAlreadyInitiatedView
 } = require('../request/views')
-const { readConfig, updateConfig } = require('../../bot-config')
 const {
   sendMessage,
   sendMessageToUsers,
@@ -19,28 +20,28 @@ const {
 
 const handleIfCancelRequestAction = async ({ callback_id, actions: [action], user }) => {
   const { name, value: requestId } = action || {}
-  if (callback_id !== cancelRequestMappings.callback_id || name !== cancelRequestMappings.yes) return
+  if (callback_id !== CancelRequest.callback_id || name !== CancelRequest.yes) return
 
   const config = await readConfig()
   const { releaseManagers, requests } = config
-  const requestData = pathOr(null, [requestId], requests)
-  if (!requestData) {
+  const request = pathOr(null, [requestId], requests)
+  if (!request) {
     await sendMessage(user.id, requestInvalidIdView(requestId), true)
     return
   }
 
-  if (requestData.progress) {
-    await sendMessage(user.id, requestAlreadyInitiatedView(requestData), true)
+  if (request.status !== RequestStatus.initial) {
+    await sendMessage(user.id, requestAlreadyInitiatedView(request), true)
     return
   }
 
-  const { file } = requestData
+  const { file } = request
   delete requests[requestId]
 
   await Promise.all([
     updateConfig({ requests }, true),
-    sendMessage(user.id, requestCanceledAuthorView(requestData)),
-    sendMessageToUsers(releaseManagers, requestCanceledManagerView(requestData, user)),
+    sendMessage(user.id, requestCanceledAuthorView(request)),
+    sendMessageToUsers(releaseManagers, requestCanceledManagerView(request, user)),
     addCommentOnFile(file.id, requestCanceledCommentView(user))
   ])
 }

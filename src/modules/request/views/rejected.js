@@ -1,14 +1,14 @@
 const { requestIdLabel } = require('./labels')
 
-const requestRejectedAuthorView = (requestData, rejector) => {
-  const { id, file } = requestData
+const requestRejectedAuthorView = (request, rejector) => {
+  const { id, file } = request
   return {
     text: `<@${rejector.id}> rejected your ${requestIdLabel(id, file)} request.`
   }
 }
 
-const requestRejectedManagerView = (requestData, rejector) => {
-  const { id, file } = requestData
+const requestRejectedManagerView = (request, rejector) => {
+  const { id, file } = request
   return {
     text: `<@${rejector.id}> rejected ${requestIdLabel(id, file)} request.`
   }

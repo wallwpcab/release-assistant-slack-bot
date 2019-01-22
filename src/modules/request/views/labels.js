@@ -1,10 +1,10 @@
 
-const { requestTypes } = require('../mappings')
+const { RequestType } = require('../mappings')
 
 const requestIdLabel = (id, file) => file.link ? `*<${file.link}|\`${id}\`>*` : `*\`${id}\`*`
 
 const typeLabel = (type) => {
-  const { label, icon } = requestTypes[type]
+  const { label, icon } = RequestType[type]
   return `*\`${label}\`* ${icon}`
 }
 
@@ -41,9 +41,9 @@ Commits: ${commitsLabel(commits)}
 
 const usersLabel = (users) => {
   const quotedUsers = users.map(u => `${u}`)
-  const firstButLastUsers = quotedUsers.slice(0, -1).join(', ')
+  const usersExceptLastOne = quotedUsers.slice(0, -1).join(', ')
   const [lastUser = ''] = quotedUsers.slice(-1)
-  const otherUsers = (firstButLastUsers && ', ' + firstButLastUsers) + (lastUser && ` and ${lastUser}`)
+  const otherUsers = (usersExceptLastOne && ', ' + usersExceptLastOne) + (lastUser && ` and ${lastUser}`)
   return `you${otherUsers}`
 }
 
@@ -63,12 +63,7 @@ const gitCheckoutLabel = ({ id, type, baseCommit }) => {
 }
 
 const gitCherryPickLabel = (requests) => {
-  const commits = Object.values(requests)
-    .filter(r => !r.progress)
-    .map(r => r.commits)
-    .reduce((acc, r) => acc.concat(r), [])
-
-  return commits.map(c => `git cherry-pick -x ${c}`).join('\n')
+  return requests.map(({ commits }) => `git cherry-pick -x ${commits}`).join('\n')
 }
 
 module.exports = {

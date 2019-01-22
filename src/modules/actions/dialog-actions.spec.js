@@ -1,8 +1,10 @@
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
 const { actionsPost } = require('./controller')
-const { requestMapping } = require('../request/mappings')
-const { configMapping } = require('../config/mappings')
-const { mockRequestFormData, mockRequest, mockUser, mockConfig, mockFile } = require('../../test-utils/mock-data')
+const { Request } = require('../request/mappings')
+const { Config } = require('../config/mappings')
+const { requestReceivedAuthorView, requestReceivedManagerView } = require('../request/views')
+const { configReadView } = require('../config/views')
+const { mockRequestFormData, mockRequest, mockUser, mockConfig, mockFile, mockChannel } = require('../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
 const { generateDialogRequest } = require('./test-utils')
@@ -18,25 +20,34 @@ describe('Dialog actions', async () => {
 
   it('Can handle dialog action', async () => {
     const req = dialogRequest(
-      requestMapping.callback_id,
+      Request.callback_id,
       mockRequestFormData
     )
+
     const res = {
       send: jest.fn()
     }
+
+    const updatedMockRequest = { ...mockRequest, id: 'id-1' }
 
     // generate a different slack api url
     mockSlackApiUrl()
 
     /** mock api **/
     const fileApi = mockFilesUploadApi()
-    const chatApi = mockChatPostMessageApi(
-      ({ text, channel }) => /^\S+/.test(text) && /^\S+/.test(channel)
+    const chatApi = mockChatPostMessageApi(({ text, channel }) => {
+      expect(text).toBe(requestReceivedManagerView(updatedMockRequest).text)
+      expect(channel).toBe(mockChannel.id)
+      return true
+    }
     )
 
     const messageApi = mockPostMessageApi(
       responseUrl,
-      ({ text }) => /^\S+/.test(text)
+      ({ text }) => {
+        expect(text).toBe(requestReceivedAuthorView(updatedMockRequest).text)
+        return true
+      }
     )
     /** mock api **/
 
@@ -66,11 +77,12 @@ describe('Dialog actions', async () => {
 
   it('Can handle edit dialog action', async () => {
     const req = dialogRequest(
-      configMapping.callback_id,
+      Config.callback_id,
       {
         config: JSON.stringify(mockConfig)
       }
     )
+
     const res = {
       send: jest.fn()
     }
@@ -78,7 +90,10 @@ describe('Dialog actions', async () => {
     /** mock api **/
     const messageApi = mockPostMessageApi(
       responseUrl,
-      ({ text }) => /^\S+/.test(text)
+      ({ text }) => {
+        expect(text).toBe(configReadView(mockConfig).text)
+        return true
+      }
     )
 
     // reset config

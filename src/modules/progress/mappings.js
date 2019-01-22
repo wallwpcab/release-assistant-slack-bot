@@ -1,9 +1,9 @@
-const cancelRequestMappings = {
+const CancelRequest = {
   callback_id: 'cancelRequest',
   yes: 'yes',
   no: 'no'
 }
 
 module.exports = {
-  cancelRequestMappings
+  CancelRequest
 }

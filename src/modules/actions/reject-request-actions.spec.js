@@ -1,7 +1,7 @@
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
 const { actionsPost } = require('./controller')
 const { generateActionRequest } = require('./test-utils')
-const { approvalMapping } = require('../request/mappings')
+const { RequestApproval } = require('../request/mappings')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
 const {
@@ -10,7 +10,7 @@ const {
 } = require('../request/views')
 const {
   mockRequest,
-  mockRequestInitiated,
+  mockApprovedRequest,
   mockUser,
   mockConfig,
   mockRejector,
@@ -23,7 +23,7 @@ const {
 } = require('../../test-utils/mock-api')
 
 const actionRequest = generateActionRequest(
-  approvalMapping.callback_id,
+  RequestApproval.callback_id,
   mockUser
 )
 
@@ -38,7 +38,7 @@ describe('Reject request actions', async () => {
   it('Can handle reject request action with invalid request id', async () => {
     const requestId = 'invalid-id'
     const req = actionRequest(
-      approvalMapping.reject,
+      RequestApproval.reject,
       requestId
     )
     const res = {
@@ -65,13 +65,13 @@ describe('Reject request actions', async () => {
 
   it('Can handle reject request action for already initiated request', async () => {
     const requests = {
-      [mockRequestInitiated.id]: mockRequestInitiated
+      [mockApprovedRequest.id]: mockApprovedRequest
     }
     await updateConfig({ requests }, true)
 
     const req = actionRequest(
-      approvalMapping.reject,
-      mockRequestInitiated.id
+      RequestApproval.reject,
+      mockApprovedRequest.id
     )
     const res = {
       send: jest.fn()
@@ -82,7 +82,7 @@ describe('Reject request actions', async () => {
 
     /** mock api **/
     const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
-      expect(text).toBe(requestAlreadyInitiatedView(mockRequestInitiated).text)
+      expect(text).toBe(requestAlreadyInitiatedView(mockApprovedRequest).text)
       expect(channel).toBe(mockChannel.id)
       return true
     })
@@ -97,11 +97,11 @@ describe('Reject request actions', async () => {
 
   it('Can handle reject request action', async () => {
     const actionRequest = generateActionRequest(
-      approvalMapping.callback_id,
+      RequestApproval.callback_id,
       mockRejector
     )
     const req = actionRequest(
-      approvalMapping.reject,
+      RequestApproval.reject,
       mockRequest.id
     )
     const res = {
@@ -128,8 +128,8 @@ describe('Reject request actions', async () => {
 
     const { requests } = await readConfig()
 
-    // request should not contain mockRequestInitiated data
-    expect(requests[mockRequestInitiated.id]).toBe(undefined)
+    // request should not contain mockApprovedRequest data
+    expect(requests[mockApprovedRequest.id]).toBe(undefined)
 
     // should call following api
     expect(chatApi.isDone()).toBe(true)

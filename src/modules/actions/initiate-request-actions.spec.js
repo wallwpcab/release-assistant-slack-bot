@@ -1,7 +1,7 @@
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
 const { actionsPost } = require('./controller')
 const { generateActionRequest } = require('./test-utils')
-const { approvalMapping } = require('../request/mappings')
+const { RequestApproval } = require('../request/mappings')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
 const {
@@ -10,7 +10,7 @@ const {
   requestInitiatedChannelView
 } = require('../request/views')
 const { mockRequest,
-  mockRequestInitiated,
+  mockApprovedRequest,
   mockUser,
   mockConfig,
   mockInitiator,
@@ -25,7 +25,7 @@ const {
 } = require('../../test-utils/mock-api')
 
 const actionRequest = generateActionRequest(
-  approvalMapping.callback_id,
+  RequestApproval.callback_id,
   mockUser
 )
 
@@ -40,9 +40,10 @@ describe('Initiate request actions', async () => {
   it('Can handle initiate request action with invalid request id', async () => {
     const requestId = 'invalid-id'
     const req = actionRequest(
-      approvalMapping.initiate,
+      RequestApproval.approve,
       requestId
     )
+
     const res = {
       send: jest.fn()
     }
@@ -67,14 +68,15 @@ describe('Initiate request actions', async () => {
 
   it('Can handle initiate request action for already initiated request', async () => {
     const requests = {
-      [mockRequestInitiated.id]: mockRequestInitiated
+      [mockApprovedRequest.id]: mockApprovedRequest
     }
     await updateConfig({ requests }, true)
 
     const req = actionRequest(
-      approvalMapping.initiate,
-      mockRequestInitiated.id
+      RequestApproval.approve,
+      mockApprovedRequest.id
     )
+
     const res = {
       send: jest.fn()
     }
@@ -84,7 +86,7 @@ describe('Initiate request actions', async () => {
 
     /** mock api **/
     const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
-      expect(text).toBe(requestAlreadyInitiatedView(mockRequestInitiated).text)
+      expect(text).toBe(requestAlreadyInitiatedView(mockApprovedRequest).text)
       expect(channel).toBe(mockChannel.id)
       return true
     })
@@ -99,11 +101,12 @@ describe('Initiate request actions', async () => {
 
   it('Can handle initiate request action', async () => {
     const actionRequest = generateActionRequest(
-      approvalMapping.callback_id,
+      RequestApproval.callback_id,
       mockInitiator
     )
+
     const req = actionRequest(
-      approvalMapping.initiate,
+      RequestApproval.approve,
       mockRequest.id
     )
     const res = {
@@ -144,11 +147,11 @@ describe('Initiate request actions', async () => {
     expect(gitApi.isDone()).toBe(true)
     expect(filesCommentsApi.isDone()).toBe(true)
 
-    // request should contain mockRequestInitiated data
+    // request should contain mockApprovedRequest data
     const { requests } = await readConfig()
     const [request] = Object.values(requests)
     expect(request).toMatchObject({
-      ...mockRequestInitiated,
+      ...mockApprovedRequest,
       id: request.id
     })
   })

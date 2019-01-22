@@ -1,20 +1,21 @@
 const { requestIdLabel, gitCheckoutLabel, gitCherryPickLabel, subscribersLabel } = require('./labels')
 
-const requestInitiatedAuthorView = (requestData, approver) => {
-  const { id, file } = requestData
+const requestInitiatedAuthorView = (request, approver) => {
+  const { id, file } = request
   return {
     text: `<@${approver.id}> initiated your ${requestIdLabel(id, file)} release request.  :tada:`
   }
 }
 
-const requestInitiatedManagerView = (requests, requestData, approver) => {
-  const { id, type, file } = requestData
+const requestInitiatedManagerView = (request, requests, approver) => {
+  const { id, type, file } = request
+
   return {
     text: `<@${approver.id}> initiated ${requestIdLabel(id, file)} request.
 Please follow these steps:
 \`\`\`
 # Checkout the new brance from ${type === 'activation' ? 'Staging' : 'Production'}
-${gitCheckoutLabel(requestData)}
+${gitCheckoutLabel(request)}
 
 # Cherry pick
 ${gitCherryPickLabel(requests)}
@@ -25,8 +26,8 @@ git push origin HEAD
   }
 }
 
-const requestInitiatedChannelView = (requestData, approver) => {
-  const { id, file, user, subscribers } = requestData
+const requestInitiatedChannelView = (request, approver) => {
+  const { id, file, user, subscribers } = request
   return {
     text: `<@${approver.id}> initiated ${requestIdLabel(id, file)} release request of <@${user.id}>.  :tada:
 ${subscribersLabel(subscribers)}

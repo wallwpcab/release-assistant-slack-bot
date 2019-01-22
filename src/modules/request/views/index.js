@@ -1,11 +1,11 @@
 const initiatedViews = require('./initiated')
 const rejectedViews = require('./rejected')
 const { requestIdLabel, typeLabel, commitsLabel, requestLabel, usersLabel } = require('./labels')
-const { requestMapping, approvalMapping, requestTypes } = require('../mappings')
+const { Request, RequestApproval, RequestType } = require('../mappings')
 
 const requestFormView = (text) => ({
   title: 'Request a relesase',
-  callback_id: requestMapping.callback_id,
+  callback_id: Request.callback_id,
   submit_label: 'Submit',
   elements: [
     {
@@ -13,7 +13,7 @@ const requestFormView = (text) => ({
       name: 'requestType',
       type: 'select',
       hint: 'Choose release type',
-      options: Object.values(requestTypes).map(({ label, value }) => ({ label, value })),
+      options: Object.values(RequestType).map(({ label, value }) => ({ label, value })),
       value: 'hotfix'
     },
     {
@@ -68,10 +68,10 @@ const requestReceivedAuthorView = ({ id, type, commits, subscribers, file }) => 
   mrkdwn_in: ['text'],
 })
 
-const requestReceivedManagerView = (requestData) => {
-  const { callback_id, initiate, reject } = approvalMapping
+const requestReceivedManagerView = (request) => {
+  const { callback_id, initiate, reject } = RequestApproval
   return {
-    text: `You've got following release request.\n ${requestLabel(requestData)}`,
+    text: `You've got following release request.\n ${requestLabel(request)}`,
     attachments: [
       {
         text: "Do you like to proceed?",
@@ -85,14 +85,14 @@ const requestReceivedManagerView = (requestData) => {
             text: "Yes",
             type: "button",
             style: "primary",
-            value: requestData.id
+            value: request.id
           },
           {
             name: reject,
             text: "No",
             type: "button",
             style: "danger",
-            value: requestData.id,
+            value: request.id,
             confirm: {
               title: "Are you sure?",
               text: "Wouldn't you like to proceed?",
@@ -113,8 +113,8 @@ const requestInvalidIdView = (id) => {
   }
 }
 
-const requestAlreadyInitiatedView = (requestData) => {
-  const { id, file, initiator } = requestData
+const requestAlreadyInitiatedView = (request) => {
+  const { id, file, initiator } = request
   return {
     response_type: 'ephemeral',
     text: `<@${initiator.id}> already initiated ${requestIdLabel(id, file)} release request.`

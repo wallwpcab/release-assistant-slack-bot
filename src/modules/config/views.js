@@ -1,4 +1,4 @@
-const { configMapping } = require('./mappings')
+const { Config } = require('./mappings')
 
 const configReadView = (config) => ({
   response_type: 'ephemeral',
@@ -9,7 +9,7 @@ const configReadView = (config) => ({
 
 const configDialogView = (value) => ({
   title: 'Set config',
-  callback_id: configMapping.callback_id,
+  callback_id: Config.callback_id,
   submit_label: 'Submit',
   elements: [
     {

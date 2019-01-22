@@ -1,6 +1,7 @@
 const { pathOr } = require('ramda')
 
-const { requestMapping, approvalMapping, requestTypes } = require('./mappings')
+const { getUnprocessedRequests } = require('./utils')
+const { Request, RequestApproval, RequestType, RequestStatus } = require('./mappings')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { getGitInfo } = require('../../git-integration')
 const { getRequestData } = require('../../transformer')
@@ -27,7 +28,7 @@ const {
 } = require('./views')
 
 const handleIfRequestDialogAction = async ({ callback_id, response_url, submission, user }) => {
-  if (callback_id !== requestMapping.callback_id) return
+  if (callback_id !== Request.callback_id) return
 
   const requestData = getRequestData(submission, user)
   const [
@@ -38,84 +39,91 @@ const handleIfRequestDialogAction = async ({ callback_id, response_url, submissi
     readConfig()
   ])
 
-  requestData.file = {
-    id: fileId,
-    link: fileLink
+  const request = {
+    ...requestData,
+    status: RequestStatus.initial,
+    file: {
+      id: fileId,
+      link: fileLink
+    }
   }
 
   await Promise.all([
     updateConfig({
       requests: {
-        [requestData.id]: requestData
+        [request.id]: request
       }
     }),
-    postMessage(response_url, requestReceivedAuthorView(requestData)),
-    sendMessageToUsers(releaseManagers, requestReceivedManagerView(requestData))
+    postMessage(response_url, requestReceivedAuthorView(request)),
+    sendMessageToUsers(releaseManagers, requestReceivedManagerView(request))
   ])
 }
 
 const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], user }) => {
   const { name, value: requestId } = action || {}
-  if (callback_id !== approvalMapping.callback_id || name !== approvalMapping.initiate) return
+  if (callback_id !== RequestApproval.callback_id || name !== RequestApproval.approve) return
 
   const { releaseManagers, requests } = await readConfig()
-  const requestData = pathOr(null, [requestId], requests)
-  if (!requestData) {
+  const request = pathOr(null, [requestId], requests)
+  if (!request) {
     await sendMessage(user.id, requestInvalidIdView(requestId), true)
     return
   }
 
-  if (requestData.progress) {
-    await sendMessage(user.id, requestAlreadyInitiatedView(requestData), true)
+  if (request.status !== RequestStatus.initial) {
+    await sendMessage(user.id, requestAlreadyInitiatedView(request), true)
     return
   }
 
-  const { type, file } = requestData
-  const { info } = await getGitInfo(type === requestTypes.hotfix.value)
+  const { type, file } = request
+  const { info } = await getGitInfo(type === RequestType.hotfix.value)
 
-  const updatedRequest = {
-    ...requestData,
-    progress: approvalMapping.initiate,
+  const targetRequest = {
+    ...request,
+    status: RequestStatus.approved,
     baseCommit: info.gitCommitAbbrev,
     initiator: user
   }
 
-  const updatedRequests = {
-    [requestId]: updatedRequest
+  const allRequests = {
+    ...requests,
+    [requestId]: targetRequest
   }
 
+  const unprocessedRequests = getUnprocessedRequests(allRequests)
+
   await Promise.all([
-    updateConfig({ requests: updatedRequests }),
-    sendMessage(updatedRequest.user.id, requestInitiatedAuthorView(updatedRequest, user)),
-    sendMessageToUsers(releaseManagers, requestInitiatedManagerView(requests, updatedRequest, user)),
-    postMessageToBotChannel(requestInitiatedChannelView(updatedRequest, user)),
+    updateConfig({ requests: allRequests }),
+    sendMessage(targetRequest.user.id, requestInitiatedAuthorView(targetRequest, user)),
+    sendMessageToUsers(releaseManagers, requestInitiatedManagerView(targetRequest, unprocessedRequests, user)),
+    postMessageToBotChannel(requestInitiatedChannelView(targetRequest, user)),
     addCommentOnFile(file.id, requestInitiatedCommentView(user))
   ])
 }
 
 const handleIfRejectRequestAction = async ({ callback_id, actions: [action], user }) => {
   const { name, value: requestId } = action || {}
-  if (callback_id !== approvalMapping.callback_id || name !== approvalMapping.reject) return
+  if (callback_id !== RequestApproval.callback_id || name !== RequestApproval.reject) return
 
   const config = await readConfig()
   const { releaseManagers, requests } = config
-  const requestData = pathOr(null, [requestId], requests)
-  if (!requestData) {
+  const request = pathOr(null, [requestId], requests)
+  if (!request) {
     await sendMessage(user.id, requestInvalidIdView(requestId), true)
     return
   }
 
-  if (requestData.progress) {
-    await sendMessage(user.id, requestAlreadyInitiatedView(requestData), true)
+  if (request.status !== RequestStatus.initial) {
+    await sendMessage(user.id, requestAlreadyInitiatedView(request), true)
     return
   }
 
-  const { file } = requestData
+  const { file } = request
   delete requests[requestId]
   await Promise.all([
     updateConfig({ requests }, true),
-    sendMessage(requestData.user.id, requestRejectedAuthorView(requestData, user)),
-    sendMessageToUsers(releaseManagers, requestRejectedManagerView(requestData, user)),
+    sendMessage(request.user.id, requestRejectedAuthorView(request, user)),
+    sendMessageToUsers(releaseManagers, requestRejectedManagerView(request, user)),
     addCommentOnFile(file.id, requestRejectedCommentView(user))
   ])
 }

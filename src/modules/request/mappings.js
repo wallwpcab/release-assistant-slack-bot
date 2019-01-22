@@ -1,4 +1,4 @@
-const requestTypes = {
+const RequestType = {
   activation: {
     label: 'Activation',
     value: 'activation',
@@ -11,18 +11,26 @@ const requestTypes = {
   }
 }
 
-const requestMapping = {
+const Request = {
   callback_id: 'request'
 }
 
-const approvalMapping = {
+const RequestApproval = {
   callback_id: 'aproval',
-  initiate: 'initiate',
+  approve: 'approve',
   reject: 'reject'
 }
 
+const RequestStatus = {
+  initial: 'initial',
+  approved: 'approved',
+  rejected: 'rejected',
+  inProgress: 'inProgress',
+}
+
 module.exports = {
-  requestTypes,
-  requestMapping,
-  approvalMapping,
+  RequestType,
+  Request,
+  RequestApproval,
+  RequestStatus
 }

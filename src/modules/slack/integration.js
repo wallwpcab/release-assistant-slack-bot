@@ -86,11 +86,11 @@ const uploadFile = async (filename, title, content, filetype = 'text', channels 
   }
 }
 
-const uploadRequestData = async (requestData) => {
+const uploadRequestData = async (request) => {
   const { botChannel } = await readConfig()
-  const { id } = requestData
+  const { id } = request
   try {
-    const { file } = await uploadFile(`${id}.json`, 'Release Request', JSON.stringify(requestData, null, 4), 'json', extractSlackChannelId(botChannel))
+    const { file } = await uploadFile(`${id}.json`, 'Release Request', JSON.stringify(request, null, 4), 'json', extractSlackChannelId(botChannel))
     return file
   } catch (err) {
     log.error('error in uploadRequestData()', err)

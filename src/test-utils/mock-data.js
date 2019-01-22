@@ -1,4 +1,5 @@
 const { splitValues } = require('../utils')
+const { RequestStatus } = require('../modules/request/mappings')
 
 const mockUser = {
   id: 'user'
@@ -42,22 +43,16 @@ const mockRequest = {
   description: mockRequestFormData.description,
   approval: mockRequestFormData.approval,
   user: mockUser,
-  file: mockFile
+  file: mockFile,
+  status: RequestStatus.initial
 }
 
-const mockRequestInitiated = {
+const mockApprovedRequest = {
   ...mockRequest,
   id: 'req-2',
-  progress: 'initiate',
+  status: RequestStatus.approved,
   initiator: mockInitiator,
   baseCommit: mockGitCommit.gitCommitAbbrev
-}
-
-const mockRequestRejected = {
-  ...mockRequest,
-  id: 'req-3',
-  progress: 'reject',
-  rejector: mockRejector
 }
 
 const mockConfig = {
@@ -74,9 +69,8 @@ module.exports = {
   mockRequestFormData,
   mockRequest,
   mockInitiator,
-  mockRequestInitiated,
+  mockApprovedRequest,
   mockRejector,
-  mockRequestRejected,
   mockUser,
   mockFile,
   mockGitCommit,

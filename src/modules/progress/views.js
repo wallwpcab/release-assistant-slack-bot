@@ -1,4 +1,4 @@
-const { cancelRequestMappings } = require('./mappings')
+const { CancelRequest } = require('./mappings')
 const { requestIdLabel } = require('../request/views/labels')
 
 const showProgressView = (requests = []) => {
@@ -10,7 +10,7 @@ const showProgressView = (requests = []) => {
 }
 
 const confirmRequestCancelView = ({ id, file }) => {
-  const { callback_id, yes, no } = cancelRequestMappings
+  const { callback_id, yes, no } = CancelRequest
   return {
     response_type: 'ephemeral',
     text: '',
