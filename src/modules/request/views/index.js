@@ -69,7 +69,7 @@ const requestReceivedAuthorView = ({ id, type, commits, subscribers, file }) => 
 })
 
 const requestReceivedManagerView = (request) => {
-  const { callback_id, initiate, reject } = RequestApproval
+  const { callback_id, approve, reject } = RequestApproval
   return {
     text: `You've got following release request.\n ${requestLabel(request)}`,
     attachments: [
@@ -81,7 +81,7 @@ const requestReceivedManagerView = (request) => {
         attachment_type: "default",
         actions: [
           {
-            name: initiate,
+            name: approve,
             text: "Yes",
             type: "button",
             style: "primary",

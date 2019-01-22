@@ -63,7 +63,10 @@ const gitCheckoutLabel = ({ id, type, baseCommit }) => {
 }
 
 const gitCherryPickLabel = (requests) => {
-  return requests.map(({ commits }) => `git cherry-pick -x ${commits}`).join('\n')
+  const commits = requests.map(r => r.commits)
+    .reduce((acc, r) => acc.concat(r), [])
+
+  return commits.map(c => `git cherry-pick -x ${c}`).join('\n')
 }
 
 module.exports = {
