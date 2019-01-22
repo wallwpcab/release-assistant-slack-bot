@@ -2,7 +2,7 @@ const { cancelRequestMappings } = require('./mappings')
 const { requestIdLabel } = require('../request/views/labels')
 
 const showProgressView = (requests = []) => {
-  const progress = requests.map(({ id, file, progress }) => `Request Id: ${requestIdLabel(id, file.link)} \nProgress: *\`${progress || 'requested'}\`*`).join('\n\n')
+  const progress = requests.map(({ id, file, progress }) => `Request Id: ${requestIdLabel(id, file)} \nProgress: *\`${progress || 'requested'}\`*`).join('\n\n')
   return {
     response_type: 'ephemeral',
     text: progress || 'Progress:\n*`No pending request`*'
@@ -16,7 +16,7 @@ const confirmRequestCancelView = ({ id, file }) => {
     text: '',
     attachments: [
       {
-        text: `Do you like to cancel ${requestIdLabel(id, file.link)}?`,
+        text: `Do you like to cancel ${requestIdLabel(id, file)}?`,
         fallback: "You've got a release request. Please check.",
         callback_id,
         color: "#3AA3E3",
@@ -50,13 +50,13 @@ const confirmRequestCancelView = ({ id, file }) => {
 const requestCanceledAuthorView = ({ id, file }) => {
   return {
     response_type: 'ephemeral',
-    text: `You've canceled ${requestIdLabel(id, file.link)} request`
+    text: `You've canceled ${requestIdLabel(id, file)} request`
   }
 }
 
 const requestCanceledManagerView = ({ id, file }, user) => {
   return {
-    text: `<@${user.id}> canceled ${requestIdLabel(id, file.link)} progress`
+    text: `<@${user.id}> canceled ${requestIdLabel(id, file)} progress`
   }
 }
 
