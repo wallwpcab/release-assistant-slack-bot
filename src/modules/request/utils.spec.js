@@ -1,4 +1,4 @@
-const { getUnprocessedRequests } = require('./utils')
+const { getInitialRequests } = require('./utils')
 const { mockRequest, mockApprovedRequest } = require('../../test-utils/mock-data')
 
 describe('Request utils', ()=> {
@@ -8,6 +8,6 @@ describe('Request utils', ()=> {
       [mockApprovedRequest.id]: mockApprovedRequest
     }
 
-    expect(getUnprocessedRequests(requests)).toEqual([mockRequest])
+    expect(getInitialRequests(requests)).toEqual([mockRequest])
   })
 })

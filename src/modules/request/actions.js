@@ -1,6 +1,6 @@
 const { pathOr } = require('ramda')
 
-const { getUnprocessedRequests } = require('./utils')
+const { getInitialRequests } = require('./utils')
 const { Request, RequestApproval, RequestType, RequestStatus } = require('./mappings')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { getGitInfo } = require('../../git-integration')
@@ -90,12 +90,12 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
     [requestId]: targetRequest
   }
 
-  const unprocessedRequests = getUnprocessedRequests(allRequests)
+  const initialRequests = getInitialRequests(allRequests)
 
   await Promise.all([
     updateConfig({ requests: allRequests }),
     sendMessage(targetRequest.user.id, requestInitiatedAuthorView(targetRequest, user)),
-    sendMessageToUsers(releaseManagers, requestInitiatedManagerView(targetRequest, unprocessedRequests, user)),
+    sendMessageToUsers(releaseManagers, requestInitiatedManagerView(targetRequest, initialRequests, user)),
     postMessageToBotChannel(requestInitiatedChannelView(targetRequest, user)),
     addCommentOnFile(file.id, requestInitiatedCommentView(user))
   ])
