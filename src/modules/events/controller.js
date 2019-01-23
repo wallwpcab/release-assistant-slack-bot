@@ -9,11 +9,28 @@ const eventsPost = async (req, res) => {
   const event = pathOr({}, ['body', 'event'], req)
 
   handleIfChannelTopicChanged(event)
+  handleIfDeployMessage(event)
   res.send(req.body.challenge)
 }
 
-const handleIfChannelTopicChanged = async ({ type, subtype, text, topic, channel }) => {
+const handleIfDeployMessage = async ({ type, subtype, channel, bot_id, attachments }) => {
+  if (
+    type !== 'message' ||
+    subtype !== 'bot_message'
+  ) {
+    return
+  }
+
   const { botChannel } = await readConfig()
+  if (channel !== extractSlackChannelId(botChannel)) {
+    return
+  }
+
+  const message = attachments.reduce((acc, { text }) =>  acc + text + '\n', '')
+  console.log(message)
+}
+
+const handleIfChannelTopicChanged = async ({ type, subtype, text, topic, channel }) => {
   if (
     type !== 'message' ||
     !['group_topic', 'channel_topic'].includes(subtype)
@@ -21,6 +38,7 @@ const handleIfChannelTopicChanged = async ({ type, subtype, text, topic, channel
     return
   }
 
+  const { botChannel } = await readConfig()
   if (channel !== extractSlackChannelId(botChannel)) {
     return
   }
