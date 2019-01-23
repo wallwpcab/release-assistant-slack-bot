@@ -39,8 +39,7 @@ describe('Dialog actions', async () => {
       expect(text).toBe(requestReceivedManagerView(updatedMockRequest).text)
       expect(channel).toBe(mockChannel.id)
       return true
-    }
-    )
+    })
 
     const messageApi = mockPostMessageApi(
       responseUrl,
