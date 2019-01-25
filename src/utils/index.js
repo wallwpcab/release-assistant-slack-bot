@@ -9,27 +9,40 @@ const splitValues = (str, sep = /[\s+,]/) => reject(
 )
 
 const extractSlackChannels = (text) => {
-  const channelExpr = /<#([^>]+)/g
+  const channelExpr = /<#[^<]+>/g
   const matches = text.match(channelExpr) || []
-  return matches.map(i => `${i}>`)
+  return matches
 }
 
 const extractSlackChannelId = (text) => {
-  const channelExpr = /<#([^|>]+)/g
-  const [match] = text.match(channelExpr) || ['']
-  return match.replace('<#', '')
+  const channelExpr = /<#([^>]+)>/
+  const [_, match] = text.match(channelExpr) || ['', '']
+  return match
 }
 
 const extractSlackUsers = (text) => {
-  const userExpr = /<@([^>]+)/g
+  const userExpr = /<@[^<]+>/g
   const matches = text.match(userExpr) || []
-  return matches.map(i => `${i}>`)
+  return matches
 }
 
 const extractSlackUserId = (text) => {
-  const userExpr = /<@([^>]+)/g
-  const [match] = text.match(userExpr) || ['']
-  return match.replace('<@', '')
+  const userExpr = /<@([^>]+)>/
+  const [_, match] = text.match(userExpr) || []
+  return match
+}
+
+const isDeployed = (branch, message = '') => {
+  const isDeployed = /^\[\*LIVE\*\] Deployed/.test(message)
+  const [_, branchMatch] = /Deployed <.*\*(.+)\*>/.exec(message) || []
+  const [__, stagingProductionMatch] = /origin\/([^\)]+)/.exec(message) || []
+  const match = branchMatch || stagingProductionMatch
+  return isDeployed && match === branch
+}
+
+const extractBranch = (message = '') => {
+  const [_, branch] = /Deployed .*\*(.+)\*/.exec(message) || []
+  return branch
 }
 
 module.exports = {
@@ -37,5 +50,7 @@ module.exports = {
   extractSlackChannels,
   extractSlackChannelId,
   extractSlackUsers,
-  extractSlackUserId
+  extractSlackUserId,
+  isDeployed,
+  extractBranch
 }

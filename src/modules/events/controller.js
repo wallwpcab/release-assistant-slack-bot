@@ -21,8 +21,8 @@ const handleIfDeployMessage = async ({ type, subtype, channel, bot_id, attachmen
     return
   }
 
-  const { botChannel } = await readConfig()
-  if (channel !== extractSlackChannelId(botChannel)) {
+  const { deployChannel } = await readConfig()
+  if (channel !== extractSlackChannelId(deployChannel)) {
     return
   }
 
