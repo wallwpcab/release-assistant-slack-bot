@@ -41,7 +41,7 @@ const getSlackUserId = (text) => {
   return findGroup([userExpr], text) || ''
 }
 
-const isDeployed = (branch, message = '') => {
+const hasBranchDeployed = (branch, message = '') => {
   const isDeployed = /^\[\*LIVE\*\] Deployed/.test(message)
 
   const isSucceed = isAnyMatch([
@@ -57,8 +57,14 @@ const isDeployed = (branch, message = '') => {
   return isDeployed && isSucceed && branchName === branch
 }
 
-const extractBranch = (message = '') => {
-  return findGroup([/Deployed .*\*(.+)\*/], message)
+const getDeploymentEnv = (branch, message = '') => {
+  const match = findGroup([/Deployed .*\*(.+)\*/], message)
+  switch(match) {
+    case branch: return 'branch'
+    case 'staging': return 'staging'
+    case 'production': return 'production'
+    default: return null
+  }
 }
 
 module.exports = {
@@ -67,6 +73,6 @@ module.exports = {
   getSlackChannelId,
   getSlackUsers,
   getSlackUserId,
-  isDeployed,
-  extractBranch
+  hasBranchDeployed,
+  getDeploymentEnv
 }
