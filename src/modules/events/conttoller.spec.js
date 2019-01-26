@@ -4,8 +4,8 @@ const { getSlackChannelId } = require('../../utils')
 const { waitForInternalPromises } = require('../../test-utils')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { mockPostMessageApi, mockChatPostMessageApi } = require('../../test-utils/mock-api')
-const { mockConfig, mockDeployment } = require('../../test-utils/mock-data')
-const { releaseManagerUpdatedView } = require('./views')
+const { mockConfig, mockDeployment, mockBranchDeployment, mockBranchBuild } = require('../../test-utils/mock-data')
+const { releaseManagerUpdatedView, branchBuildManagerView } = require('./views')
 const { branchBuildView } = require('../config/views')
 const { DeploymentStatus } = require('../request/mappings')
 
@@ -73,7 +73,7 @@ describe('Events controller', async () => {
         event: {
           type: 'message',
           subtype: 'bot_message',
-          attachments: branchBuildView(mockDeployment.branch).attachments,
+          attachments: branchBuildView(mockBranchBuild.branch).attachments,
           channel: getSlackChannelId(mockConfig.deployChannel)
         }
       }
@@ -85,7 +85,8 @@ describe('Events controller', async () => {
 
     /** mock api **/
     const chatApi = mockChatPostMessageApi(
-      ({ text }) => {
+      (message) => {
+        expect(message).toMatchObject(branchBuildManagerView(mockBranchDeployment.build))
         return true
       }
     )

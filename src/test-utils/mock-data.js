@@ -13,7 +13,7 @@ const mockRejector = {
   id: 'rejector'
 }
 
-const mockChannel = { 
+const mockChannel = {
   id: 'channel-1'
 }
 
@@ -55,28 +55,51 @@ const mockApprovedRequest = {
   baseCommit: mockGitCommit.gitCommitAbbrev
 }
 
+const mockBranchBuild = {
+  branch: 'release/hotfix/2018-10-14/dep-1',
+  commitId: 'c03012d',
+  triggerLink: 'https://google.com',
+  environment: DeploymentStatus.branch
+}
+
+const mockStagingBuild = {
+  id: '104',
+  branch: 'release/hotfix/2018-10-14/dep-1',
+  commitId: 'c03012d',
+  triggerLink: 'https://google.com',
+  environment: DeploymentStatus.staging
+}
+
+const mockProductionBuild = {
+  id: '105',
+  branch: 'release/hotfix/2018-10-14/dep-1',
+  commitId: 'c03012d',
+  environment: DeploymentStatus.production
+}
+
 const mockDeployment = {
   id: 'dep-1',
   branch: 'release/hotfix/2018-10-14/dep-1',
-  tatus: DeploymentStatus.initial
+  status: DeploymentStatus.initial,
+  build: null
 }
 
-const mockDeploymentBranch = {
-  ...mockDeployment,
-  commitId: 'sha-1',
-  buildNo: '203',
-  promotionLink: 'https://google.com',
-  status: DeploymentStatus.branch
+const mockBranchDeployment = {
+  id: 'dep-2',
+  status: DeploymentStatus.branch,
+  build: mockBranchBuild
 }
 
-const mockDeploymentStaging = {
-  ...mockDeploymentBranch,
-  status: DeploymentStatus.staging
+const mockStagingDeployment = {
+  id: 'dep-3',
+  status: DeploymentStatus.staging,
+  build: mockStagingBuild
 }
 
-const mockDeploymentProduction = {
-  ...mockDeploymentStaging,
-  status: DeploymentStatus.production
+const mockProductionDeployment = {
+  id: 'dep-3',
+  status: DeploymentStatus.production,
+  build: mockProductionBuild
 }
 
 const mockConfig = {
@@ -85,8 +108,9 @@ const mockConfig = {
   botChannelWebhook: 'http://webhook.slack/bot-channel',
   stagingInfoUrl: 'http://staging.git.com/info',
   productionInfoUrl: 'http://production.git.com/info',
-  releaseManagers:['<@UC29BCUN6>'],
-  requests: {}
+  releaseManagers: ['<@UC29BCUN6>'],
+  requests: {},
+  deployments: {}
 }
 
 module.exports = {
@@ -101,7 +125,10 @@ module.exports = {
   mockGitCommit,
   mockChannel,
   mockDeployment,
-  mockDeploymentBranch,
-  mockDeploymentStaging,
-  mockDeploymentProduction
+  mockBranchBuild,
+  mockBranchDeployment,
+  mockStagingBuild,
+  mockStagingDeployment,
+  mockProductionBuild,
+  mockProductionDeployment
 }

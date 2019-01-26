@@ -1,6 +1,6 @@
 const { pathOr } = require('ramda')
 
-const { releaseManagerUpdatedView } = require('./views')
+const { releaseManagerUpdatedView, branchBuildManagerView } = require('./views')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { postMessageToBotChannel, sendMessageToUsers } = require('../slack/integration')
 const { getSlackChannelId, getSlackUsers } = require('../../utils')
@@ -8,7 +8,7 @@ const log = require('../../utils/log')
 const {
   isDeploymentEvent,
   isSuccessfullDeployment,
-  getDeploymentInfo,
+  getBuildInfo,
   updateDeployment
 } = require('./utils')
 
@@ -40,8 +40,8 @@ const handleIfDeploymentEvent = async ({ type, subtype, channel, bot_id, attachm
     return
   }
 
-  const depInfo = getDeploymentInfo(message)
-  const { branch, environment } = depInfo
+  const build = getBuildInfo(message)
+  const { branch, environment } = build
   if (!isSuccessfullDeployment(message)) {
     log.log(`Deployment Event > failed deployment event, branch: ${branch}, environment: ${environment}`)
     return
@@ -57,7 +57,8 @@ const handleIfDeploymentEvent = async ({ type, subtype, channel, bot_id, attachm
   }
 
   await Promise.all([
-    updateDeployment(deployment, depInfo),
+    updateDeployment(deployment, build),
+    sendMessageToUsers(releaseManagers, branchBuildManagerView(build))
   ])
 }
 

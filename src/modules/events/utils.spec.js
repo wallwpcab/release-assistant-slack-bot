@@ -1,17 +1,20 @@
-const { mockDeployment } = require('../../test-utils/mock-data')
-const { readConfig } = require('../../bot-config')
-const { DeploymentStatus } = require('../request/mappings')
+const { mockConfig, mockDeployment, mockBranchDeployment, mockStagingDeployment, mockBranchBuild, mockStagingBuild } = require('../../test-utils/mock-data')
+const { readConfig, updateConfig } = require('../../bot-config')
 const { branchBuildView, stagingBuildView, productionBuildView } = require('../config/views')
 const {
   isDeploymentEvent,
-  getDeploymentInfo,
+  getBuildInfo,
   updateDeployment
 } = require('./utils')
 
 const buildMessage = ({ attachments }) => attachments
   .reduce((acc, { text }) => acc + text + '\n', '')
 
-describe('Events Utils', () => {
+describe('Events Utils', async () => {
+  beforeEach(async () => {
+    await updateConfig(mockConfig, true)
+  })
+
   it('Can detect if a branch deployment occured from event message', () => {
     const branch = 'release/hotfix/2013434435'
     const message = buildMessage(branchBuildView(branch))
@@ -24,11 +27,11 @@ describe('Events Utils', () => {
     const message = buildMessage(branchBuildView(branch))
 
     expect(isDeploymentEvent(message)).toBe(true)
-    expect(getDeploymentInfo(message)).toMatchObject({
+    expect(getBuildInfo(message)).toMatchObject({
       branch,
       commitId: 'c03012d',
       environment: 'branch',
-      promotionLink: 'https://google.com'
+      triggerLink: 'https://google.com'
     })
   })
 
@@ -37,12 +40,12 @@ describe('Events Utils', () => {
     const message = buildMessage(stagingBuildView(branch))
 
     expect(isDeploymentEvent(message)).toBe(true)
-    expect(getDeploymentInfo(message)).toMatchObject({
+    expect(getBuildInfo(message)).toMatchObject({
+      id: '232',
       branch,
       commitId: 'c03012d',
-      buildNo: '232',
       environment: 'staging',
-      promotionLink: 'https://google.com'
+      triggerLink: 'https://google.com'
     })
   })
 
@@ -51,28 +54,38 @@ describe('Events Utils', () => {
     const message = buildMessage(productionBuildView(branch))
 
     expect(isDeploymentEvent(message)).toBe(true)
-    expect(getDeploymentInfo(message)).toMatchObject({
+    expect(getBuildInfo(message)).toMatchObject({
+      id: '106',
       branch,
       commitId: 'c03012d',
-      buildNo: '106',
       environment: 'production'
     })
   })
 
-  it('Can update deployment', async () => {
-    await updateDeployment(mockDeployment, {
-      commitId: 'sha-1',
-      buildNo: '203',
-      promotionLink: 'https://google.com',
-      environment: DeploymentStatus.branch
-    })
+  it('Can update to branch deployment', async () => {
+    await updateDeployment(mockDeployment, mockBranchBuild)
     const { deployments } = await readConfig()
     const deployment = deployments[mockDeployment.id]
+
     expect(deployment).toMatchObject({
-      commitId: 'sha-1',
-      buildNo: '203',
-      promotionLink: 'https://google.com',
-      status: DeploymentStatus.branch
+      ...mockBranchDeployment,
+      id: mockDeployment.id
+    })
+    expect(deployments.staging).toBeUndefined()
+  })
+
+  it('Can update staging deployment', async () => {
+    await updateDeployment(mockBranchDeployment, mockStagingBuild)
+    const { deployments } = await readConfig()
+    const deployment = deployments[mockBranchDeployment.id]
+
+    expect(deployment).toMatchObject({
+      ...mockStagingDeployment,
+      id: mockBranchDeployment.id
+    })
+    expect(deployments.staging).toMatchObject({
+      ...mockStagingDeployment,
+      id: mockBranchDeployment.id
     })
   })
 })

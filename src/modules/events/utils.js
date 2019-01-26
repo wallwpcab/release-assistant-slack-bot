@@ -14,15 +14,15 @@ const isSuccessfullDeployment = (message = '') => {
   ], message)
 }
 
-const getDeploymentInfo = (message = '') => {
+const getBuildInfo = (message = '') => {
   const branch = findGroup([
     /Deployed <.+\*(.+)\*>/,   // for branch build
     /\(HEAD.* origin\/(.+?)\)/ // for staging and production build
   ], message)
 
+  const id = findGroup([/Build <.+\|#(.+)>/], message)
   const commitId = findGroup([/version `(.+)`/], message)
-  const buildNo = findGroup([/Build <.+\|#(.+)>/], message)
-  const promotionLink = findGroup([/Click <([^\|]+).+here.+ to promote/], message)
+  const triggerLink = findGroup([/Click <([^\|]+).+here.+ to promote/], message)
   const env = findGroup([/Deployed .*\*(.+)\*/], message)
   const mapEnv = cond([
     [equals(branch), always(DeploymentStatus.branch)],
@@ -32,35 +32,39 @@ const getDeploymentInfo = (message = '') => {
   ])
 
   return {
+    id,
     branch,
     commitId,
-    buildNo,
-    promotionLink,
+    triggerLink,
     environment: mapEnv(env)
   }
 }
 
-const updateDeployment = async (deployment, { commitId, buildNo, promotionLink, environment }) => {
+const updateDeployment = async (deployment, build) => {
   const updatedDeployment = {
     ...deployment,
-    commitId,
-    buildNo,
-    promotionLink,
-    status: environment
+    status: build.environment,
+    build
   }
 
-  const { deployments } = await readConfig()
+  const { deployments: currentDeployments } = await readConfig()
+  const deployments = {
+    ...currentDeployments,
+    [deployment.id]: updatedDeployment
+  }
+
+  if (build.environment === DeploymentStatus.staging) {
+    deployments.staging = updatedDeployment
+  }
+
   await updateConfig({
-    deployments: {
-      ...deployments,
-      [deployment.id]: updatedDeployment
-    }
+    deployments
   })
 }
 
 module.exports = {
   isDeploymentEvent,
   isSuccessfullDeployment,
-  getDeploymentInfo,
+  getBuildInfo,
   updateDeployment
 }
