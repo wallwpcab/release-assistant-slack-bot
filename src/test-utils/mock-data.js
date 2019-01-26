@@ -1,5 +1,5 @@
 const { splitValues } = require('../utils')
-const { RequestStatus } = require('../modules/request/mappings')
+const { RequestStatus, DeploymentStatus } = require('../modules/request/mappings')
 
 const mockUser = {
   id: 'user'
@@ -55,6 +55,12 @@ const mockApprovedRequest = {
   baseCommit: mockGitCommit.gitCommitAbbrev
 }
 
+const mockDeployment = {
+  id: 'dep-1',
+  branch: 'release/hotfix/2018-10-14/dep-1',
+  status: DeploymentStatus.initial
+}
+
 const mockConfig = {
   botChannel: '<#GEL8D0QRG|release-bot-test>',
   deployChannel: '<#GEL8D0QRG|release-bot-test>',
@@ -75,5 +81,6 @@ module.exports = {
   mockUser,
   mockFile,
   mockGitCommit,
-  mockChannel
+  mockChannel,
+  mockDeployment
 }

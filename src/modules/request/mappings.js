@@ -28,9 +28,17 @@ const RequestStatus = {
   inProgress: 'inProgress',
 }
 
+const DeploymentStatus = {
+  initial: 'initial',
+  branch: 'branch',
+  staging: 'staging',
+  production: 'production'
+}
+
 module.exports = {
   RequestType,
   Request,
   RequestApproval,
-  RequestStatus
+  RequestStatus,
+  DeploymentStatus
 }

@@ -3,14 +3,15 @@ const fs = require('fs')
 const fileName = __dirname + '/store.json'
 
 const readStore = () => new Promise((resolve) => {
-  fs.readFile(fileName, 'utf8', (err, data) => {
+  fs.readFile(fileName, 'utf8', (err, content) => {
     if (err) return resolve({})
-    resolve(JSON.parse(data))
+    resolve(JSON.parse(content))
   })
 })
 
 const writeStore = (document) => new Promise((resolve, reject) => {
-  fs.writeFile(fileName, JSON.stringify(document), "utf8", (err) => {
+  const content = JSON.stringify(document, null, 2)
+  fs.writeFile(fileName, content, "utf8", (err) => {
     if (err) return reject(err)
     resolve(document)
   })
