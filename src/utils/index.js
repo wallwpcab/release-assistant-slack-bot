@@ -8,49 +8,65 @@ const splitValues = (str, sep = /[\s+,]/) => reject(
   )
 )
 
-const extractSlackChannels = (text) => {
+const findGroup = (patterns, text) => {
+  return patterns.map(regEx => {
+    const [_, match] = regEx.exec(text) || []
+    return match
+  }).find(match => !!match)
+}
+
+const isAnyMatch = (patterns, text) => {
+  return patterns.map(regEx =>
+    regEx.test(text)
+  ).find(match => match)
+}
+
+const getSlackChannels = (text) => {
   const channelExpr = /<#[^<]+>/g
-  const matches = text.match(channelExpr) || []
-  return matches
+  return text.match(channelExpr) || []
 }
 
-const extractSlackChannelId = (text) => {
+const getSlackChannelId = (text) => {
   const channelExpr = /<#([^>]+)>/
-  const [_, match] = text.match(channelExpr) || ['', '']
-  return match
+  return findGroup([channelExpr], text) || ''
 }
 
-const extractSlackUsers = (text) => {
+const getSlackUsers = (text) => {
   const userExpr = /<@[^<]+>/g
-  const matches = text.match(userExpr) || []
-  return matches
+  return text.match(userExpr) || []
 }
 
-const extractSlackUserId = (text) => {
+const getSlackUserId = (text) => {
   const userExpr = /<@([^>]+)>/
-  const [_, match] = text.match(userExpr) || []
-  return match
+  return findGroup([userExpr], text) || ''
 }
 
 const isDeployed = (branch, message = '') => {
   const isDeployed = /^\[\*LIVE\*\] Deployed/.test(message)
-  const [_, branchMatch] = /Deployed <.*\*(.+)\*>/.exec(message) || []
-  const [__, stagingProductionMatch] = /origin\/([^\)]+)/.exec(message) || []
-  const match = branchMatch || stagingProductionMatch
-  return isDeployed && match === branch
+
+  const isSucceed = isAnyMatch([
+    /Click .+here.+ to promote .+ to `staging`/, // for branch build
+    /Build #.+ status is: \*SUCCESS\*./          // for staging and production build
+  ], message)
+
+  const branchName = findGroup([
+    /Deployed <.+\*(.+)\*>/,   // for branch build
+    /\(HEAD.* origin\/(.+?)\)/ // for staging and production build
+  ], message)
+
+  return isDeployed && isSucceed && branchName === branch
 }
 
 const extractBranch = (message = '') => {
-  const [_, branch] = /Deployed .*\*(.+)\*/.exec(message) || []
-  return branch
+  return findGroup([/Deployed .*\*(.+)\*/], message)
 }
 
 module.exports = {
   splitValues,
-  extractSlackChannels,
-  extractSlackChannelId,
-  extractSlackUsers,
-  extractSlackUserId,
+  getSlackChannels,
+  getSlackChannelId,
+  getSlackUsers,
+  getSlackUserId,
   isDeployed,
   extractBranch
 }

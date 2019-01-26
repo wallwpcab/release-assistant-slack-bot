@@ -3,7 +3,7 @@ const { pathOr } = require('ramda')
 const { releaseManagerUpdatedView } = require('./views')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { postMessageToBotChannel } = require('../slack/integration')
-const { extractSlackChannelId, extractSlackUsers } = require('../../utils')
+const { getSlackChannelId, getSlackUsers } = require('../../utils')
 
 const eventsPost = async (req, res) => {
   const event = pathOr({}, ['body', 'event'], req)
@@ -22,7 +22,7 @@ const handleIfDeployMessage = async ({ type, subtype, channel, bot_id, attachmen
   }
 
   const { deployChannel } = await readConfig()
-  if (channel !== extractSlackChannelId(deployChannel)) {
+  if (channel !== getSlackChannelId(deployChannel)) {
     return
   }
 
@@ -39,12 +39,12 @@ const handleIfChannelTopicChanged = async ({ type, subtype, text, topic, channel
   }
 
   const { botChannel } = await readConfig()
-  if (channel !== extractSlackChannelId(botChannel)) {
+  if (channel !== getSlackChannelId(botChannel)) {
     return
   }
 
-  const [author] = extractSlackUsers(text)
-  const releaseManagers = extractSlackUsers(topic)
+  const [author] = getSlackUsers(text)
+  const releaseManagers = getSlackUsers(topic)
   await Promise.all([
     updateConfig({ releaseManagers }),
     postMessageToBotChannel(releaseManagerUpdatedView(author, releaseManagers))

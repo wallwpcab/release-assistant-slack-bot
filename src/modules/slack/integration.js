@@ -4,7 +4,7 @@ const { pathOr } = require('ramda')
 
 const { httpClient } = require('./http')
 const { readConfig } = require('../../bot-config')
-const { extractSlackChannelId, extractSlackUserId } = require('../../utils')
+const { getSlackChannelId, getSlackUserId } = require('../../utils')
 const log = require('../../utils/log')
 
 const postMessage = async (url, message) => {
@@ -32,7 +32,7 @@ const sendMessage = async (userId, message, ephemeral) => {
 const sendMessageToUsers = async (users, message) => {
   try {
     const { data } = await httpClient().post('/conversations.open', {
-      users: users.map(u => extractSlackUserId(u)).join(',')
+      users: users.map(u => getSlackUserId(u)).join(',')
     })
     const channel = pathOr('', ['channel', 'id'], data)
 
@@ -90,7 +90,7 @@ const uploadRequestData = async (request) => {
   const { botChannel } = await readConfig()
   const { id } = request
   try {
-    const { file } = await uploadFile(`${id}.json`, 'Release Request', JSON.stringify(request, null, 4), 'json', extractSlackChannelId(botChannel))
+    const { file } = await uploadFile(`${id}.json`, 'Release Request', JSON.stringify(request, null, 4), 'json', getSlackChannelId(botChannel))
     return file
   } catch (err) {
     log.error('error in uploadRequestData()', err)

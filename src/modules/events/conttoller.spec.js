@@ -1,5 +1,6 @@
 require('../../test-utils/mock-implementations')
 const { eventsPost } = require('./controller')
+const { getSlackChannelId } = require('../../utils')
 const { waitForInternalPromises } = require('../../test-utils')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { mockPostMessageApi } = require('../../test-utils/mock-api')
@@ -22,7 +23,6 @@ describe('Events controller', async () => {
       send: jest.fn()
     }
 
-    await updateConfig({ botChannel: '#bot-channel' })
     await eventsPost(req, res)
     await waitForInternalPromises()
 
@@ -39,7 +39,7 @@ describe('Events controller', async () => {
           subtype: 'group_topic',
           text: `${author} set topic to: ${managers.join(', ')} are DevOps for this week`,
           topic: `${managers.join(', ')} are DevOps for this week`,
-          channel: 'CHANNEL1'
+          channel: getSlackChannelId(mockConfig.deployChannel)
         }
       }
     }
@@ -56,7 +56,6 @@ describe('Events controller', async () => {
       }
     )
 
-    await updateConfig({ botChannel: '<#CHANNEL1|bot-channel>' })
     await eventsPost(req, res)
     await waitForInternalPromises()
 

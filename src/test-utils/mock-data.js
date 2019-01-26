@@ -57,6 +57,7 @@ const mockApprovedRequest = {
 
 const mockConfig = {
   botChannel: '<#GEL8D0QRG|release-bot-test>',
+  deployChannel: '<#GEL8D0QRG|release-bot-test>',
   botChannelWebhook: 'http://webhook.slack/bot-channel',
   stagingInfoUrl: 'http://staging.git.com/info',
   productionInfoUrl: 'http://production.git.com/info',
