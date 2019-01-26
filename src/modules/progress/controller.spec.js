@@ -2,7 +2,7 @@ require('../../test-utils/mock-implementations')
 const { progressPost } = require('./controller')
 const { waitForInternalPromises } = require('../../test-utils')
 const { updateConfig } = require('../../bot-config')
-const { mockConfig, mockRequest, mockApprovedRequest } = require('../../test-utils/mock-data')
+const { mockConfig, mockInitialRequest, mockApprovedRequest } = require('../../test-utils/mock-data')
 const { showProgressView, confirmRequestCancelView } = require('./views')
 const {
   requestInvalidIdView,
@@ -10,7 +10,7 @@ const {
 } = require('../request/views')
 
 const requests = {
-  [mockRequest.id]: mockRequest,
+  [mockInitialRequest.id]: mockInitialRequest,
   [mockApprovedRequest.id]: mockApprovedRequest
 }
 
@@ -43,7 +43,7 @@ describe('Progress controller', async () => {
   it('Can handle view progress for a request', async () => {
     const req = {
       body: {
-        text: `--id ${mockRequest.id}`
+        text: `--id ${mockInitialRequest.id}`
       }
     }
 
@@ -54,7 +54,7 @@ describe('Progress controller', async () => {
     await progressPost(req, res)
     await waitForInternalPromises()
 
-    expect(res.send).toBeCalledWith(showProgressView([mockRequest]))
+    expect(res.send).toBeCalledWith(showProgressView([mockInitialRequest]))
   })
 
   it('Can handle cancel progress with invalid request id', async () => {
@@ -97,7 +97,7 @@ describe('Progress controller', async () => {
   it('Can handle cancel progress', async () => {
     const req = {
       body: {
-        text: `--id ${mockRequest.id} --cancel`
+        text: `--id ${mockInitialRequest.id} --cancel`
       }
     }
 
@@ -108,6 +108,6 @@ describe('Progress controller', async () => {
     await progressPost(req, res)
     await waitForInternalPromises()
 
-    expect(res.send).toBeCalledWith(confirmRequestCancelView(mockRequest))
+    expect(res.send).toBeCalledWith(confirmRequestCancelView(mockInitialRequest))
   })
 })

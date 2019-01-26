@@ -1,45 +1,39 @@
-const { split, reject, map } = require('ramda')
+const { split, reject, map } = require('ramda');
 
 const splitValues = (str, sep = /[\s+,]/) => reject(
   s => !s,
   map(
     s => s.trim(),
-    split(sep, str)
-  )
-)
+    split(sep, str),
+  ),
+);
 
-const findGroup = (patterns, text) => {
-  return patterns.map(regEx => {
-    const [_, match] = regEx.exec(text) || []
-    return match
-  }).find(match => !!match)
-}
+const findGroup = (patterns, text) => patterns.map((regEx) => {
+  const [, match] = regEx.exec(text) || [];
+  return match;
+}).find(match => !!match);
 
-const isAnyMatch = (patterns, text) => {
-  return patterns.map(regEx =>
-    regEx.test(text)
-  ).find(match => match)
-}
+const isAnyMatch = (patterns, text) => patterns.map(regEx => regEx.test(text)).find(match => match);
 
 const getSlackChannels = (text) => {
-  const channelExpr = /<#[^<]+>/g
-  return text.match(channelExpr) || []
-}
+  const channelExpr = /<#[^<]+>/g;
+  return text.match(channelExpr) || [];
+};
 
 const getSlackChannelId = (text) => {
-  const channelExpr = /<#([^>]+)>/
-  return findGroup([channelExpr], text) || ''
-}
+  const channelExpr = /<#([^>]+)>/;
+  return findGroup([channelExpr], text) || '';
+};
 
 const getSlackUsers = (text) => {
-  const userExpr = /<@[^<]+>/g
-  return text.match(userExpr) || []
-}
+  const userExpr = /<@[^<]+>/g;
+  return text.match(userExpr) || [];
+};
 
 const getSlackUserId = (text) => {
-  const userExpr = /<@([^>]+)>/
-  return findGroup([userExpr], text) || ''
-}
+  const userExpr = /<@([^>]+)>/;
+  return findGroup([userExpr], text) || '';
+};
 
 module.exports = {
   splitValues,
@@ -48,5 +42,5 @@ module.exports = {
   getSlackChannels,
   getSlackChannelId,
   getSlackUsers,
-  getSlackUserId
-}
+  getSlackUserId,
+};

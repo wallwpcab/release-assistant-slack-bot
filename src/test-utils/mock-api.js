@@ -1,15 +1,17 @@
-const nock = require('nock')
-const config = require('config')
+const nock = require('nock');
+const config = require('config');
 
-const { mockFile, mockConfig, mockGitCommit, mockChannel } = require('./mock-data')
+const {
+  mockFile, mockConfig, mockGitCommit, mockChannel,
+} = require('./mock-data');
 
-const mockServer = (url) => nock(url)
-  .defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+const mockServer = url => nock(url)
+  .defaultReplyHeaders({ 'access-control-allow-origin': '*' });
 
 const mockSlackServer = () => {
-  const { apiUrl } = config.get('slack')
-  return mockServer(apiUrl)
-}
+  const { apiUrl } = config.get('slack');
+  return mockServer(apiUrl);
+};
 
 const mockFilesUploadApi = (payloadCallback) => {
   const payload = {
@@ -17,97 +19,97 @@ const mockFilesUploadApi = (payloadCallback) => {
     title: /^\S+/,
     content: /^\S+/,
     filetype: /^\S+/,
-    channels: /^\S+/
-  }
+    channels: /^\S+/,
+  };
 
   return mockSlackServer()
-    .post('/files.upload', payloadCallback ? payloadCallback : payload)
+    .post('/files.upload', payloadCallback || payload)
     .reply(200, {
       file: {
         id: mockFile.id,
-        permalink: mockFile.link
-      }
-    })
-}
+        permalink: mockFile.link,
+      },
+    });
+};
 
 const mockDialogOpenApi = (payloadCallback) => {
   const payload = {
     trigger_id: /^\S+/,
-    dialog: /^\S+/
-  }
+    dialog: /^\S+/,
+  };
 
   return mockSlackServer()
-    .post('/dialog.open', payloadCallback ? payloadCallback : payload)
-    .reply(200)
-}
+    .post('/dialog.open', payloadCallback || payload)
+    .reply(200);
+};
 
 const mockConversationsOpensApi = () => {
   const payload = {
-    users: /^\S+/
-  }
+    users: /^\S+/,
+  };
 
   return mockSlackServer()
     .post('/conversations.open', payload)
     .reply(200, {
-      channel: mockChannel
-    })
-}
+      channel: mockChannel,
+    });
+};
 
 const mockChatPostMessageApi = (payloadCallback) => {
   const payload = {
     text: /^\S+/,
-    channel: /^\S+/
-  }
+    channel: /^\S+/,
+  };
 
-  mockConversationsOpensApi()
+  mockConversationsOpensApi();
   return mockSlackServer()
-    .post('/chat.postMessage', payloadCallback ? payloadCallback : payload)
-    .reply(200)
-}
+    .post('/chat.postMessage', payloadCallback || payload)
+    .reply(200);
+};
 
 const mockChatPostEphemeralApi = (payloadCallback) => {
   const payload = {
     text: /^\S+/,
     channel: /^\S+/,
-    user: /^\S+/
-  }
+    user: /^\S+/,
+  };
 
-  mockConversationsOpensApi()
+  mockConversationsOpensApi();
   return mockSlackServer()
-    .post('/chat.postEphemeral', payloadCallback ? payloadCallback : payload)
-    .reply(200)
-}
+    .post('/chat.postEphemeral', payloadCallback || payload)
+    .reply(200);
+};
 
 const mockPostMessageApi = (url, payloadCallback) => {
   const payload = {
-    text: /^\S+/
-  }
+    text: /^\S+/,
+  };
 
   return mockServer(url)
-    .post('', payloadCallback ? payloadCallback : payload)
-    .reply(200)
-}
+    .post('', payloadCallback || payload)
+    .reply(200);
+};
 
 const mockFilesCommentsAddApi = (payloadCallback) => {
   const payload = {
     file: /^\S+/,
-    comment: /^\S+/
-  }
+    comment: /^\S+/,
+  };
 
   return mockSlackServer()
-    .post('/files.comments.add', payloadCallback ? payloadCallback : payload)
-    .reply(200)
-}
+    .post('/files.comments.add', payloadCallback || payload)
+    .reply(200);
+};
 
 const mockGitStagingApi = () => mockServer(mockConfig.stagingInfoUrl).get('')
   .reply(200, {
-    info: mockGitCommit
-  })
+    info: mockGitCommit,
+  });
 
 const mockGitProductionApi = () => mockServer(mockConfig.productionInfoUrl).get('')
   .reply(200, {
-    info: mockGitCommit
-  })
+    info: mockGitCommit,
+  });
 
 module.exports = {
   mockServer,
@@ -118,5 +120,5 @@ module.exports = {
   mockPostMessageApi,
   mockFilesCommentsAddApi,
   mockGitStagingApi,
-  mockGitProductionApi
-}
+  mockGitProductionApi,
+};

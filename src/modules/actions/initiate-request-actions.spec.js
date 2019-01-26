@@ -9,7 +9,7 @@ const {
   requestAlreadyInitiatedView,
   requestInitiatedChannelView
 } = require('../request/views')
-const { mockRequest,
+const { mockInitialRequest,
   mockApprovedRequest,
   mockUser,
   mockConfig,
@@ -32,7 +32,7 @@ const actionRequest = generateActionRequest(
 describe('Initiate request actions', async () => {
   beforeEach(async () => {
     const requests = {
-      [mockRequest.id]: mockRequest
+      [mockInitialRequest.id]: mockInitialRequest
     }
     await updateConfig({ ...mockConfig, requests }, true)
   })
@@ -107,7 +107,7 @@ describe('Initiate request actions', async () => {
 
     const req = actionRequest(
       RequestApproval.approve,
-      mockRequest.id
+      mockInitialRequest.id
     )
     const res = {
       send: jest.fn()
@@ -130,7 +130,7 @@ describe('Initiate request actions', async () => {
     const messageApi = mockPostMessageApi(
       mockConfig.botChannelWebhook,
       ({ text }) => {
-        expect(text).toBe(requestInitiatedChannelView(mockRequest, mockInitiator).text)
+        expect(text).toBe(requestInitiatedChannelView(mockInitialRequest, mockInitiator).text)
         return true
       }
     )

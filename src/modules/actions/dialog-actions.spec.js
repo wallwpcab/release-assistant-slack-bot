@@ -4,7 +4,7 @@ const { Request } = require('../request/mappings')
 const { Config } = require('../config/mappings')
 const { requestReceivedAuthorView, requestReceivedManagerView } = require('../request/views')
 const { configReadView } = require('../config/views')
-const { mockRequestFormData, mockRequest, mockUser, mockConfig, mockFile, mockChannel } = require('../../test-utils/mock-data')
+const { mockRequestFormData, mockInitialRequest, mockUser, mockConfig, mockFile, mockChannel } = require('../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
 const { generateDialogRequest } = require('./test-utils')
@@ -28,7 +28,7 @@ describe('Dialog actions', async () => {
       send: jest.fn()
     }
 
-    const updatedMockRequest = { ...mockRequest, id: 'id-1' }
+    const updatedMockRequest = { ...mockInitialRequest, id: 'id-1' }
 
     // generate a different slack api url
     mockSlackApiUrl()
@@ -61,9 +61,9 @@ describe('Dialog actions', async () => {
     expect(chatApi.isDone()).toBe(true)
     expect(messageApi.isDone()).toBe(true)
 
-    // request should contain mockRequest data
+    // request should contain mockInitialRequest data
     expect(request).toMatchObject({
-      ...mockRequest,
+      ...mockInitialRequest,
       id: request.id
     })
 

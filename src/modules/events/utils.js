@@ -1,4 +1,4 @@
-const { cond, equals, always, T } = require('ramda')
+const { cond, equals, always, T, mergeRight } = require('ramda')
 const { findGroup, isAnyMatch } = require('../../utils')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { DeploymentStatus } = require('../request/mappings')
@@ -40,6 +40,15 @@ const getBuildInfo = (message = '') => {
   }
 }
 
+const updateDeployments = (deployments, deployment, build) => {
+  return mergeRight(deployments, {
+    [deployment.id]: mergeRight(deployment, {
+      status: build.environment,
+      build
+    })
+  })
+}
+
 const updateDeployment = async (deployment, build) => {
   const updatedDeployment = {
     ...deployment,
@@ -66,5 +75,6 @@ module.exports = {
   isDeploymentEvent,
   isSuccessfullDeployment,
   getBuildInfo,
+  updateDeployments,
   updateDeployment
 }

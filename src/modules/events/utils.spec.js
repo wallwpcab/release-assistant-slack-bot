@@ -1,4 +1,4 @@
-const { mockConfig, mockDeployment, mockBranchDeployment, mockStagingDeployment, mockBranchBuild, mockStagingBuild } = require('../../test-utils/mock-data')
+const { mockConfig, mockInitialDeployment, mockBranchDeployment, mockStagingDeployment, mockBranchBuild, mockStagingBuild } = require('../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { branchBuildView, stagingBuildView, productionBuildView } = require('../config/views')
 const {
@@ -63,13 +63,13 @@ describe('Events Utils', async () => {
   })
 
   it('Can update to branch deployment', async () => {
-    await updateDeployment(mockDeployment, mockBranchBuild)
+    await updateDeployment(mockInitialDeployment, mockBranchBuild)
     const { deployments } = await readConfig()
-    const deployment = deployments[mockDeployment.id]
+    const deployment = deployments[mockInitialDeployment.id]
 
     expect(deployment).toMatchObject({
       ...mockBranchDeployment,
-      id: mockDeployment.id
+      id: mockInitialDeployment.id
     })
     expect(deployments.staging).toBeUndefined()
   })

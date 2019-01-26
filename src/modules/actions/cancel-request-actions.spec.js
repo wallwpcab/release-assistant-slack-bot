@@ -9,7 +9,7 @@ const {
   requestAlreadyInitiatedView
 } = require('../request/views')
 const {
-  mockRequest,
+  mockInitialRequest,
   mockApprovedRequest,
   mockUser,
   mockConfig,
@@ -29,7 +29,7 @@ const actionRequest = generateActionRequest(
 describe('Cancel request actions', async () => {
   beforeEach(async () => {
     const requests = {
-      [mockRequest.id]: mockRequest
+      [mockInitialRequest.id]: mockInitialRequest
     }
     await updateConfig({ ...mockConfig, requests }, true)
   })
@@ -98,7 +98,7 @@ describe('Cancel request actions', async () => {
   it('Can handle cancel request action', async () => {
     const req = actionRequest(
       CancelRequest.yes,
-      mockRequest.id
+      mockInitialRequest.id
     )
 
     const res = {

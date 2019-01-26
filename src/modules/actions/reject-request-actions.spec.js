@@ -9,7 +9,7 @@ const {
   requestAlreadyInitiatedView
 } = require('../request/views')
 const {
-  mockRequest,
+  mockInitialRequest,
   mockApprovedRequest,
   mockUser,
   mockConfig,
@@ -30,7 +30,7 @@ const actionRequest = generateActionRequest(
 describe('Reject request actions', async () => {
   beforeEach(async () => {
     const requests = {
-      [mockRequest.id]: mockRequest
+      [mockInitialRequest.id]: mockInitialRequest
     }
     await updateConfig({ ...mockConfig, requests }, true)
   })
@@ -102,7 +102,7 @@ describe('Reject request actions', async () => {
     )
     const req = actionRequest(
       RequestApproval.reject,
-      mockRequest.id
+      mockInitialRequest.id
     )
     const res = {
       send: jest.fn()
