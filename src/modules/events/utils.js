@@ -1,6 +1,6 @@
 const { findGroup, isAnyMatch } = require('../../utils')
 
-const hasBranchDeployed = (branch, message = '') => {
+const isDeploymentEvent = (message) => {
   const isDeployed = /^\[\*LIVE\*\] Deployed/.test(message)
 
   const isSucceed = isAnyMatch([
@@ -8,25 +8,25 @@ const hasBranchDeployed = (branch, message = '') => {
     /Build #.+ status is: \*SUCCESS\*./          // for staging and production build
   ], message)
 
-  const branchName = findGroup([
+  return isDeployed && isSucceed
+}
+
+const getDeploymentInfo = (message = '') => {
+  const branch = findGroup([
     /Deployed <.+\*(.+)\*>/,   // for branch build
     /\(HEAD.* origin\/(.+?)\)/ // for staging and production build
   ], message)
 
-  return isDeployed && isSucceed && branchName === branch
-}
+  const env = findGroup([/Deployed .*\*(.+)\*/], message)
+  const environment = branch && env === branch ? 'branch' : env
 
-const getDeploymentEnv = (branch, message = '') => {
-  const match = findGroup([/Deployed .*\*(.+)\*/], message)
-  switch(match) {
-    case branch: return 'branch'
-    case 'staging': return 'staging'
-    case 'production': return 'production'
-    default: return null
+  return {
+    branch,
+    environment
   }
 }
 
 module.exports = {
-  hasBranchDeployed,
-  getDeploymentEnv
+  isDeploymentEvent,
+  getDeploymentInfo
 }

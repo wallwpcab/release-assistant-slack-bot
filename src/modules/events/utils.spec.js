@@ -1,4 +1,4 @@
-const { hasBranchDeployed, getDeploymentEnv } = require('./utils')
+const { isDeploymentEvent, getDeploymentInfo } = require('./utils')
 
 describe('Events Utils', () => {
   it('Can detect if a branch deployment occured from event message', () => {
@@ -6,7 +6,7 @@ describe('Events Utils', () => {
     const message = `[*LIVE*] Deployed <https://google.com|*${branch}*> (auth: glass/Glass-Passw0rd) version \`c03012d\`.
 Click <https://google.com|*here*> to promote \`c03012d\` to \`staging\` environment.`
 
-    expect(hasBranchDeployed(branch, message)).toBe(true)
+    expect(isDeploymentEvent(message)).toBe(true)
   })
 
   it('Can extract branch from event message', () => {
@@ -14,8 +14,11 @@ Click <https://google.com|*here*> to promote \`c03012d\` to \`staging\` environm
     const message = `[*LIVE*] Deployed <https://google.com|*${branch}*> (auth: glass/Glass-Passw0rd) version \`c03012d\`.
 Click <https://google.com|*here*> to promote \`c03012d\` to \`staging\` environment.`
 
-    expect(hasBranchDeployed(branch, message)).toBe(true)
-    expect(getDeploymentEnv(branch, message)).toBe('branch')
+    expect(isDeploymentEvent(message)).toBe(true)
+    expect(getDeploymentInfo(message)).toMatchObject({
+      branch,
+      environment: 'branch'
+    })
   })
 
   it('Can detect if a staging deployment occured from event message', () => {
@@ -27,8 +30,11 @@ ca36897 - DCDP-2550 Fix cms endpont path (2019-01-23T11:04:17+02:00) <Ivan Savch
 abe3173 - CART-1198 Revert Cart Overlay rollout of DE, GB, FR, NL (2019-01-22T16:59:41+01:00) <Boyle, Molly>\`\`\`
 Click <https://google.com|*here*> to promote \`c03012d\` to \`production\` environment. <https://google.com|deployment plan>`
 
-    expect(hasBranchDeployed(branch, message)).toBe(true)
-    expect(getDeploymentEnv(branch, message)).toBe('staging')
+    expect(isDeploymentEvent(message)).toBe(true)
+    expect(getDeploymentInfo(message)).toMatchObject({
+      branch,
+      environment: 'staging'
+    })
   })
 
   it('Can detect if a production deployment occured from event message', () => {
@@ -39,7 +45,10 @@ Build #106 status is: *SUCCESS*. test results / artifacts / commits / changelog
 ca36897 - DCDP-2550 Fix cms endpont path (2019-01-23T11:04:17+02:00) <Ivan Savchenko>
 abe3173 - CART-1198 Revert Cart Overlay rollout of DE, GB, FR, NL (2019-01-22T16:59:41+01:00) <Boyle, Molly>\`\`\``
 
-    expect(hasBranchDeployed(branch, message)).toBe(true)
-    expect(getDeploymentEnv(branch, message)).toBe('production')
+    expect(isDeploymentEvent(message)).toBe(true)
+    expect(getDeploymentInfo(message)).toMatchObject({
+      branch,
+      environment: 'production'
+    })
   })
 })
