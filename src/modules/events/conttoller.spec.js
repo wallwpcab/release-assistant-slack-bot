@@ -3,9 +3,11 @@ const { eventsPost } = require('./controller')
 const { getSlackChannelId } = require('../../utils')
 const { waitForInternalPromises } = require('../../test-utils')
 const { readConfig, updateConfig } = require('../../bot-config')
-const { mockPostMessageApi } = require('../../test-utils/mock-api')
-const { mockConfig } = require('../../test-utils/mock-data')
+const { mockPostMessageApi, mockChatPostMessageApi } = require('../../test-utils/mock-api')
+const { mockConfig, mockDeployment } = require('../../test-utils/mock-data')
 const { releaseManagerUpdatedView } = require('./views')
+const { branchBuildView } = require('../config/views')
+const { DeploymentStatus } = require('../request/mappings')
 
 describe('Events controller', async () => {
   beforeEach(async () => {
@@ -29,7 +31,7 @@ describe('Events controller', async () => {
     expect(res.send).toBeCalledWith('challenge-1')
   })
 
-  it('Can handle channel topic change', async () => {
+  it('Can handle channel topic change event', async () => {
     const author = '<@USER1|Fred>'
     const managers = ['<@USER2|Kerl>']
     const req = {
@@ -39,7 +41,7 @@ describe('Events controller', async () => {
           subtype: 'group_topic',
           text: `${author} set topic to: ${managers.join(', ')} are DevOps for this week`,
           topic: `${managers.join(', ')} are DevOps for this week`,
-          channel: getSlackChannelId(mockConfig.deployChannel)
+          channel: getSlackChannelId(mockConfig.botChannel)
         }
       }
     }
@@ -63,5 +65,43 @@ describe('Events controller', async () => {
 
     const { releaseManagers } = await readConfig();
     expect(releaseManagers).toEqual(managers)
+  })
+
+  it('Can handle branch build event', async () => {
+    const req = {
+      body: {
+        event: {
+          type: 'message',
+          subtype: 'bot_message',
+          attachments: branchBuildView(mockDeployment.branch).attachments,
+          channel: getSlackChannelId(mockConfig.deployChannel)
+        }
+      }
+    }
+
+    const res = {
+      send: jest.fn()
+    }
+
+    /** mock api **/
+    const chatApi = mockChatPostMessageApi(
+      ({ text }) => {
+        return true
+      }
+    )
+
+    await updateConfig({
+      deployments: {
+        [mockDeployment.id]: mockDeployment
+      }
+    })
+    await eventsPost(req, res)
+    await waitForInternalPromises()
+
+    const { deployments } = await readConfig()
+    const deployment = deployments[mockDeployment.id]
+    expect(deployment.status).toEqual(DeploymentStatus.branch)
+
+    expect(chatApi.isDone()).toBe(true)
   })
 })

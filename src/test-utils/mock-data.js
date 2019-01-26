@@ -58,7 +58,25 @@ const mockApprovedRequest = {
 const mockDeployment = {
   id: 'dep-1',
   branch: 'release/hotfix/2018-10-14/dep-1',
-  status: DeploymentStatus.initial
+  tatus: DeploymentStatus.initial
+}
+
+const mockDeploymentBranch = {
+  ...mockDeployment,
+  commitId: 'sha-1',
+  buildNo: '203',
+  promotionLink: 'https://google.com',
+  status: DeploymentStatus.branch
+}
+
+const mockDeploymentStaging = {
+  ...mockDeploymentBranch,
+  status: DeploymentStatus.staging
+}
+
+const mockDeploymentProduction = {
+  ...mockDeploymentStaging,
+  status: DeploymentStatus.production
 }
 
 const mockConfig = {
@@ -82,5 +100,8 @@ module.exports = {
   mockFile,
   mockGitCommit,
   mockChannel,
-  mockDeployment
+  mockDeployment,
+  mockDeploymentBranch,
+  mockDeploymentStaging,
+  mockDeploymentProduction
 }

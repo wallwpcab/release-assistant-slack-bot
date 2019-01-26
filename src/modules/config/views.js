@@ -39,7 +39,7 @@ const stagingBuildView = branch => ({
     {
       color: '#36a64f',
       text: `[*LIVE*] Deployed *staging* (auth: glass/Glass-Passw0rd) version \`c03012d\`.
-Build #232 status is: *SUCCESS*. test results / artifacts / commits / changelog`
+Build <https://google.com|#232> status is: *SUCCESS*. test results / artifacts / commits / changelog`
     },
     {
       color: '#36a64f',
@@ -59,7 +59,7 @@ const productionBuildView = branch => ({
     {
       color: '#36a64f',
       text: `[*LIVE*] Deployed *production* (auth: glass/Glass-Passw0rd) version \`c03012d\`.
-Build #106 status is: *SUCCESS*. test results / artifacts / commits / changelog`
+Build <https://google.com|#106> status is: *SUCCESS*. test results / artifacts / commits / changelog`
     },
     {
       color: '#36a64f',
