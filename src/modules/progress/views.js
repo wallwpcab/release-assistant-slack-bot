@@ -1,5 +1,5 @@
 const { RequestProgress } = require('./mappings')
-const { requestIdLabel } = require('../request/labels')
+const { requestIdLabel } = require('../request/views')
 
 const showProgressView = (requests = []) => {
   const progress = requests.map(({ id, file, progress }) => `Request Id: ${requestIdLabel(id, file)} \nProgress: *\`${progress || 'requested'}\`*`).join('\n\n')

@@ -1,6 +1,5 @@
-const { RequestType } = require('./mappings')
-
-const requestIdLabel = (id, file) => file.link ? `*<${file.link}|\`${id}\`>*` : `*\`${id}\`*`
+const { requestIdLabel } = require('../../request/views')
+const { RequestType } = require('../../request/mappings')
 
 const typeLabel = (type) => {
   const { label, icon } = RequestType[type]
@@ -64,7 +63,6 @@ const gitCherryPickLabel = ({ requests }) => {
 }
 
 module.exports = {
-  requestIdLabel,
   typeLabel,
   approvalLabel,
   descriptionLabel,

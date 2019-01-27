@@ -1,9 +1,9 @@
 const { format } = require('date-fns')
 
-const { readConfig } = require('../../bot-config')
-const { generateId } = require('../../utils/generator')
-const { getGitInfo } = require('../../git-integration')
-const { RequestStatus, DeploymentStatus } = require('../request/mappings')
+const { readConfig } = require('../../../bot-config')
+const { generateId } = require('../../../utils/generator')
+const { getGitInfo } = require('../../../git-integration')
+const { RequestStatus, DeploymentStatus } = require('../../request/mappings')
 
 const getInitialRequests = (requests)=> {
   return Object.values(requests).filter(r => r.status === RequestStatus.initial)

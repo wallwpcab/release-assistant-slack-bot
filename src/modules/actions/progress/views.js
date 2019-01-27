@@ -1,4 +1,4 @@
-const { requestIdLabel } = require('../request/labels')
+const { requestIdLabel } = require('../../request/views')
 
 const requestCanceledAuthorView = ({ id, file }) => {
   return {

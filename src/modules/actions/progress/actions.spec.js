@@ -1,25 +1,25 @@
-const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
-const { actionsPost } = require('./controller')
-const { generateActionRequest } = require('./test-utils')
-const { RequestProgress } = require('../progress/mappings')
-const { readConfig, updateConfig } = require('../../bot-config')
-const { waitForInternalPromises } = require('../../test-utils')
+const { mockSlackApiUrl } = require('../../../test-utils/mock-implementations')
+const { actionsPost } = require('../controller')
+const { generateActionRequest } = require('../test-utils')
+const { RequestProgress } = require('../../progress/mappings')
+const { readConfig, updateConfig } = require('../../../bot-config')
+const { waitForInternalPromises } = require('../../../test-utils')
 const {
   requestInvalidIdView,
   requestAlreadyInitiatedView
-} = require('../request/views')
+} = require('../../request/views')
 const {
   mockInitialRequest,
   mockApprovedRequest,
   mockUser,
   mockConfig,
   mockChannel
-} = require('../../test-utils/mock-data')
+} = require('../../../test-utils/mock-data')
 const {
   mockChatPostMessageApi,
   mockChatPostEphemeralApi,
   mockFilesCommentsAddApi
-} = require('../../test-utils/mock-api')
+} = require('../../../test-utils/mock-api')
 
 const actionRequest = generateActionRequest(
   RequestProgress.callback_id,

@@ -1,9 +1,9 @@
-const { setMockId } = require('../../test-utils/mock-implementations')
+const { setMockId } = require('../../../test-utils/mock-implementations')
 const { format } = require('date-fns')
-const { getInitialRequests, createDeployment, getOrCreateDeployment } = require('./request-utils')
-const { mockConfig, mockInitialRequest, mockApprovedRequest, mockInitialBuild, mockInitialDeployment, mockBranchDeployment } = require('../../test-utils/mock-data')
-const { mockGitProductionApi } = require('../../test-utils/mock-api')
-const { updateConfig } = require('../../bot-config')
+const { getInitialRequests, createDeployment, getOrCreateDeployment } = require('./utils')
+const { mockConfig, mockInitialRequest, mockApprovedRequest, mockInitialBuild, mockInitialDeployment, mockBranchDeployment } = require('../../../test-utils/mock-data')
+const { mockGitProductionApi } = require('../../../test-utils/mock-api')
+const { updateConfig } = require('../../../bot-config')
 
 describe('Request utils', async () => {
   beforeEach(async () => {

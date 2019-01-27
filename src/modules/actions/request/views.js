@@ -1,14 +1,14 @@
-const { RequestApproval } = require('../request/mappings')
+const { RequestApproval } = require('../../request/mappings')
+const { requestIdLabel } = require('../../request/views')
 const {
   requestLabel,
-  requestIdLabel,
   typeLabel,
   gitCheckoutLabel,
   gitCherryPickLabel,
   subscribersLabel,
   commitsLabel,
   usersLabel
-} = require('../request/labels')
+} = require('./labels')
 
 const requestReceivedAuthorView = ({ id, type, commits, subscribers, file }) => ({
   response_type: 'ephemeral',

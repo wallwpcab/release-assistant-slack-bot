@@ -1,5 +1,6 @@
-const { requestIdLabel } = require('./labels')
 const { Request, RequestType } = require('./mappings')
+
+const requestIdLabel = (id, file) => file.link ? `*<${file.link}|\`${id}\`>*` : `*\`${id}\`*`
 
 const requestFormView = (text) => ({
   title: 'Request a relesase',
@@ -75,6 +76,7 @@ const requestAlreadyInitiatedView = (request) => {
 }
 
 module.exports = {
+  requestIdLabel,
   requestFormView,
   requestInvalidIdView,
   requestAlreadyInitiatedView

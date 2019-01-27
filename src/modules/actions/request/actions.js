@@ -1,9 +1,9 @@
 const { pathOr } = require('ramda')
 
-const { getInitialRequests, getOrCreateDeployment } = require('./request-utils')
-const { Request, RequestApproval, RequestStatus } = require('../request/mappings')
-const { readConfig, updateConfig } = require('../../bot-config')
-const { getRequestData } = require('../../transformer')
+const { getOrCreateDeployment } = require('./utils')
+const { Request, RequestApproval, RequestStatus } = require('../../request/mappings')
+const { readConfig, updateConfig } = require('../../../bot-config')
+const { getRequestData } = require('../../../transformer')
 const {
   sendMessage,
   sendMessageToUsers,
@@ -11,7 +11,7 @@ const {
   uploadRequestData,
   postMessageToBotChannel,
   addCommentOnFile
-} = require('../slack/integration')
+} = require('../../slack/integration')
 const {
   requestReceivedAuthorView,
   requestReceivedManagerView,
@@ -22,11 +22,11 @@ const {
   requestRejectedAuthorView,
   requestRejectedManagerView,
   requestRejectedCommentView
-} = require('./request-views')
+} = require('./views')
 const {
   requestInvalidIdView,
   requestAlreadyInitiatedView,
-} = require('../request/views')
+} = require('../../request/views')
 
 const handleIfRequestDialogAction = async ({ callback_id, response_url, submission, user }) => {
   if (callback_id !== Request.callback_id) return
