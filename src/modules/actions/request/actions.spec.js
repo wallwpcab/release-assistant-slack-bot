@@ -1,4 +1,4 @@
-const { mockSlackApiUrl, setMockId } = require('../../../test-utils/mock-implementations')
+const { mockSlackApiUrl, setMockId, setMockDate } = require('../../../test-utils/mock-implementations')
 const { actionsPost } = require('../controller')
 const { generateDialogRequest, generateActionRequest } = require('../test-utils')
 const { Request, RequestApproval } = require('../../request/mappings')
@@ -59,6 +59,7 @@ describe('Request actions', async () => {
     }
 
     setMockId(mockInitialRequest.id)
+    const date = setMockDate(new Date().toISOString())
 
     // generate a different slack api url
     mockSlackApiUrl()
@@ -94,7 +95,8 @@ describe('Request actions', async () => {
     // request should contain mockInitialRequest data
     expect(request).toMatchObject({
       ...mockInitialRequest,
-      id: request.id
+      id: request.id,
+      date
     })
 
     // request should contain user data

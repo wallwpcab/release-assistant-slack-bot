@@ -1,19 +1,18 @@
-const { splitValues } = require('./utils')
-const { generateId } = require('./utils/generator')
+const { format } = require('date-fns')
+
+const { splitValues, makeTitleCase } = require('./utils')
+const { generateId, getDate } = require('./utils/generator')
 
 const getRequestData = (dialogData, user) => {
-  const { requestType: type, commits: commitsStr, description, approval, subscribers: subscribersStr } = dialogData
-  const commits = splitValues(commitsStr)
-  const subscribers = splitValues(subscribersStr || '')
-  const id = generateId()
+  const { requestType: type, commits, description, approval } = dialogData
 
   return {
-    id,
+    id: generateId(),
     type,
-    commits,
-    subscribers,
+    commits: splitValues(commits),
     description,
     approval,
+    date: getDate(),
     user
   }
 }
@@ -22,7 +21,26 @@ const getConfigData = ({ config }) => {
   return JSON.parse(config)
 }
 
+const getFileContent = (request) => {
+  const { id, type, commits, description, approval, date, user } = request
+
+  const approvalText = {
+    [true]: 'Yes',
+    [false]: 'No',
+  }
+
+  return `Id			: ${id}
+Type		: ${makeTitleCase(type)}
+Commits		: [ ${commits.join(', ')} ]
+Description	: ${description}
+Approval	: ${approvalText[approval] || 'Unknown'}
+Date		: ${format(date, 'MM.DD.YY, HH:mm A')}
+User Name	: ${user.name}
+User Id		: ${user.id}`
+}
+
 module.exports = {
   getRequestData,
-  getConfigData
+  getConfigData,
+  getFileContent
 }

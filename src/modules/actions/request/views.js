@@ -5,14 +5,12 @@ const {
   typeLabel,
   gitCheckoutLabel,
   gitCherryPickLabel,
-  subscribersLabel,
-  commitsLabel,
-  usersLabel
+  commitsLabel
 } = require('./labels')
 
-const requestReceivedAuthorView = ({ id, type, commits, subscribers, file }) => ({
+const requestReceivedAuthorView = ({ id, type, commits, file }) => ({
   response_type: 'ephemeral',
-  text: `I've received your ${typeLabel(type)} request with following commits: ${commitsLabel(commits)} Your request id is: ${requestIdLabel(id, file)}.\nI'll notify ${usersLabel(subscribers)} about further updates.`,
+  text: `I've received your ${typeLabel(type)} request with following commits: ${commitsLabel(commits)} Your request id is: ${requestIdLabel(id, file)}.\nI'll notify you about further updates.`,
   mrkdwn: true,
   mrkdwn_in: ['text'],
 })
@@ -82,11 +80,9 @@ git push origin HEAD
 }
 
 const requestInitiatedChannelView = (request, approver) => {
-  const { id, file, user, subscribers } = request
+  const { id, file, user } = request
   return {
-    text: `<@${approver.id}> initiated ${requestIdLabel(id, file)} release request of <@${user.id}>.  :tada:
-${subscribersLabel(subscribers)}
-`
+    text: `<@${approver.id}> initiated ${requestIdLabel(id, file)} release request of <@${user.id}>.  :tada:`
   }
 }
 

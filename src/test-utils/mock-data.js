@@ -31,17 +31,16 @@ const mockRequestFormData = {
   requestType: 'hotfix',
   commits: 'sha1, sha2',
   description: 'Hotfix Reqest',
-  approval: null,
-  subscribers: '<@user1>, #bot'
+  approval: null
 }
 
 const mockInitialRequest = {
   id: 'req-1',
   type: mockRequestFormData.requestType,
   commits: splitValues(mockRequestFormData.commits),
-  subscribers: splitValues(mockRequestFormData.subscribers),
   description: mockRequestFormData.description,
   approval: mockRequestFormData.approval,
+  date: '2019-01-27T18:13:15.249Z',
   user: mockUser,
   file: mockFile,
   status: RequestStatus.initial

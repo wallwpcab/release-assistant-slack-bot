@@ -35,6 +35,11 @@ const getSlackUserId = (text) => {
   return findGroup([userExpr], text) || ''
 }
 
+const makeTitleCase = (message = '') => message.replace(
+  /\w\S*/g, word =>
+    word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
+)
+
 module.exports = {
   splitValues,
   findGroup,
@@ -42,5 +47,6 @@ module.exports = {
   getSlackChannels,
   getSlackChannelId,
   getSlackUsers,
-  getSlackUserId
+  getSlackUserId,
+  makeTitleCase
 }

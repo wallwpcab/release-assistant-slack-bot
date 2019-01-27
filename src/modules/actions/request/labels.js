@@ -37,19 +37,6 @@ Commits: ${commitsLabel(commits)}
 `
 }
 
-const usersLabel = (users) => {
-  const quotedUsers = users.map(u => `${u}`)
-  const usersExceptLastOne = quotedUsers.slice(0, -1).join(', ')
-  const [lastUser = ''] = quotedUsers.slice(-1)
-  const otherUsers = (usersExceptLastOne && ', ' + usersExceptLastOne) + (lastUser && ` and ${lastUser}`)
-  return `you${otherUsers}`
-}
-
-const subscribersLabel = (subscribers) => {
-  const users = subscribers.map(u => `${u}`).join(' ')
-  return users && `//cc ${users}`
-}
-
 const gitCheckoutLabel = ({ baseCommit, build }) => {
   const commit = baseCommit || '__COMMIT_SHA__'
   return `git checkout -b ${build.branch} ${commit}`
@@ -68,8 +55,6 @@ module.exports = {
   descriptionLabel,
   commitsLabel,
   requestLabel,
-  usersLabel,
-  subscribersLabel,
   gitCheckoutLabel,
   gitCherryPickLabel
 }

@@ -48,14 +48,6 @@ const requestFormView = (text) => ({
         }
       ],
       hint: 'Mention if you got aprovals already'
-    },
-    {
-      label: 'Subscribers',
-      type: 'text',
-      name: 'subscribers',
-      value: text,
-      optional: true,
-      hint: "Please dont make any change here! Use '/request-release' arguments."
     }
   ]
 })

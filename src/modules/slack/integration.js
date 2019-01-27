@@ -5,6 +5,7 @@ const { pathOr } = require('ramda')
 const { httpClient } = require('./http')
 const { readConfig } = require('../../bot-config')
 const { getSlackChannelId, getSlackUserId } = require('../../utils')
+const { getFileContent } = require('../../transformer')
 const log = require('../../utils/log')
 
 const postMessage = async (url, message) => {
@@ -88,9 +89,15 @@ const uploadFile = async (filename, title, content, filetype = 'text', channels 
 
 const uploadRequestData = async (request) => {
   const { botChannel } = await readConfig()
-  const { id } = request
+
   try {
-    const { file } = await uploadFile(`${id}.json`, 'Release Request', JSON.stringify(request, null, 4), 'json', getSlackChannelId(botChannel))
+    const { file } = await uploadFile(
+      `${request.id}.txt`,
+      'Release Request',
+      getFileContent(request),
+      'text',
+      getSlackChannelId(botChannel)
+    )
     return file
   } catch (err) {
     log.error('error in uploadRequestData()', err)
