@@ -1,6 +1,8 @@
 const { setMockId } = require('../../../test-utils/mock-implementations')
 const { format } = require('date-fns')
-const { getInitialRequests, createDeployment, getOrCreateDeployment } = require('./utils')
+
+const { RequestType } = require('../../request/mappings')
+const { getInitialRequests, createDeployment, getOrCreateDeployment, getGroupType, updateObject } = require('./utils')
 const { mockConfig, mockInitialRequest, mockApprovedRequest, mockInitialBuild, mockInitialDeployment, mockBranchDeployment } = require('../../../test-utils/mock-data')
 const { mockGitProductionApi } = require('../../../test-utils/mock-api')
 const { updateConfig } = require('../../../bot-config')
@@ -25,20 +27,22 @@ describe('Request utils', async () => {
 
     const mockBuild = {
       ...mockInitialBuild,
-      branch: `release/${format(new Date(), 'YY-MM-DD')}/${mockApprovedRequest.type}/${id}`
+      branch: `release/${format(new Date(), 'YY-MM-DD')}/${mockInitialRequest.type}/${id}`
     }
 
     const mockDeployment = {
       ...mockInitialDeployment,
       id,
-      build: mockBuild,
-      requests: []
+      build: mockBuild
     }
 
-    const deployment = await createDeployment(mockApprovedRequest.type)
+    const deployment = await createDeployment([mockInitialRequest])
 
     expect(gitApi.isDone()).toBe(true)
-    expect(deployment).toMatchObject(mockDeployment)
+    expect(deployment).toMatchObject({
+      ...mockDeployment,
+      requests: [mockInitialRequest.id]
+    })
   })
 
   it('Should create a new deployment', async () => {
@@ -47,7 +51,7 @@ describe('Request utils', async () => {
 
     const mockBuild = {
       ...mockInitialBuild,
-      branch: `release/${format(new Date(), 'YY-MM-DD')}/${mockApprovedRequest.type}/${id}`
+      branch: `release/${format(new Date(), 'YY-MM-DD')}/${mockInitialRequest.type}/${id}`
     }
 
     const mockDeployment = {
@@ -60,10 +64,10 @@ describe('Request utils', async () => {
       [id]: mockDeployment
     }
 
-    const deployment = await getOrCreateDeployment(deployments, mockApprovedRequest)
+    const deployment = await getOrCreateDeployment(deployments, [mockInitialRequest])
 
     expect(gitApi.isDone()).toBe(true)
-    expect(deployment.requests).toHaveLength(0)
+    expect(deployment.requests).toHaveLength(1)
   })
 
   it('Should get an existing deployment', async () => {
@@ -72,7 +76,7 @@ describe('Request utils', async () => {
 
     const mockBuild = {
       ...mockInitialBuild,
-      branch: `release/${format(new Date(), 'YY-MM-DD')}/${mockApprovedRequest.type}/${id}`
+      branch: `release/${format(new Date(), 'YY-MM-DD')}/${mockInitialRequest.type}/${id}`
     }
 
     const mockDeployment = {
@@ -85,9 +89,57 @@ describe('Request utils', async () => {
       [id]: mockDeployment
     }
 
-    const deployment = await getOrCreateDeployment(deployments, mockApprovedRequest)
+    const deployment = await getOrCreateDeployment(deployments, [mockInitialRequest])
 
     expect(gitApi.isDone()).toBe(true)
-    expect(deployment.requests).toHaveLength(1)
+    expect(deployment.requests).toHaveLength(2)
+  })
+
+  it('Can get request group type', () => {
+    const activationRequest = {
+      ...mockInitialRequest,
+      type: RequestType.activation.value
+    }
+
+    const hotfixRequest = {
+      ...mockInitialRequest,
+      type: RequestType.hotfix.value
+    }
+
+    const type1 = getGroupType([
+      activationRequest,
+      activationRequest
+    ])
+    expect(type1).toBe(RequestType.activation.value)
+
+    const type2 = getGroupType([
+      hotfixRequest,
+      hotfixRequest
+    ])
+    expect(type2).toBe(RequestType.hotfix.value)
+
+    const type3 = getGroupType([
+      activationRequest,
+      hotfixRequest
+    ])
+    expect(type3).toBe(`${RequestType.hotfix.value}-${RequestType.activation.value}`)
+  })
+
+  it('Can update child object', () => {
+    const child = {
+      id: '1',
+      b: 'b'
+    }
+    const parent = {
+      '1': {
+        id: '1',
+        a: 'a'
+      }
+    }
+
+    expect(updateObject(parent, child, 'id')).toMatchObject({
+      ...parent,
+      [child.id]: child
+    })
   })
 })

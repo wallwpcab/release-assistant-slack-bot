@@ -1,19 +1,29 @@
 const { format } = require('date-fns')
 
-const { readConfig } = require('../../../bot-config')
-const { generateId } = require('../../../utils/generator')
+const { generateId, getDate } = require('../../../utils/generator')
 const { getGitInfo } = require('../../../git-integration')
-const { RequestStatus, DeploymentStatus } = require('../../request/mappings')
+const { RequestType, RequestStatus, DeploymentStatus } = require('../../request/mappings')
 
-const getInitialRequests = (requests)=> {
+const getInitialRequests = (requests) => {
   return Object.values(requests).filter(r => r.status === RequestStatus.initial)
 }
 
-const createBuild = (requestType, deploymentId) => ({
-  branch: `release/${format(new Date(), 'YY-MM-DD')}/${requestType}/${deploymentId}`
+const createBuild = (type, deploymentId) => ({
+  branch: `release/${format(getDate(), 'YY-MM-DD')}/${type}/${deploymentId}`
 })
 
-const createDeployment = async (requestType) => {
+const getGroupType = (requests) => {
+  const hasType = (requests, type) => requests.find(r => r.type === type)
+
+  return [
+    RequestType.hotfix.value,
+    RequestType.activation.value
+  ].map(type => hasType(requests, type) && type)
+    .filter(Boolean)
+    .join('-')
+}
+
+const createDeployment = async (requests) => {
   const { info } = await getGitInfo(true)
   const id = generateId()
 
@@ -21,25 +31,39 @@ const createDeployment = async (requestType) => {
     id,
     status: DeploymentStatus.initial,
     baseCommit: info.gitCommitAbbrev,
-    build: createBuild(requestType, id),
-    requests: []
+    build: createBuild(getGroupType(requests), id),
+    requests: requests.map(r => r.id)
   }
 }
 
-const getOrCreateDeployment = async (deployments, requestType) => {
+const getOrCreateDeployment = async (deployments, requests) => {
   let deployment = Object.values(deployments).find(d => d.status === DeploymentStatus.initial)
+  const initialRequests = getInitialRequests(requests)
+
   if (!deployment) {
-    deployment = await createDeployment(requestType)
+    deployment = await createDeployment(initialRequests)
   } else {
     const { info } = await getGitInfo(true)
     deployment.baseCommit = info.gitCommitAbbrev
+    deployment.requests = deployment.requests.concat(
+      initialRequests.map(r => r.id)
+    )
   }
 
   return deployment
 }
 
+const updateObject = (parent, child, key = 'id') => {
+  return {
+    ...parent,
+    [child[key]]: child
+  }
+}
+
 module.exports = {
   getInitialRequests,
   createDeployment,
-  getOrCreateDeployment
+  getOrCreateDeployment,
+  updateObject,
+  getGroupType
 }

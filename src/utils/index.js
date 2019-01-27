@@ -21,7 +21,7 @@ const getSlackChannels = (text) => {
 }
 
 const getSlackChannelId = (text) => {
-  const channelExpr = /<#([^>]+)>/
+  const channelExpr = /<#([^\|>]+)/
   return findGroup([channelExpr], text) || ''
 }
 
@@ -31,7 +31,7 @@ const getSlackUsers = (text) => {
 }
 
 const getSlackUserId = (text) => {
-  const userExpr = /<@([^>]+)>/
+  const userExpr = /<@([^\|>]+)/
   return findGroup([userExpr], text) || ''
 }
 

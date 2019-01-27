@@ -182,6 +182,8 @@ describe('Request actions', async () => {
       send: jest.fn()
     }
 
+    setMockId('dep-1')
+
     // start mock api
     mockSlackApiUrl()
 

@@ -16,7 +16,7 @@ describe('Utils', () => {
   })
 
   it('Can extract Slack channel id from text', () => {
-    expect(getSlackChannelId('bla bla <#CHANNEL1>')).toEqual('CHANNEL1')
+    expect(getSlackChannelId('bla bla <#CHANNEL1|channel1>')).toEqual('CHANNEL1')
   })
 
   it('Can extract Slack users from text', () => {
@@ -24,6 +24,6 @@ describe('Utils', () => {
   })
 
   it('Can extract Slack userId from text', () => {
-    expect(getSlackUserId('bla bla <@USER1> abc')).toEqual('USER1')
+    expect(getSlackUserId('bla bla <@USER1|user1> abc')).toEqual('USER1')
   })
 })

@@ -43,7 +43,8 @@ const mockInitialRequest = {
   date: '2019-01-27T18:13:15.249Z',
   user: mockUser,
   file: mockFile,
-  status: RequestStatus.initial
+  status: RequestStatus.initial,
+  deploymentId: 'dep-1'
 }
 
 const mockApprovedRequest = {
@@ -84,7 +85,7 @@ const mockInitialDeployment = {
   status: DeploymentStatus.initial,
   baseCommit: mockGitCommit.gitCommitAbbrev,
   build: mockInitialBuild,
-  requests: [mockApprovedRequest]
+  requests: [mockApprovedRequest.id]
 }
 
 const mockBranchDeployment = {

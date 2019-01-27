@@ -1,6 +1,6 @@
 const { pathOr } = require('ramda')
 
-const { getOrCreateDeployment } = require('./utils')
+const { getOrCreateDeployment, updateObject } = require('./utils')
 const { Request, RequestApproval, RequestStatus } = require('../../request/mappings')
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { getRequestData } = require('../../../transformer')
@@ -76,21 +76,19 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
     return
   }
 
-  const deployment = await getOrCreateDeployment(deployments, request.type)
+  const deployment = await getOrCreateDeployment(deployments, requests)
+
   request = {
     ...request,
     status: RequestStatus.approved,
     approver: user,
-    deployment
+    deploymentId: deployment.id
   }
-
-  requests = {
-    ...requests,
-    [requestId]: request
-  }
+  requests = updateObject(requests, request)
+  deployments = updateObject(deployments, deployment)
 
   await Promise.all([
-    updateConfig({ requests: requests }),
+    updateConfig({ requests, deployments }),
     sendMessage(request.user.id, requestInitiatedAuthorView(request, user)),
     sendMessageToUsers(releaseManagers, requestInitiatedManagerView(request, deployment, user)),
     postMessageToBotChannel(requestInitiatedChannelView(request, user)),

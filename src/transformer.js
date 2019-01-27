@@ -23,10 +23,9 @@ const getConfigData = ({ config }) => {
 
 const getFileContent = (request) => {
   const { id, type, commits, description, approval, date, user } = request
-
   const approvalText = {
-    [true]: 'Yes',
-    [false]: 'No',
+    ['yes']: 'Yes',
+    ['no']: 'No',
   }
 
   return `Id			: ${id}
@@ -34,7 +33,7 @@ Type		: ${makeTitleCase(type)}
 Commits		: [ ${commits.join(', ')} ]
 Description	: ${description}
 Approval	: ${approvalText[approval] || 'Unknown'}
-Date		: ${format(date, 'MM.DD.YY, HH:mm A')}
+Date		: ${format(date, 'MM.DD.YY / HH:mm')}
 User Name	: ${user.name}
 User Id		: ${user.id}`
 }
