@@ -1,13 +1,13 @@
 const { path } = require('ramda')
 
 const log = require('../../utils/log')
-const { handleIfEditDialogAction } = require('../config/actions')
-const { handleIfCancelRequestAction } = require('../progress/actions')
+const { handleIfEditDialogAction } = require('./config-actions')
+const { handleIfRequestProgressAction } = require('./progress-actions')
 const {
   handleIfRequestDialogAction,
   handleIfInitiateRequestAction,
   handleIfRejectRequestAction
-} = require('../request/actions')
+} = require('./request-actions')
 
 const actionsPost = async (req, res) => {
   try {
@@ -35,7 +35,7 @@ const handleIfInteractiveMessage = (payload) => {
   }
   handleIfInitiateRequestAction(payload)
   handleIfRejectRequestAction(payload)
-  handleIfCancelRequestAction(payload)
+  handleIfRequestProgressAction(payload)
 }
 
 module.exports = {

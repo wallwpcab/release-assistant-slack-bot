@@ -1,7 +1,7 @@
 const { pathOr } = require('ramda')
 
-const { getInitialRequests } = require('./utils')
-const { Request, RequestApproval, RequestType, RequestStatus } = require('./mappings')
+const { getInitialRequests } = require('../request/utils')
+const { Request, RequestApproval, RequestType, RequestStatus } = require('../request/mappings')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { getGitInfo } = require('../../git-integration')
 const { getRequestData } = require('../../transformer')
@@ -16,8 +16,6 @@ const {
 const {
   requestReceivedAuthorView,
   requestReceivedManagerView,
-  requestInvalidIdView,
-  requestAlreadyInitiatedView,
   requestInitiatedAuthorView,
   requestInitiatedManagerView,
   requestInitiatedChannelView,
@@ -25,7 +23,11 @@ const {
   requestRejectedAuthorView,
   requestRejectedManagerView,
   requestRejectedCommentView
-} = require('./views')
+} = require('./request-views')
+const {
+  requestInvalidIdView,
+  requestAlreadyInitiatedView,
+} = require('../request/views')
 
 const handleIfRequestDialogAction = async ({ callback_id, response_url, submission, user }) => {
   if (callback_id !== Request.callback_id) return

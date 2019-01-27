@@ -1,7 +1,7 @@
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
 const { actionsPost } = require('./controller')
 const { generateActionRequest } = require('./test-utils')
-const { CancelRequest } = require('../progress/mappings')
+const { RequestProgress } = require('../progress/mappings')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { waitForInternalPromises } = require('../../test-utils')
 const {
@@ -22,7 +22,7 @@ const {
 } = require('../../test-utils/mock-api')
 
 const actionRequest = generateActionRequest(
-  CancelRequest.callback_id,
+  RequestProgress.callback_id,
   mockUser
 )
 
@@ -37,7 +37,7 @@ describe('Cancel request actions', async () => {
   it('Can handle cancel request action with invalid request id', async () => {
     const requestId = 'invalid-id'
     const req = actionRequest(
-      CancelRequest.yes,
+      RequestProgress.cancel,
       requestId
     )
     const res = {
@@ -69,7 +69,7 @@ describe('Cancel request actions', async () => {
     await updateConfig({ requests }, true)
 
     const req = actionRequest(
-      CancelRequest.yes,
+      RequestProgress.cancel,
       mockApprovedRequest.id
     )
 
@@ -97,7 +97,7 @@ describe('Cancel request actions', async () => {
 
   it('Can handle cancel request action', async () => {
     const req = actionRequest(
-      CancelRequest.yes,
+      RequestProgress.cancel,
       mockInitialRequest.id
     )
 

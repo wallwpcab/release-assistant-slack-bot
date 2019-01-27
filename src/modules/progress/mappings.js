@@ -1,9 +1,8 @@
-const CancelRequest = {
-  callback_id: 'cancelRequest',
-  yes: 'yes',
-  no: 'no'
+const RequestProgress = {
+  callback_id: 'requestProgress',
+  cancel: 'cancel'
 }
 
 module.exports = {
-  CancelRequest
+  RequestProgress
 }

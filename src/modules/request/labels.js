@@ -1,5 +1,4 @@
-
-const { RequestType } = require('../mappings')
+const { RequestType } = require('./mappings')
 
 const requestIdLabel = (id, file) => file.link ? `*<${file.link}|\`${id}\`>*` : `*\`${id}\`*`
 

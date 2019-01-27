@@ -9,7 +9,7 @@
     "start": "nodemon src/index.js --ignore 'store.json'",
     "tsc": "tsc",
     "lint": "eslint src/**/*.js --fix",
-    "test": "jest --coverage"
+    "test": "jest"
   },
   "dependencies": {
     "axios": "^0.18.0",

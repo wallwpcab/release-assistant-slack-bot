@@ -85,28 +85,28 @@ const mockInitialDeployment = {
   id: 'dep-1',
   status: DeploymentStatus.initial,
   build: mockInitialBuild,
-  requests: [mockApprovedRequest]
+  requests: [mockApprovedRequest],
 };
 
 const mockBranchDeployment = {
   id: 'dep-2',
   status: DeploymentStatus.branch,
   build: mockBranchBuild,
-  requests: [mockApprovedRequest]
+  requests: [mockApprovedRequest],
 };
 
 const mockStagingDeployment = {
   id: 'dep-3',
   status: DeploymentStatus.staging,
   build: mockStagingBuild,
-  requests: [mockApprovedRequest]
+  requests: [mockApprovedRequest],
 };
 
 const mockProductionDeployment = {
   id: 'dep-3',
   status: DeploymentStatus.production,
   build: mockProductionBuild,
-  requests: [mockApprovedRequest]
+  requests: [mockApprovedRequest],
 };
 
 const mockConfig = {

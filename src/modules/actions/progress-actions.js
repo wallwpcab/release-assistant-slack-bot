@@ -1,13 +1,13 @@
 const { pathOr } = require('ramda')
 
-const { CancelRequest } = require('./mappings')
+const { RequestProgress } = require('../progress/mappings')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { RequestStatus } = require('../request/mappings')
 const {
   requestCanceledAuthorView,
   requestCanceledManagerView,
   requestCanceledCommentView
-} = require('./views')
+} = require('./progress-views')
 const {
   requestInvalidIdView,
   requestAlreadyInitiatedView
@@ -18,9 +18,9 @@ const {
   addCommentOnFile
 } = require('../slack/integration')
 
-const handleIfCancelRequestAction = async ({ callback_id, actions: [action], user }) => {
+const handleIfRequestProgressAction = async ({ callback_id, actions: [action], user }) => {
   const { name, value: requestId } = action || {}
-  if (callback_id !== CancelRequest.callback_id || name !== CancelRequest.yes) return
+  if (callback_id !== RequestProgress.callback_id || name !== RequestProgress.cancel) return
 
   const config = await readConfig()
   const { releaseManagers, requests } = config
@@ -47,5 +47,5 @@ const handleIfCancelRequestAction = async ({ callback_id, actions: [action], use
 }
 
 module.exports = {
-  handleIfCancelRequestAction
+  handleIfRequestProgressAction
 }

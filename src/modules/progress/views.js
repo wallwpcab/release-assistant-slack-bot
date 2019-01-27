@@ -1,5 +1,5 @@
-const { CancelRequest } = require('./mappings')
-const { requestIdLabel } = require('../request/views/labels')
+const { RequestProgress } = require('./mappings')
+const { requestIdLabel } = require('../request/labels')
 
 const showProgressView = (requests = []) => {
   const progress = requests.map(({ id, file, progress }) => `Request Id: ${requestIdLabel(id, file)} \nProgress: *\`${progress || 'requested'}\`*`).join('\n\n')
@@ -10,7 +10,7 @@ const showProgressView = (requests = []) => {
 }
 
 const confirmRequestCancelView = ({ id, file }) => {
-  const { callback_id, yes, no } = CancelRequest
+  const { callback_id, yes, no } = RequestProgress
   return {
     response_type: 'ephemeral',
     text: '',
@@ -47,27 +47,7 @@ const confirmRequestCancelView = ({ id, file }) => {
   }
 }
 
-const requestCanceledAuthorView = ({ id, file }) => {
-  return {
-    response_type: 'ephemeral',
-    text: `You've canceled ${requestIdLabel(id, file)} request`
-  }
-}
-
-const requestCanceledManagerView = ({ id, file }, user) => {
-  return {
-    text: `<@${user.id}> canceled ${requestIdLabel(id, file)} progress`
-  }
-}
-
-const requestCanceledCommentView = (user) => {
-  return `<@${user.id}> canceled progress`
-}
-
 module.exports = {
   showProgressView,
-  confirmRequestCancelView,
-  requestCanceledAuthorView,
-  requestCanceledManagerView,
-  requestCanceledCommentView
+  confirmRequestCancelView
 }
