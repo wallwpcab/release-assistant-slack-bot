@@ -6,3 +6,4 @@ node_modules/
 coverage/
 
 development.json
+store.json

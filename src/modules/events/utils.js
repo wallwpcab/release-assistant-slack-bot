@@ -41,6 +41,10 @@ const getBuildInfo = (message = '') => {
 }
 
 const updateDeployments = (deployments, deployment, build) => {
+  if(!deployment || !build) {
+    deployments
+  }
+
   return mergeRight(deployments, {
     [deployment.id]: mergeRight(deployment, {
       status: build.environment,
@@ -49,32 +53,9 @@ const updateDeployments = (deployments, deployment, build) => {
   })
 }
 
-const updateDeployment = async (deployment, build) => {
-  const updatedDeployment = {
-    ...deployment,
-    status: build.environment,
-    build
-  }
-
-  const { deployments: currentDeployments } = await readConfig()
-  const deployments = {
-    ...currentDeployments,
-    [deployment.id]: updatedDeployment
-  }
-
-  if (build.environment === DeploymentStatus.staging) {
-    deployments.staging = updatedDeployment
-  }
-
-  await updateConfig({
-    deployments
-  })
-}
-
 module.exports = {
   isDeploymentEvent,
   isSuccessfullDeployment,
   getBuildInfo,
-  updateDeployments,
-  updateDeployment
+  updateDeployments
 }

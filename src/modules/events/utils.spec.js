@@ -1,3 +1,4 @@
+require('../../test-utils/mock-implementations')
 const { mockConfig, mockInitialDeployment, mockBranchDeployment, mockStagingDeployment, mockBranchBuild, mockStagingBuild } = require('../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { branchBuildView, stagingBuildView, productionBuildView } = require('../config/views')
@@ -59,33 +60,6 @@ describe('Events Utils', async () => {
       branch,
       commitId: 'c03012d',
       environment: 'production'
-    })
-  })
-
-  it('Can update to branch deployment', async () => {
-    await updateDeployment(mockInitialDeployment, mockBranchBuild)
-    const { deployments } = await readConfig()
-    const deployment = deployments[mockInitialDeployment.id]
-
-    expect(deployment).toMatchObject({
-      ...mockBranchDeployment,
-      id: mockInitialDeployment.id
-    })
-    expect(deployments.staging).toBeUndefined()
-  })
-
-  it('Can update staging deployment', async () => {
-    await updateDeployment(mockBranchDeployment, mockStagingBuild)
-    const { deployments } = await readConfig()
-    const deployment = deployments[mockBranchDeployment.id]
-
-    expect(deployment).toMatchObject({
-      ...mockStagingDeployment,
-      id: mockBranchDeployment.id
-    })
-    expect(deployments.staging).toMatchObject({
-      ...mockStagingDeployment,
-      id: mockBranchDeployment.id
     })
   })
 })

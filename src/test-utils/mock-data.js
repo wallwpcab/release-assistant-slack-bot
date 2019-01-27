@@ -5,8 +5,8 @@ const mockUser = {
   id: 'user',
 };
 
-const mockInitiator = {
-  id: 'initiator',
+const mockApprover = {
+  id: 'approver',
 };
 
 const mockRejector = {
@@ -51,7 +51,7 @@ const mockApprovedRequest = {
   ...mockInitialRequest,
   id: 'req-2',
   status: RequestStatus.approved,
-  initiator: mockInitiator,
+  approver: mockApprover,
   baseCommit: mockGitCommit.gitCommitAbbrev,
 };
 
@@ -83,27 +83,30 @@ const mockProductionBuild = {
 
 const mockInitialDeployment = {
   id: 'dep-1',
-  branch: 'release/hotfix/2018-10-14/dep-1',
   status: DeploymentStatus.initial,
   build: mockInitialBuild,
+  requests: [mockApprovedRequest]
 };
 
 const mockBranchDeployment = {
   id: 'dep-2',
   status: DeploymentStatus.branch,
   build: mockBranchBuild,
+  requests: [mockApprovedRequest]
 };
 
 const mockStagingDeployment = {
   id: 'dep-3',
   status: DeploymentStatus.staging,
   build: mockStagingBuild,
+  requests: [mockApprovedRequest]
 };
 
 const mockProductionDeployment = {
   id: 'dep-3',
   status: DeploymentStatus.production,
   build: mockProductionBuild,
+  requests: [mockApprovedRequest]
 };
 
 const mockConfig = {
@@ -121,7 +124,7 @@ module.exports = {
   mockConfig,
   mockRequestFormData,
   mockInitialRequest,
-  mockInitiator,
+  mockApprover,
   mockApprovedRequest,
   mockRejector,
   mockUser,

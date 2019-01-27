@@ -114,10 +114,10 @@ const requestInvalidIdView = (id) => {
 }
 
 const requestAlreadyInitiatedView = (request) => {
-  const { id, file, initiator } = request
+  const { id, file, approver } = request
   return {
     response_type: 'ephemeral',
-    text: `<@${initiator.id}> already initiated ${requestIdLabel(id, file)} release request.`
+    text: `<@${approver.id}> already initiated ${requestIdLabel(id, file)} release request.`
   }
 }
 

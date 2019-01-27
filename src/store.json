@@ -1,1 +1,12 @@
-{"botChannel":"<#GEL8D0QRG|release-bot-test>","botChannelWebhook":"https://hooks.slack.com/services/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","stagingInfoUrl":"https://staging.glass.0u6ws.k8s.archon.ore.aws.k8s.3stripes.net/_manage/info","productionInfoUrl":"https://production.glass.n5co2.k8s.asgard.dub.aws.k8s.3stripes.net/_manage/info","releaseManagers":["<@UC29BCUN6>"],"requests":{},"deployChannel":"<#CEML3BEK0|release-bot>"}
+{
+  "botChannel": "<#CHANNEL1|release-bot-1>",
+  "deployChannel": "<#CHANNEL2|release-bot-2>",
+  "botChannelWebhook": "https://hooks.slack.com/test",
+  "stagingInfoUrl": "https://staging.git.net/info",
+  "productionInfoUrl": "https://production.git.net/info",
+  "releaseManagers": [],
+  "requests": {},
+  "deployments": {
+    "staging": {}
+  }
+}

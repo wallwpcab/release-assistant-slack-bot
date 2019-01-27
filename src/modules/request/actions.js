@@ -82,7 +82,7 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
     ...request,
     status: RequestStatus.approved,
     baseCommit: info.gitCommitAbbrev,
-    initiator: user
+    approver: user
   }
 
   const allRequests = {

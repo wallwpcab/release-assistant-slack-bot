@@ -6,6 +6,7 @@ const { readConfig, updateConfig } = require('../../bot-config')
 const { mockPostMessageApi } = require('../../test-utils/mock-api')
 const { mockConfig } = require('../../test-utils/mock-data')
 const { releaseManagerUpdatedView } = require('./views')
+const { eventRequestGenerator } = require('./test-utils')
 
 describe('Events controller', async () => {
   beforeEach(async () => {
@@ -32,17 +33,11 @@ describe('Events controller', async () => {
   it('Can handle channel topic change event', async () => {
     const author = '<@USER1|Fred>'
     const managers = ['<@USER2|Kerl>']
-    const req = {
-      body: {
-        event: {
-          type: 'message',
-          subtype: 'group_topic',
-          text: `${author} set topic to: ${managers.join(', ')} are DevOps for this week`,
-          topic: `${managers.join(', ')} are DevOps for this week`,
-          channel: getSlackChannelId(mockConfig.botChannel)
-        }
-      }
-    }
+    const generateRequest = eventRequestGenerator('group_topic', getSlackChannelId(mockConfig.botChannel))
+    const req = generateRequest({
+      text: `${author} set topic to: ${managers.join(', ')} are DevOps for this week`,
+      topic: `${managers.join(', ')} are DevOps for this week`,
+    })
 
     const res = {
       send: jest.fn()

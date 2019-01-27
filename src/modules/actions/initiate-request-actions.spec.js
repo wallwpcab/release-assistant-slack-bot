@@ -13,7 +13,7 @@ const { mockInitialRequest,
   mockApprovedRequest,
   mockUser,
   mockConfig,
-  mockInitiator,
+  mockApprover,
   mockChannel
 } = require('../../test-utils/mock-data')
 const {
@@ -102,7 +102,7 @@ describe('Initiate request actions', async () => {
   it('Can handle initiate request action', async () => {
     const actionRequest = generateActionRequest(
       RequestApproval.callback_id,
-      mockInitiator
+      mockApprover
     )
 
     const req = actionRequest(
@@ -130,7 +130,7 @@ describe('Initiate request actions', async () => {
     const messageApi = mockPostMessageApi(
       mockConfig.botChannelWebhook,
       ({ text }) => {
-        expect(text).toBe(requestInitiatedChannelView(mockInitialRequest, mockInitiator).text)
+        expect(text).toBe(requestInitiatedChannelView(mockInitialRequest, mockApprover).text)
         return true
       }
     )
