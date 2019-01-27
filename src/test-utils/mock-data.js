@@ -1,39 +1,39 @@
-const { splitValues } = require('../utils');
-const { RequestStatus, DeploymentStatus } = require('../modules/request/mappings');
+const { splitValues } = require('../utils')
+const { RequestStatus, DeploymentStatus } = require('../modules/request/mappings')
 
 const mockUser = {
-  id: 'user',
-};
+  id: 'user'
+}
 
 const mockApprover = {
-  id: 'approver',
-};
+  id: 'approver'
+}
 
 const mockRejector = {
-  id: 'rejector',
-};
+  id: 'rejector'
+}
 
 const mockChannel = {
-  id: 'channel-1',
-};
+  id: 'channel-1'
+}
 
 const mockFile = {
   id: 'file-1',
-  link: 'http://files.com/file-1',
-};
+  link: 'http://files.com/file-1'
+}
 
 const mockGitCommit = {
   gitCommitAbbrev: 'b9c3b02',
-  gitCommit: 'b9c3b0201c3ffd4218e6277d99be2c74dbb0f864',
-};
+  gitCommit: 'b9c3b0201c3ffd4218e6277d99be2c74dbb0f864'
+}
 
 const mockRequestFormData = {
   requestType: 'hotfix',
   commits: 'sha1, sha2',
   description: 'Hotfix Reqest',
   approval: null,
-  subscribers: '<@user1>, #bot',
-};
+  subscribers: '<@user1>, #bot'
+}
 
 const mockInitialRequest = {
   id: 'req-1',
@@ -44,70 +44,70 @@ const mockInitialRequest = {
   approval: mockRequestFormData.approval,
   user: mockUser,
   file: mockFile,
-  status: RequestStatus.initial,
-};
+  status: RequestStatus.initial
+}
 
 const mockApprovedRequest = {
   ...mockInitialRequest,
   id: 'req-2',
   status: RequestStatus.approved,
-  approver: mockApprover,
-  baseCommit: mockGitCommit.gitCommitAbbrev,
-};
+  approver: mockApprover
+}
 
 const mockInitialBuild = {
   branch: 'release/hotfix/2018-10-14/dep-1',
 };
 
 const mockBranchBuild = {
-  branch: 'release/hotfix/2018-10-14/dep-1',
-  commitId: 'c03012d',
+  ...mockInitialBuild,
+  commitId: mockGitCommit.gitCommitAbbrev,
   triggerLink: 'https://google.com',
-  environment: DeploymentStatus.branch,
-};
+  environment: DeploymentStatus.branch
+}
 
 const mockStagingBuild = {
+  ...mockInitialBuild,
   id: '104',
-  branch: 'release/hotfix/2018-10-14/dep-1',
-  commitId: 'c03012d',
+  commitId: mockGitCommit.gitCommitAbbrev,
   triggerLink: 'https://google.com',
-  environment: DeploymentStatus.staging,
-};
+  environment: DeploymentStatus.staging
+}
 
 const mockProductionBuild = {
+  ...mockInitialBuild,
   id: '105',
-  branch: 'release/hotfix/2018-10-14/dep-1',
-  commitId: 'c03012d',
-  environment: DeploymentStatus.production,
-};
+  commitId: mockGitCommit.gitCommitAbbrev,
+  environment: DeploymentStatus.production
+}
 
 const mockInitialDeployment = {
   id: 'dep-1',
   status: DeploymentStatus.initial,
+  baseCommit: mockGitCommit.gitCommitAbbrev,
   build: mockInitialBuild,
-  requests: [mockApprovedRequest],
-};
+  requests: [mockApprovedRequest]
+}
 
 const mockBranchDeployment = {
+  ...mockInitialDeployment,
   id: 'dep-2',
   status: DeploymentStatus.branch,
-  build: mockBranchBuild,
-  requests: [mockApprovedRequest],
-};
+  build: mockBranchBuild
+}
 
 const mockStagingDeployment = {
+  ...mockInitialDeployment,
   id: 'dep-3',
   status: DeploymentStatus.staging,
-  build: mockStagingBuild,
-  requests: [mockApprovedRequest],
-};
+  build: mockStagingBuild
+}
 
 const mockProductionDeployment = {
-  id: 'dep-3',
+  ...mockInitialDeployment,
+  id: 'dep-4',
   status: DeploymentStatus.production,
-  build: mockProductionBuild,
-  requests: [mockApprovedRequest],
-};
+  build: mockProductionBuild
+}
 
 const mockConfig = {
   botChannel: '<#GEL8D0QRG|release-bot-test>',
@@ -117,8 +117,10 @@ const mockConfig = {
   productionInfoUrl: 'http://production.git.com/info',
   releaseManagers: ['<@UC29BCUN6>'],
   requests: {},
-  deployments: {},
-};
+  deployments: {
+    staging: {}
+  }
+}
 
 module.exports = {
   mockConfig,
@@ -131,11 +133,12 @@ module.exports = {
   mockFile,
   mockGitCommit,
   mockChannel,
+  mockInitialBuild,
   mockInitialDeployment,
   mockBranchBuild,
   mockBranchDeployment,
   mockStagingBuild,
   mockStagingDeployment,
   mockProductionBuild,
-  mockProductionDeployment,
-};
+  mockProductionDeployment
+}

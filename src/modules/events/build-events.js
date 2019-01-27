@@ -5,6 +5,7 @@ const { sendMessageToUsers, postMessageToBotChannel } = require('../slack/integr
 const log = require('../../utils/log')
 const { DeploymentStatus } = require('../request/mappings')
 const {
+  findDeployment,
   updateDeployments
 } = require('./utils')
 
@@ -14,8 +15,7 @@ const handleIfBranchBuildEvent = async (build) => {
   }
 
   const { deployments, releaseManagers } = await readConfig()
-  const deployment = Object.values(deployments)
-    .find(d => d.build.branch === build.branch)
+  const deployment = findDeployment(deployments, build)
 
   if (!deployment) {
     log.log(`Build Event > branch:${branch} is not found in deployments: ${deployments}`)
@@ -35,14 +35,10 @@ const handleIfStagingBuildEvent = async (build) => {
     return
   }
 
-  let { deployments, releaseManagers } = await readConfig()
-  const deployment = Object.values(deployments)
-    .find(d => d.build.branch === build.branch)
-
-  deployments = mergeRight(deployments, {
-    staging: {
-      build
-    }
+  const { deployments: oldDeployments, releaseManagers } = await readConfig()
+  const deployment = findDeployment(oldDeployments, build)
+  const deployments = mergeRight(oldDeployments, {
+    staging: { build }
   })
 
   if (!deployment) {
@@ -64,9 +60,8 @@ const handleIfProductionBuildEvent = async (build) => {
     return
   }
 
-  let { deployments } = await readConfig()
-  const deployment = Object.values(deployments)
-    .find(d => d.build.branch === build.branch)
+  const { deployments } = await readConfig()
+  const deployment = findDeployment(deployments, build)
 
   if (!deployment) {
     log.log(`Build Event > branch:${branch} is not found in deployments: ${deployments}`)

@@ -51,17 +51,12 @@ const subscribersLabel = (subscribers) => {
   return users && `//cc ${users}`
 }
 
-const dateLabel = (sep = '.') => {
-  const date = new Date()
-  return `${date.getDate()}${sep}${date.getMonth()}${sep}${date.getFullYear()}`
-}
-
-const gitCheckoutLabel = ({ id, type, baseCommit }) => {
+const gitCheckoutLabel = ({ baseCommit, build }) => {
   const commit = baseCommit || '__COMMIT_SHA__'
-  return `git checkout -b release/${type}/${dateLabel('')}/${id} ${commit}`
+  return `git checkout -b ${build.branch} ${commit}`
 }
 
-const gitCherryPickLabel = (requests) => {
+const gitCherryPickLabel = ({ requests }) => {
   const commits = requests.map(r => r.commits)
     .reduce((acc, r) => acc.concat(r), [])
 
@@ -77,7 +72,6 @@ module.exports = {
   requestLabel,
   usersLabel,
   subscribersLabel,
-  dateLabel,
   gitCheckoutLabel,
   gitCherryPickLabel
 }

@@ -1,9 +1,8 @@
 const { pathOr } = require('ramda')
 
-const { getInitialRequests } = require('../request/utils')
-const { Request, RequestApproval, RequestType, RequestStatus } = require('../request/mappings')
+const { getInitialRequests, getOrCreateDeployment } = require('./request-utils')
+const { Request, RequestApproval, RequestStatus } = require('../request/mappings')
 const { readConfig, updateConfig } = require('../../bot-config')
-const { getGitInfo } = require('../../git-integration')
 const { getRequestData } = require('../../transformer')
 const {
   sendMessage,
@@ -65,8 +64,8 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   const { name, value: requestId } = action || {}
   if (callback_id !== RequestApproval.callback_id || name !== RequestApproval.approve) return
 
-  const { releaseManagers, requests } = await readConfig()
-  const request = pathOr(null, [requestId], requests)
+  let { releaseManagers, requests, deployments } = await readConfig()
+  let request = pathOr(null, [requestId], requests)
   if (!request) {
     await sendMessage(user.id, requestInvalidIdView(requestId), true)
     return
@@ -77,29 +76,25 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
     return
   }
 
-  const { type, file } = request
-  const { info } = await getGitInfo(type === RequestType.hotfix.value)
-
-  const targetRequest = {
+  const deployment = await getOrCreateDeployment(deployments, request.type)
+  request = {
     ...request,
     status: RequestStatus.approved,
-    baseCommit: info.gitCommitAbbrev,
-    approver: user
+    approver: user,
+    deployment
   }
 
-  const allRequests = {
+  requests = {
     ...requests,
-    [requestId]: targetRequest
+    [requestId]: request
   }
-
-  const initialRequests = getInitialRequests(allRequests)
 
   await Promise.all([
-    updateConfig({ requests: allRequests }),
-    sendMessage(targetRequest.user.id, requestInitiatedAuthorView(targetRequest, user)),
-    sendMessageToUsers(releaseManagers, requestInitiatedManagerView(targetRequest, initialRequests, user)),
-    postMessageToBotChannel(requestInitiatedChannelView(targetRequest, user)),
-    addCommentOnFile(file.id, requestInitiatedCommentView(user))
+    updateConfig({ requests: requests }),
+    sendMessage(request.user.id, requestInitiatedAuthorView(request, user)),
+    sendMessageToUsers(releaseManagers, requestInitiatedManagerView(request, deployment, user)),
+    postMessageToBotChannel(requestInitiatedChannelView(request, user)),
+    addCommentOnFile(request.file.id, requestInitiatedCommentView(user))
   ])
 }
 

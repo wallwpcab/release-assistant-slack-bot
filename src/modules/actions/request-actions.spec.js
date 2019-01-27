@@ -1,4 +1,4 @@
-const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
+const { mockSlackApiUrl, setMockId } = require('../../test-utils/mock-implementations')
 const { actionsPost } = require('./controller')
 const { generateDialogRequest, generateActionRequest } = require('./test-utils')
 const { Request, RequestApproval } = require('../request/mappings')
@@ -58,7 +58,7 @@ describe('Request actions', async () => {
       send: jest.fn()
     }
 
-    const updatedMockRequest = { ...mockInitialRequest, id: 'id-1' }
+    setMockId(mockInitialRequest.id)
 
     // generate a different slack api url
     mockSlackApiUrl()
@@ -66,7 +66,7 @@ describe('Request actions', async () => {
     /** mock api **/
     const fileApi = mockFilesUploadApi()
     const chatApi = mockChatPostMessageApi(({ text, channel }) => {
-      expect(text).toBe(requestReceivedManagerView(updatedMockRequest).text)
+      expect(text).toBe(requestReceivedManagerView(mockInitialRequest).text)
       expect(channel).toBe(mockChannel.id)
       return true
     })
@@ -74,7 +74,7 @@ describe('Request actions', async () => {
     const messageApi = mockPostMessageApi(
       responseUrl,
       ({ text }) => {
-        expect(text).toBe(requestReceivedAuthorView(updatedMockRequest).text)
+        expect(text).toBe(requestReceivedAuthorView(mockInitialRequest).text)
         return true
       }
     )

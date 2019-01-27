@@ -1,5 +1,5 @@
-const generateId = () => Date.now();
+const generateId = () => Date.now().toString(36)
 
 module.exports = {
-  generateId,
-};
+  generateId
+}

@@ -1,5 +1,11 @@
-jest.mock('../utils/generator');
+jest.mock('../utils/generator')
+const { generateId } = require('../utils/generator')
 
-const { generateId } = require('../utils/generator');
+let mockId = '-'
+generateId.mockImplementation(() => mockId)
 
-generateId.mockImplementation(() => 'id-1');
+const setMockId = id => mockId = id
+
+module.exports = {
+  setMockId
+}

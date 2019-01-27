@@ -1,6 +1,5 @@
-const { cond, equals, always, T, mergeRight } = require('ramda')
+const { cond, equals, always, T, mergeRight, path } = require('ramda')
 const { findGroup, isAnyMatch } = require('../../utils')
-const { readConfig, updateConfig } = require('../../bot-config')
 const { DeploymentStatus } = require('../request/mappings')
 
 const isDeploymentEvent = (message = '') => {
@@ -53,9 +52,15 @@ const updateDeployments = (deployments, deployment, build) => {
   })
 }
 
+const findDeployment = (deployments, build) => {
+  return Object.values(deployments)
+    .find(d => path(['build', 'branch'], d) === build.branch)
+}
+
 module.exports = {
   isDeploymentEvent,
   isSuccessfullDeployment,
   getBuildInfo,
-  updateDeployments
+  updateDeployments,
+  findDeployment
 }

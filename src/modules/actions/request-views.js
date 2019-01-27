@@ -62,7 +62,7 @@ const requestInitiatedAuthorView = (request, approver) => {
   }
 }
 
-const requestInitiatedManagerView = (request, requests, approver) => {
+const requestInitiatedManagerView = (request, deployment, approver) => {
   const { id, type, file } = request
 
   return {
@@ -70,10 +70,10 @@ const requestInitiatedManagerView = (request, requests, approver) => {
 Please follow these steps:
 \`\`\`
 # Checkout the new brance from ${type === 'activation' ? 'Staging' : 'Production'}
-${gitCheckoutLabel(request)}
+${gitCheckoutLabel(deployment)}
 
 # Cherry pick
-${gitCherryPickLabel(requests)}
+${gitCherryPickLabel(deployment)}
 
 # Push
 git push origin HEAD

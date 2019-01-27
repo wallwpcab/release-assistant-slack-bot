@@ -3,27 +3,27 @@ const {
   getSlackChannels,
   getSlackChannelId,
   getSlackUsers,
-  getSlackUserId,
-} = require('./index');
+  getSlackUserId
+} = require('./index')
 
 describe('Utils', () => {
   it('Can split text by white space or comma seperator', () => {
-    expect(splitValues('123 456 \n 6778 , 5666, , 90')).toEqual(['123', '456', '6778', '5666', '90']);
-  });
+    expect(splitValues('123 456 \n 6778 , 5666, , 90')).toEqual(['123', '456', '6778', '5666', '90'])
+  })
 
   it('Can extract Slack channels from text', () => {
-    expect(getSlackChannels('bla bla <#CHANNEL1> <#CHANNEL2|channel2>, bla <#CHANNEL3|channel3> test')).toEqual(['<#CHANNEL1>', '<#CHANNEL2|channel2>', '<#CHANNEL3|channel3>']);
-  });
+    expect(getSlackChannels('bla bla <#CHANNEL1> <#CHANNEL2|channel2>, bla <#CHANNEL3|channel3> test')).toEqual(['<#CHANNEL1>', '<#CHANNEL2|channel2>', '<#CHANNEL3|channel3>'])
+  })
 
   it('Can extract Slack channel id from text', () => {
-    expect(getSlackChannelId('bla bla <#CHANNEL1>')).toEqual('CHANNEL1');
-  });
+    expect(getSlackChannelId('bla bla <#CHANNEL1>')).toEqual('CHANNEL1')
+  })
 
   it('Can extract Slack users from text', () => {
-    expect(getSlackUsers('bla bla <@USER1> <@USER2|user2>, bla <@USER3|user3> test')).toEqual(['<@USER1>', '<@USER2|user2>', '<@USER3|user3>']);
-  });
+    expect(getSlackUsers('bla bla <@USER1> <@USER2|user2>, bla <@USER3|user3> test')).toEqual(['<@USER1>', '<@USER2|user2>', '<@USER3|user3>'])
+  })
 
   it('Can extract Slack userId from text', () => {
-    expect(getSlackUserId('bla bla <@USER1> abc')).toEqual('USER1');
-  });
-});
+    expect(getSlackUserId('bla bla <@USER1> abc')).toEqual('USER1')
+  })
+})
