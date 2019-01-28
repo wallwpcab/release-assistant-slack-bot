@@ -17,8 +17,6 @@ const requestReceivedAuthorView = ({ id, type, commits, file }) => ({
   mrkdwn_in: ['text'],
 })
 
-const requestReceivedFileCommentView = ({ user, type }) => `${slackUser(user)} requested following ${requestTypeLabel(type)} request.`
-
 const requestReceivedManagerView = (request) => {
   const { callback_id, approve, reject } = RequestApproval
   return {
@@ -57,6 +55,8 @@ const requestReceivedManagerView = (request) => {
   }
 }
 
+const requestReceivedChannelView = ({ user, type }) => `${slackUser(user)} requested following ${requestTypeLabel(type)} request.`
+
 const requestLabels = requests => requests.map(({ id, file }) => requestIdLabel(id, file)).join(', ')
 
 const requestInitiatedManagerView = (deployment, allRequests, approver) => {
@@ -79,42 +79,32 @@ git push origin HEAD
 }
 
 const requestInitiatedChannelView = (request, approver) => {
-  const { id, file, user, type } = request
+  const { user, type } = request
   return {
-    text: `${slackUser(approver)} initiated ${slackUser(user)}'s ${requestIdLabel(id, file)} ${requestTypeLabel(type)} request.`
-  }
-}
-
-const requestInitiatedCommentView = (approver) => {
-  return `${slackUser(approver)} initiated this release request.  :tada:`
-}
-
-const requestRejectedAuthorView = (request, rejector) => {
-  const { id, file } = request
-  return {
-    text: `${slackUser(rejector)} rejected your ${requestIdLabel(id, file)} request.`
+    text: `${slackUser(approver)} initiated ${slackUser(user)}'s ${requestTypeLabel(type)} request.`
   }
 }
 
 const requestRejectedManagerView = (request, rejector) => {
-  const { id, file } = request
+  const { id, type, file } = request
   return {
-    text: `${slackUser(rejector)} rejected ${requestIdLabel(id, file)} request.`
+    text: `${slackUser(rejector)} rejected ${requestIdLabel(id, file)} ${requestTypeLabel(type)} request.`
   }
 }
 
-const requestRejectedCommentView = (rejector) => {
-  return `${slackUser(rejector)} rejected this release request.`
+const requestRejectedChannelView = (request, rejector) => {
+  const { user, type } = request
+  return {
+    text: `${slackUser(rejector)} rejected ${slackUser(user)}'s ${requestTypeLabel(type)} request.`
+  }
 }
 
 module.exports = {
-  requestReceivedFileCommentView,
   requestReceivedAuthorView,
   requestReceivedManagerView,
+  requestReceivedChannelView,
   requestInitiatedManagerView,
   requestInitiatedChannelView,
-  requestInitiatedCommentView,
-  requestRejectedAuthorView,
   requestRejectedManagerView,
-  requestRejectedCommentView
+  requestRejectedChannelView
 }

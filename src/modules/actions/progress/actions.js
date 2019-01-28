@@ -13,8 +13,9 @@ const {
   requestAlreadyInitiatedView
 } = require('../../request/views')
 const {
-  sendMessage,
+  sendEphemeralMessage,
   sendMessageToUsers,
+  sendMessageToChannel,
   addCommentOnFile
 } = require('../../slack/integration')
 
@@ -23,15 +24,15 @@ const handleIfRequestProgressAction = async ({ callback_id, actions: [action], u
   if (callback_id !== RequestProgress.callback_id || name !== RequestProgress.cancel) return
 
   const config = await readConfig()
-  const { releaseManagers, requests } = config
+  const { releaseManagers, requests, botChannel } = config
   const request = pathOr(null, [requestId], requests)
   if (!request) {
-    await sendMessage(user.id, requestInvalidIdView(requestId), true)
+    await sendEphemeralMessage(user, requestInvalidIdView(requestId))
     return
   }
 
   if (request.status !== RequestStatus.initial) {
-    await sendMessage(user.id, requestAlreadyInitiatedView(request), true)
+    await sendEphemeralMessage(user, requestAlreadyInitiatedView(request))
     return
   }
 
@@ -40,7 +41,7 @@ const handleIfRequestProgressAction = async ({ callback_id, actions: [action], u
 
   await Promise.all([
     updateConfig({ requests }, true),
-    sendMessage(user.id, requestCanceledAuthorView(request)),
+    sendMessageToChannel(botChannel.id, requestCanceledAuthorView(request)),
     sendMessageToUsers(releaseManagers, requestCanceledManagerView(request, user)),
     addCommentOnFile(file.id, requestCanceledCommentView(user))
   ])

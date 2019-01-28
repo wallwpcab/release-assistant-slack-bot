@@ -1,6 +1,6 @@
 const minimist = require('minimist')
 
-const { openDialog, postMessageToBotChannel } = require('../slack/integration')
+const { openDialog, sendMessageToChannel } = require('../slack/integration')
 const { readConfig } = require('../../bot-config')
 const { splitValues } = require('../../utils')
 const log = require('../../utils/log')
@@ -44,28 +44,32 @@ const handleIfReadConfig = async (args, res) => {
 const handleIfTestBranchBuild = async ({ testBranchBuild, branch }, res) => {
   if (!testBranchBuild) return
 
+  const { botChannel } = await readConfig()
   res.send()
-  postMessageToBotChannel(branchBuildView(branch))
+  sendMessageToChannel(botChannel.id, branchBuildView(branch))
 }
 
 const handleIfTestStagingBuild = async ({ testStagingBuild, branch }, res) => {
   if (!testStagingBuild) return
 
+  const { botChannel } = await readConfig()
   res.send()
-  postMessageToBotChannel(stagingBuildView(branch))
+  sendMessageToChannel(botChannel.id, stagingBuildView(branch))
 }
 
 const handleIfTestProductionBuild = async ({ testProductionBuild, branch }, res) => {
   if (!testProductionBuild) return
 
+  const { botChannel } = await readConfig()
   res.send()
-  postMessageToBotChannel(productionBuildView(branch))
+  sendMessageToChannel(botChannel.id, productionBuildView(branch))
 }
 
 const handleIfUpdateConfig = async (args, res, req) => {
   if (!args.update) return
 
   const config = await readConfig()
+  // TODO: ??
   const {
     deployChannel = config.deployChannel,
     botChannel = config.botChannel,

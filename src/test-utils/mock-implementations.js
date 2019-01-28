@@ -1,10 +1,9 @@
-const { mockSlackApiUrl } = require('./config.mock')
-const { setMockId, setMockDate } = require('./generator.mock')
+require('./config.mock')
 require('./persistence.mock')
 require('./http.mock')
+const { setMockId, setMockDate } = require('./generator.mock')
 
 module.exports = {
-  mockSlackApiUrl,
   setMockId,
   setMockDate
 }

@@ -1,10 +1,19 @@
 {
-  "botChannel": "<#CHANNEL1|release-bot-1>",
-  "deployChannel": "<#CHANNEL2|release-bot-2>",
-  "botChannelWebhook": "https://hooks.slack.com/test",
-  "stagingInfoUrl": "https://staging.git.net/info",
-  "productionInfoUrl": "https://production.git.net/info",
-  "releaseManagers": [],
+  "botChannel": {
+    "id": "GEL8D0QRG",
+    "name": "release-bot-test"
+  },
+  "deployChannel": {
+    "id": "CEML3BEK0",
+    "name": "release-bot"
+  },
+  "stagingInfoUrl": "https://staging.stripes.net/git/info",
+  "productionInfoUrl": "https://production.stripes.net/git/info",
+  "releaseManagers": [
+    {
+      "id": "UC29BCUN6"
+    }
+  ],
   "requests": {},
   "deployments": {
     "staging": {}

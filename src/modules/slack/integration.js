@@ -1,62 +1,51 @@
 const axios = require('axios')
 const qs = require('querystring')
-const { path, pathOr, values, head, pipe } = require('ramda')
+const { path, values, head, pipe } = require('ramda')
 
 const { httpClient } = require('./http')
-const { readConfig } = require('../../bot-config')
-const { getSlackUserId } = require('../../utils')
 const { getFileContent } = require('../../transformer')
 const log = require('../../utils/log')
 
-const postMessage = async (url, message) => {
-  await axios.post(url, message)
+const getChannel = async (users) => {
+  const { data } = await httpClient().post('/conversations.open', {
+    users: users.join(',')
+  })
+  return path(['channel', 'id'], data)
 }
 
-const sendMessage = async (userId, message, ephemeral) => {
+const sendMessage = async ({ user = null, users = null, channel = null, message, thread = null }) => {
   try {
-    const { data } = await httpClient().post('/conversations.open', {
-      users: userId
-    })
-    const channel = pathOr('', ['channel', 'id'], data)
-    const postUrl = ephemeral ? '/chat.postEphemeral' : '/chat.postMessage'
-
-    await httpClient().post(postUrl, {
+    const _users = user ? [user] : users || []
+    const _channel = channel ? channel : await getChannel(_users)
+    const payload = {
       ...message,
-      channel,
-      user: ephemeral ? userId : undefined
-    })
+      channel: _channel
+    }
+    thread && (payload.thread_ts = thread)
+
+    await httpClient().post('/chat.postMessage', payload)
   } catch (err) {
     log.error('error in sendMessage()', err)
   }
 }
 
-const sendMessageToUsers = async (users, message) => {
+const sendEphemeralMessage = async (user, message) => {
   try {
-    const { data } = await httpClient().post('/conversations.open', {
-      users: users.map(u => getSlackUserId(u)).join(',')
-    })
-    const channel = pathOr('', ['channel', 'id'], data)
-
-    await httpClient().post('/chat.postMessage', {
+    const payload = {
       ...message,
-      channel
-    })
+      channel: await getChannel([user]),
+      user
+    }
+    await httpClient().post('/chat.postEphemeral', payload)
   } catch (err) {
-    log.error('error in sendMessageToUsers()', err)
+    log.error('error in sendMessage()', err)
   }
 }
 
-const postMessageToBotChannel = async (message) => {
-  const { botChannelWebhook = '' } = await readConfig()
-  if (!botChannelWebhook) {
-    log.error('error in postMessageToBotChannel()', 'botChannelWebhook is not configured.')
-  }
-  try {
-    await postMessage(botChannelWebhook, message)
-  } catch (err) {
-    log.error('error in postMessageToBotChannel()', err)
-  }
-}
+const sendMessageToUser = (user, message, thread) => sendMessage({ user: user.id, message, thread })
+const sendMessageToUsers = (users, message, thread) => sendMessage({ users: users.map(u => u.id), message, thread })
+const sendMessageToChannel = (channelId, message, thread) => sendMessage({ channel: channelId, message, thread })
+const sendMessageOverUrl = async (url, message) => axios.post(url, message)
 
 const openDialog = async (trigger_id, dialog) => {
   try {
@@ -92,7 +81,7 @@ const uploadFile = async (filename, content, channels, title = null, comment = n
 
 const uploadRequestData = async (request, channel, comment) => {
   try {
-    const { ok, file, error } = await uploadFile(
+    const { file } = await uploadFile(
       `${request.id}.txt`,
       getFileContent(request),
       channel,
@@ -101,13 +90,7 @@ const uploadRequestData = async (request, channel, comment) => {
       'text',
     )
 
-    if (!ok) {
-      throw error
-    }
-
     // get value of: file.shares.private['CHANNEL_ID'][0].ts
-    // const [thread_ts] = jsonPath.query(file, `$.shares.private.*[0].ts`)
-
     const getThread = pipe(path(['shares', 'private']), values, head, head, path(['ts']))
 
     return {
@@ -123,23 +106,22 @@ const uploadRequestData = async (request, channel, comment) => {
 const addCommentOnFile = async (file, comment) => {
   try {
     await httpClient().post(
-      '/files.comments.add',
-      {
+      '/files.comments.add', {
         file,
         comment
-      }
-    )
+      })
   } catch (err) {
     log.error('error in commentOnFile()', err)
   }
 }
 
 module.exports = {
-  openDialog,
-  sendMessage,
+  sendEphemeralMessage,
+  sendMessageToUser,
   sendMessageToUsers,
-  postMessage,
-  postMessageToBotChannel,
+  sendMessageToChannel,
+  sendMessageOverUrl,
+  openDialog,
   uploadFile,
   uploadRequestData,
   addCommentOnFile

@@ -16,8 +16,8 @@ const {
   mockChannel
 } = require('../../../test-utils/mock-data')
 const {
-  mockChatPostMessageApi,
-  mockChatPostEphemeralApi,
+  mockMessageApi,
+  mockEphemeralMessageApi,
   mockFilesCommentsAddApi
 } = require('../../../test-utils/mock-api')
 
@@ -44,11 +44,8 @@ describe('Cancel request actions', async () => {
       send: jest.fn()
     }
 
-    // generate a different slack api url
-    mockSlackApiUrl()
-
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
       expect(text).toBe(requestInvalidIdView(requestId).text)
       expect(channel).toBe(mockChannel.id)
       return true
@@ -77,11 +74,8 @@ describe('Cancel request actions', async () => {
       send: jest.fn()
     }
 
-    // generate a different slack api url
-    mockSlackApiUrl()
-
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
       expect(text).toBe(requestAlreadyInitiatedView(mockApprovedRequest).text)
       expect(channel).toBe(mockChannel.id)
       return true
@@ -105,16 +99,13 @@ describe('Cancel request actions', async () => {
       send: jest.fn()
     }
 
-    // generate a different slack api url
-    mockSlackApiUrl()
-
     /** mock api **/
     const filesCommentsApi = mockFilesCommentsAddApi()
-    const chatApi = mockChatPostMessageApi(
+    const chatApi = mockMessageApi(
       ({ text, channel }) => /canceled/.test(text) && /^\S+/.test(channel)
     )
 
-    const chatApiForUsers = mockChatPostMessageApi(
+    const chatApiForUsers = mockMessageApi(
       ({ text, channel }) => /canceled/.test(text) && /^\S+/.test(channel)
     )
     /** mock api **/

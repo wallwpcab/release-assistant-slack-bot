@@ -15,7 +15,7 @@ const actionsPost = async (req, res) => {
     handleIfDialog(payload)
     handleIfInteractiveMessage(payload)
   } catch (err) {
-    log.error('actions > actionsPost() > sendMessage() failed', err)
+    log.error('actions > actionsPost() failed', err)
   }
 
   res.send()

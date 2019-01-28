@@ -5,23 +5,19 @@ const { Request, RequestApproval, RequestStatus } = require('../../request/mappi
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { getRequestData } = require('../../../transformer')
 const {
-  sendMessage,
+  sendEphemeralMessage,
   sendMessageToUsers,
-  postMessage,
-  uploadRequestData,
-  postMessageToBotChannel,
-  addCommentOnFile
-} = require('../../slack/integration')
+  sendMessageToChannel,
+  sendMessageOverUrl,
+  uploadRequestData} = require('../../slack/integration')
 const {
-  requestReceivedFileCommentView,
   requestReceivedAuthorView,
   requestReceivedManagerView,
+  requestReceivedChannelView,
   requestInitiatedManagerView,
   requestInitiatedChannelView,
-  requestInitiatedCommentView,
-  requestRejectedAuthorView,
   requestRejectedManagerView,
-  requestRejectedCommentView
+  requestRejectedChannelView
 } = require('./views')
 const {
   requestInvalidIdView,
@@ -33,7 +29,7 @@ const handleIfRequestDialogAction = async ({ callback_id, response_url, submissi
 
   let request = getRequestData(submission, user)
   let { botChannel, releaseManagers, requests } = await readConfig()
-  const file = await uploadRequestData(request, botChannel, requestReceivedFileCommentView(request))
+  const file = await uploadRequestData(request, botChannel.id, requestReceivedChannelView(request))
 
   request = {
     ...request,
@@ -45,7 +41,7 @@ const handleIfRequestDialogAction = async ({ callback_id, response_url, submissi
 
   await Promise.all([
     updateConfig({ requests }),
-    postMessage(response_url, requestReceivedAuthorView(request)),
+    sendMessageOverUrl(response_url, requestReceivedAuthorView(request)),
     sendMessageToUsers(releaseManagers, requestReceivedManagerView(request))
   ])
 }
@@ -54,15 +50,15 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   const { name, value: requestId } = action || {}
   if (callback_id !== RequestApproval.callback_id || name !== RequestApproval.approve) return
 
-  let { releaseManagers, requests, deployments } = await readConfig()
+  let { releaseManagers, requests, deployments, botChannel } = await readConfig()
   let request = pathOr(null, [requestId], requests)
   if (!request) {
-    await sendMessage(user.id, requestInvalidIdView(requestId), true)
+    await sendEphemeralMessage(user, requestInvalidIdView(requestId))
     return
   }
 
   if (request.status !== RequestStatus.initial) {
-    await sendMessage(user.id, requestAlreadyInitiatedView(request), true)
+    await sendEphemeralMessage(user, requestAlreadyInitiatedView(request))
     return
   }
 
@@ -76,12 +72,12 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   }
   requests = updateObject(requests, request)
   deployments = updateObject(deployments, deployment)
+  const { file: { thread_ts } } = request
 
   await Promise.all([
     updateConfig({ requests, deployments }),
     sendMessageToUsers(releaseManagers, requestInitiatedManagerView(deployment, requests, user)),
-    postMessageToBotChannel(requestInitiatedChannelView(request, user)),
-    addCommentOnFile(request.file.id, requestInitiatedCommentView(user))
+    sendMessageToChannel(botChannel.id, requestInitiatedChannelView(request, user), thread_ts)
   ])
 }
 
@@ -89,26 +85,24 @@ const handleIfRejectRequestAction = async ({ callback_id, actions: [action], use
   const { name, value: requestId } = action || {}
   if (callback_id !== RequestApproval.callback_id || name !== RequestApproval.reject) return
 
-  const config = await readConfig()
-  const { releaseManagers, requests } = config
+  const { releaseManagers, requests, botChannel } = await readConfig()
   const request = pathOr(null, [requestId], requests)
   if (!request) {
-    await sendMessage(user.id, requestInvalidIdView(requestId), true)
+    await sendEphemeralMessage(user, requestInvalidIdView(requestId))
     return
   }
 
   if (request.status !== RequestStatus.initial) {
-    await sendMessage(user.id, requestAlreadyInitiatedView(request), true)
+    await sendEphemeralMessage(user, requestAlreadyInitiatedView(request))
     return
   }
 
-  const { file } = request
+  const { file: { thread_ts } } = request
   delete requests[requestId]
   await Promise.all([
     updateConfig({ requests }, true),
-    sendMessage(request.user.id, requestRejectedAuthorView(request, user)),
     sendMessageToUsers(releaseManagers, requestRejectedManagerView(request, user)),
-    addCommentOnFile(file.id, requestRejectedCommentView(user))
+    sendMessageToChannel(botChannel.id, requestRejectedChannelView(request, user), thread_ts)
   ])
 }
 

@@ -6,7 +6,7 @@ const { mockUser, mockConfig } = require('../../../test-utils/mock-data')
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { waitForInternalPromises } = require('../../../test-utils')
 const { generateDialogRequest } = require('../test-utils')
-const { mockPostMessageApi } = require('../../../test-utils/mock-api')
+const { mockPublicMessageApi } = require('../../../test-utils/mock-api')
 
 const responseUrl = 'http://response.slack.com/message'
 const dialogRequest = generateDialogRequest(responseUrl, mockUser)
@@ -29,7 +29,7 @@ describe('Dialog actions', async () => {
     }
 
     /** mock api **/
-    const messageApi = mockPostMessageApi(
+    const messageApi = mockPublicMessageApi(
       responseUrl,
       ({ text }) => {
         expect(text).toBe(configReadView(mockConfig).text)

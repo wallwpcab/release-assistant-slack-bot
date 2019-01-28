@@ -17,6 +17,10 @@ const mockChannel = {
   id: 'channel-1'
 }
 
+const mockMessage = {
+  text: 'Mock Message'
+}
+
 const mockFile = {
   id: 'file-1',
   permalink: 'http://files.com/file-1',
@@ -111,12 +115,11 @@ const mockProductionDeployment = {
 }
 
 const mockConfig = {
-  botChannel: '<#GEL8D0QRG|release-bot-test>',
-  deployChannel: '<#GEL8D0QRG|release-bot-test>',
-  botChannelWebhook: 'http://webhook.slack/bot-channel',
+  botChannel: { id: 'GEL8D0QRG', name: 'release-bot-test' },
+  deployChannel: { id: 'GEL8D0QRG', name: 'release-bot-test' },
   stagingInfoUrl: 'http://staging.git.com/info',
   productionInfoUrl: 'http://production.git.com/info',
-  releaseManagers: ['<@UC29BCUN6>'],
+  releaseManagers: [{ id: 'UC29BCUN6' }],
   requests: {},
   deployments: {
     staging: {}
@@ -130,6 +133,7 @@ module.exports = {
   mockApprover,
   mockApprovedRequest,
   mockRejector,
+  mockMessage,
   mockUser,
   mockFile,
   mockGitCommit,

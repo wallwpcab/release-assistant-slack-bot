@@ -13,7 +13,65 @@ const mockSlackServer = () => {
   return mockServer(apiUrl)
 }
 
-const mockFilesUploadApi = (payloadCallback) => {
+const mockConversationsApi = () => {
+  const payload = {
+    users: /^\S+/
+  }
+
+  return mockSlackServer()
+    .post('/conversations.open', payload)
+    .reply(200, {
+      channel: mockChannel
+    })
+}
+
+const mockMessageApi = (payloadCallback) => {
+  const payload = {
+    text: /^\S+/,
+    channel: /^\S+/
+  }
+
+  mockConversationsApi()
+  return mockSlackServer()
+    .post('/chat.postMessage', payloadCallback || payload)
+    .reply(200)
+}
+
+const mockEphemeralMessageApi = (payloadCallback) => {
+  const payload = {
+    text: /^\S+/,
+    channel: /^\S+/,
+    user: /^\S+/
+  }
+
+  mockConversationsApi()
+  return mockSlackServer()
+    .post('/chat.postEphemeral', payloadCallback || payload)
+    .reply(200)
+}
+
+const mockPublicMessageApi = (url, payloadCallback) => {
+  const payload = {
+    text: /^\S+/
+  }
+
+  return mockServer(url)
+    .post('', payloadCallback || payload)
+    .reply(200)
+}
+
+const mockDialogOpenApi = (payloadCallback) => {
+  const payload = {
+    trigger_id: /^\S+/,
+    dialog: /^\S+/
+  }
+
+  return mockSlackServer()
+    .post('/dialog.open', payloadCallback || payload)
+    .reply(200)
+}
+
+const mockFileApi = (payloadCallback) => {
   const payload = {
     filename: /^\S+/,
     content: /^\S+/,
@@ -41,64 +99,6 @@ const mockFilesUploadApi = (payloadCallback) => {
     })
 }
 
-const mockDialogOpenApi = (payloadCallback) => {
-  const payload = {
-    trigger_id: /^\S+/,
-    dialog: /^\S+/
-  }
-
-  return mockSlackServer()
-    .post('/dialog.open', payloadCallback || payload)
-    .reply(200)
-}
-
-const mockConversationsOpensApi = () => {
-  const payload = {
-    users: /^\S+/
-  }
-
-  return mockSlackServer()
-    .post('/conversations.open', payload)
-    .reply(200, {
-      channel: mockChannel
-    })
-}
-
-const mockChatPostMessageApi = (payloadCallback) => {
-  const payload = {
-    text: /^\S+/,
-    channel: /^\S+/
-  }
-
-  mockConversationsOpensApi()
-  return mockSlackServer()
-    .post('/chat.postMessage', payloadCallback || payload)
-    .reply(200)
-}
-
-const mockChatPostEphemeralApi = (payloadCallback) => {
-  const payload = {
-    text: /^\S+/,
-    channel: /^\S+/,
-    user: /^\S+/
-  }
-
-  mockConversationsOpensApi()
-  return mockSlackServer()
-    .post('/chat.postEphemeral', payloadCallback || payload)
-    .reply(200)
-}
-
-const mockPostMessageApi = (url, payloadCallback) => {
-  const payload = {
-    text: /^\S+/
-  }
-
-  return mockServer(url)
-    .post('', payloadCallback || payload)
-    .reply(200)
-}
-
 const mockFilesCommentsAddApi = (payloadCallback) => {
   const payload = {
     file: /^\S+/,
@@ -122,11 +122,11 @@ const mockGitProductionApi = () => mockServer(mockConfig.productionInfoUrl).get(
 
 module.exports = {
   mockServer,
-  mockFilesUploadApi,
+  mockFileApi,
   mockDialogOpenApi,
-  mockChatPostMessageApi,
-  mockChatPostEphemeralApi,
-  mockPostMessageApi,
+  mockMessageApi,
+  mockEphemeralMessageApi,
+  mockPublicMessageApi,
   mockFilesCommentsAddApi,
   mockGitStagingApi,
   mockGitProductionApi

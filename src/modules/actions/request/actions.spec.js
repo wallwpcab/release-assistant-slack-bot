@@ -1,9 +1,10 @@
-const { mockSlackApiUrl, setMockId, setMockDate } = require('../../../test-utils/mock-implementations')
+const { setMockId, setMockDate } = require('../../../test-utils/mock-implementations')
 const { actionsPost } = require('../controller')
 const { generateDialogRequest, generateActionRequest } = require('../test-utils')
 const { Request, RequestApproval } = require('../../request/mappings')
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { waitForInternalPromises } = require('../../../test-utils')
+const { updateObject } = require('./utils')
 const {
   requestInvalidIdView,
   requestAlreadyInitiatedView
@@ -12,27 +13,28 @@ const {
   requestReceivedAuthorView,
   requestReceivedManagerView,
   requestInitiatedManagerView,
-  requestInitiatedChannelView
+  requestInitiatedChannelView,
+  requestRejectedManagerView,
+  requestRejectedChannelView,
 } = require('./views')
 const {
-  mockRequestFormData,
-  mockInitialRequest,
   mockApprovedRequest,
-  mockUser,
-  mockConfig,
   mockApprover,
-  mockRejector,
   mockChannel,
+  mockConfig,
   mockFile,
-  mockInitialDeployment
+  mockInitialDeployment,
+  mockInitialRequest,
+  mockRejector,
+  mockRequestFormData,
+  mockUser
 } = require('../../../test-utils/mock-data')
 const {
-  mockChatPostMessageApi,
-  mockChatPostEphemeralApi,
-  mockPostMessageApi,
+  mockMessageApi,
+  mockEphemeralMessageApi,
+  mockPublicMessageApi,
   mockGitProductionApi,
-  mockFilesCommentsAddApi,
-  mockFilesUploadApi
+  mockFileApi
 } = require('../../../test-utils/mock-api')
 
 const responseUrl = 'http://response.slack.com/message'
@@ -42,15 +44,13 @@ const actionRequest = generateActionRequest(
   mockUser
 )
 
-describe('Request actions', async () => {
+describe('My Request actions', async () => {
   beforeEach(async () => {
-    const requests = {
-      [mockInitialRequest.id]: mockInitialRequest
-    }
+    const requests = updateObject({}, mockInitialRequest)
     await updateConfig({ ...mockConfig, requests }, true)
   })
 
-  it('Can handle dialog action', async () => {
+  it('Can handle a dialog action', async () => {
     const req = dialogRequest(
       Request.callback_id,
       mockRequestFormData
@@ -61,20 +61,18 @@ describe('Request actions', async () => {
     }
 
     setMockId(mockInitialRequest.id)
-    const date = setMockDate(new Date().toISOString())
+    setMockDate(new Date('2019-01-27T18:13:15.249Z').toISOString())
 
-    // generate a different slack api url
-    mockSlackApiUrl()
 
     /** mock api **/
-    const fileApi = mockFilesUploadApi()
-    const chatApi = mockChatPostMessageApi(({ text, channel }) => {
+    const fileApi = mockFileApi()
+    const messageApi = mockMessageApi(({ text, channel }) => {
       expect(text).toBe(requestReceivedManagerView(mockInitialRequest).text)
       expect(channel).toBe(mockChannel.id)
       return true
     })
 
-    const messageApi = mockPostMessageApi(
+    const publicMessageApi = mockPublicMessageApi(
       responseUrl,
       ({ text }) => {
         expect(text).toBe(requestReceivedAuthorView(mockInitialRequest).text)
@@ -91,14 +89,13 @@ describe('Request actions', async () => {
 
     // should call following api
     expect(fileApi.isDone()).toBe(true)
-    expect(chatApi.isDone()).toBe(true)
     expect(messageApi.isDone()).toBe(true)
+    expect(publicMessageApi.isDone()).toBe(true)
 
     // request should contain mockInitialRequest data
     expect(request).toMatchObject({
       ...mockInitialRequest,
-      id: request.id,
-      date
+      id: request.id
     })
 
     // request should contain user data
@@ -119,11 +116,9 @@ describe('Request actions', async () => {
       send: jest.fn()
     }
 
-    // generate a different slack api url
-    mockSlackApiUrl()
 
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
       expect(text).toBe(requestInvalidIdView(requestId).text)
       expect(channel).toBe(mockChannel.id)
       return true
@@ -152,11 +147,9 @@ describe('Request actions', async () => {
       send: jest.fn()
     }
 
-    // generate a different slack api url
-    mockSlackApiUrl()
 
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
       expect(text).toBe(requestAlreadyInitiatedView(mockApprovedRequest).text)
       expect(channel).toBe(mockChannel.id)
       return true
@@ -190,30 +183,21 @@ describe('Request actions', async () => {
       [mockApprovedRequest.id]: mockApprovedRequest
     }
 
+    const messageApiCallback = ({ text }) => {
+      expect([
+        requestInitiatedManagerView(mockInitialDeployment, allRequests, mockApprover).text,
+        requestInitiatedChannelView(mockInitialRequest, mockApprover).text
+      ]).toContain(text)
+      return true
+    }
+
     setMockId('dep-1')
     setMockDate(new Date('2018-10-14').toISOString())
 
-    // start mock api
-    mockSlackApiUrl()
-
     /** mock api **/
-    const filesCommentsApi = mockFilesCommentsAddApi()
     const gitApi = mockGitProductionApi()
-    const chatApi = mockChatPostMessageApi(payload => {
-      expect(payload).toMatchObject({
-        ...requestInitiatedManagerView(mockInitialDeployment, allRequests, mockApprover),
-        channel: mockChannel.id
-      })
-      return true
-    })
-
-    const messageApi = mockPostMessageApi(
-      mockConfig.botChannelWebhook,
-      ({ text }) => {
-        expect(text).toBe(requestInitiatedChannelView(mockInitialRequest, mockApprover).text)
-        return true
-      }
-    )
+    const userMessageApi = mockMessageApi(messageApiCallback)
+    const channelMessageApi = mockMessageApi(messageApiCallback)
     /** mock api **/
 
     // simulate controller method call
@@ -221,10 +205,9 @@ describe('Request actions', async () => {
     await waitForInternalPromises()
 
     // should call following api
-    expect(chatApi.isDone()).toBe(true)
-    expect(messageApi.isDone()).toBe(true)
     expect(gitApi.isDone()).toBe(true)
-    expect(filesCommentsApi.isDone()).toBe(true)
+    expect(userMessageApi.isDone()).toBe(true)
+    expect(channelMessageApi.isDone()).toBe(true)
 
     // request should contain mockApprovedRequest data
     const { requests } = await readConfig()
@@ -245,11 +228,9 @@ describe('Request actions', async () => {
       send: jest.fn()
     }
 
-    // generate a different slack api url
-    mockSlackApiUrl()
 
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
       expect(text).toBe(requestInvalidIdView(requestId).text)
       expect(channel).toBe(mockChannel.id)
       return true
@@ -277,11 +258,9 @@ describe('Request actions', async () => {
       send: jest.fn()
     }
 
-    // generate a different slack api url
-    mockSlackApiUrl()
 
     /** mock api **/
-    const messageApi = mockChatPostEphemeralApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
       expect(text).toBe(requestAlreadyInitiatedView(mockApprovedRequest).text)
       expect(channel).toBe(mockChannel.id)
       return true
@@ -300,26 +279,28 @@ describe('Request actions', async () => {
       RequestApproval.callback_id,
       mockRejector
     )
+
     const req = actionRequest(
       RequestApproval.reject,
       mockInitialRequest.id
     )
+
     const res = {
       send: jest.fn()
     }
 
-    // generate a different slack api url
-    mockSlackApiUrl()
+    const messageApiCallback = ({ text }) => {
+      expect([
+        requestRejectedManagerView(mockInitialRequest, mockRejector).text,
+        requestRejectedChannelView(mockInitialRequest, mockRejector).text
+      ]).toContain(text)
+      return true
+    }
+
 
     /** mock api **/
-    const filesCommentsApi = mockFilesCommentsAddApi()
-    const chatApi = mockChatPostMessageApi(
-      ({ text, channel }) => /rejected/.test(text) && /^\S+/.test(channel)
-    )
-
-    const chatApiForUsers = mockChatPostMessageApi(
-      ({ text, channel }) => /rejected/.test(text) && /^\S+/.test(channel)
-    )
+    const userMessageApi = mockMessageApi(messageApiCallback)
+    const channelMessageApi = mockMessageApi(messageApiCallback)
     /** mock api **/
 
     // simulate controller method call
@@ -332,8 +313,7 @@ describe('Request actions', async () => {
     expect(requests[mockApprovedRequest.id]).toBe(undefined)
 
     // should call following api
-    expect(chatApi.isDone()).toBe(true)
-    expect(chatApiForUsers.isDone()).toBe(true)
-    expect(filesCommentsApi.isDone()).toBe(true)
+    expect(userMessageApi.isDone()).toBe(true)
+    expect(channelMessageApi.isDone()).toBe(true)
   })
 })

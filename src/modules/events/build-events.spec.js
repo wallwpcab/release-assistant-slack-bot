@@ -3,7 +3,7 @@ const { eventsPost } = require('./controller')
 const { getSlackChannelId } = require('../../utils')
 const { waitForInternalPromises } = require('../../test-utils')
 const { readConfig, updateConfig } = require('../../bot-config')
-const { mockChatPostMessageApi, mockPostMessageApi } = require('../../test-utils/mock-api')
+const { mockMessageApi, mockPublicMessageApi } = require('../../test-utils/mock-api')
 const { mockConfig, mockInitialDeployment, mockBranchDeployment, mockBranchBuild, mockStagingBuild, mockProductionBuild } = require('../../test-utils/mock-data')
 const { branchBuildManagerView, stagingBuildManagerView, productionBuildChannelView } = require('./views')
 const { branchBuildView } = require('../config/views')
@@ -20,7 +20,7 @@ describe('Events controller', async () => {
 
   it('Can handle branch build event', async () => {
     /** mock api **/
-    const chatApi = mockChatPostMessageApi(message => {
+    const chatApi = mockMessageApi(message => {
       expect(message).toMatchObject(branchBuildManagerView(mockBranchDeployment.build))
       return true
     })
@@ -42,7 +42,7 @@ describe('Events controller', async () => {
 
   it('Can handle staging build event', async () => {
     /** mock api **/
-    const chatApi = mockChatPostMessageApi(message => {
+    const chatApi = mockMessageApi(message => {
       expect(message).toMatchObject(stagingBuildManagerView(mockStagingBuild))
       return true
     })
@@ -65,9 +65,7 @@ describe('Events controller', async () => {
 
   it('Can handle production build event', async () => {
     /** mock api **/
-    const chatApi = mockPostMessageApi(
-      mockConfig.botChannelWebhook,
-      message => {
+    const chatApi = mockMessageApi(message => {
         expect(message).toMatchObject(stagingBuildManagerView(mockProductionBuild))
         return true
       })

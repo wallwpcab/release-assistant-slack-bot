@@ -4,7 +4,7 @@ const { waitForInternalPromises } = require('../../test-utils')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { configReadView, branchBuildView, stagingBuildView, productionBuildView } = require('./views')
 const { mockConfig } = require('../../test-utils/mock-data')
-const { mockDialogOpenApi, mockPostMessageApi } = require('../../test-utils/mock-api')
+const { mockDialogOpenApi, mockMessageApi } = require('../../test-utils/mock-api')
 
 describe('Config controller', async () => {
   it('Can handle read config', async () => {
@@ -82,12 +82,10 @@ describe('Config controller', async () => {
       send: jest.fn()
     }
 
-    const messageApi = mockPostMessageApi(
-      mockConfig.botChannelWebhook,
-      ({ attachments }) => {
-        expect(attachments).toEqual(branchBuildView('release/hotfix/20134455').attachments)
-        return true
-      }
+    const messageApi = mockMessageApi(({ attachments }) => {
+      expect(attachments).toEqual(branchBuildView('release/hotfix/20134455').attachments)
+      return true
+    }
     )
 
     await updateConfig(mockConfig)
@@ -108,8 +106,7 @@ describe('Config controller', async () => {
       send: jest.fn()
     }
 
-    const messageApi = mockPostMessageApi(
-      mockConfig.botChannelWebhook,
+    const messageApi = mockMessageApi(
       ({ attachments }) => {
         expect(attachments).toEqual(stagingBuildView('release/hotfix/20134456').attachments)
         return true
@@ -134,8 +131,7 @@ describe('Config controller', async () => {
       send: jest.fn()
     }
 
-    const messageApi = mockPostMessageApi(
-      mockConfig.botChannelWebhook,
+    const messageApi = mockMessageApi(
       ({ attachments }) => {
         expect(attachments).toEqual(productionBuildView('release/hotfix/20134457').attachments)
         return true
