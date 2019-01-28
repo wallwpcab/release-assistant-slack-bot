@@ -9,7 +9,7 @@ const getInitialRequests = (requests) => {
 }
 
 const getGroupType = (requests) => {
-  const hasType = (requests, type) => requests.find(r => r.type === type)
+  const hasType = (requests, type) => requests.find(r => r && r.type === type)
 
   return [
     RequestType.hotfix.value,
@@ -23,7 +23,8 @@ const createBuild = (requests, deploymentId) => ({
   branch: `release/${format(getDate(), 'YYYY-MM-DD')}/${getGroupType(requests)}/${deploymentId}`
 })
 
-const trimRequestForDeployment = ({ id, type, commits, user }) => ({ id, type, commits, user })
+const getRequestId = ({ id }) => id
+const getRequests = (ids, requests) => ids.map(id => requests[id])
 
 const createDeployment = async (requests) => {
   const { info } = await getGitInfo(true)
@@ -34,26 +35,27 @@ const createDeployment = async (requests) => {
     status: DeploymentStatus.initial,
     baseCommit: info.gitCommitAbbrev,
     build: createBuild(requests, id),
-    requests: requests.map(trimRequestForDeployment)
+    requests: requests.map(getRequestId)
   }
 }
 
 const getOrCreateDeployment = async (deployments, requests) => {
   let deployment = Object.values(deployments).find(d => d.status === DeploymentStatus.initial)
+  const initialRequests = getInitialRequests(requests)
 
   if (!deployment) {
-    deployment = await createDeployment(requests)
+    deployment = await createDeployment(initialRequests)
   } else {
     const { info } = await getGitInfo(true)
-    const mergedRequests = deployment.requests.concat(
-      requests.map(trimRequestForDeployment)
+    const requestIds = deployment.requests.concat(
+      initialRequests.map(getRequestId)
     )
 
     deployment = {
       ...deployment,
       baseCommit: info.gitCommitAbbrev,
-      requests: mergedRequests,
-      build: createBuild(mergedRequests, deployment.id)
+      requests: requestIds,
+      build: createBuild(getRequests(requestIds, requests), deployment.id)
     }
   }
 
@@ -73,5 +75,5 @@ module.exports = {
   getOrCreateDeployment,
   updateObject,
   getGroupType,
-  trimRequestForDeployment
+  getRequestId
 }

@@ -200,7 +200,7 @@ describe('Request actions', async () => {
         channel: mockChannel.id
       })
       return true
-      }
+    }
     )
 
     const messageApi = mockPostMessageApi(

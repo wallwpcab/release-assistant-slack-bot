@@ -76,8 +76,7 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
     return
   }
 
-  const initialRequests = getInitialRequests(requests)
-  const deployment = await getOrCreateDeployment(deployments, initialRequests)
+  const deployment = await getOrCreateDeployment(deployments, requests)
 
   request = {
     ...request,

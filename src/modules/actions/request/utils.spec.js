@@ -6,8 +6,7 @@ const {
   createDeployment,
   getOrCreateDeployment,
   getGroupType,
-  updateObject,
-  trimRequestForDeployment
+  updateObject
 } = require('./utils')
 const { mockConfig, mockInitialRequest, mockApprovedRequest, mockInitialBuild, mockInitialDeployment, mockBranchDeployment } = require('../../../test-utils/mock-data')
 const { mockGitProductionApi } = require('../../../test-utils/mock-api')
@@ -41,7 +40,7 @@ describe('Request utils', async () => {
     expect(gitApi.isDone()).toBe(true)
     expect(deployment).toMatchObject({
       ...mockDeployment,
-      requests: [trimRequestForDeployment(mockInitialRequest)]
+      requests: [mockInitialRequest.id]
     })
   })
 
@@ -55,11 +54,15 @@ describe('Request utils', async () => {
       id
     }
 
+    const requests = {
+      [mockInitialRequest.id]: mockInitialRequest
+    }
+
     const deployments = {
       [id]: mockDeployment
     }
 
-    const deployment = await getOrCreateDeployment(deployments, [mockInitialRequest])
+    const deployment = await getOrCreateDeployment(deployments, requests)
 
     expect(gitApi.isDone()).toBe(true)
     expect(deployment.requests).toHaveLength(1)
@@ -70,11 +73,15 @@ describe('Request utils', async () => {
     const id = setMockId('id-32')
     setMockDate(new Date('2018-10-14').toISOString())
 
+    const requests = {
+      [mockInitialRequest.id]: mockInitialRequest
+    }
+
     const deployments = {
       [id]: mockInitialDeployment
     }
 
-    const deployment = await getOrCreateDeployment(deployments, [mockInitialRequest])
+    const deployment = await getOrCreateDeployment(deployments, requests)
 
     expect(gitApi.isDone()).toBe(true)
     expect(deployment.requests).toHaveLength(2)
