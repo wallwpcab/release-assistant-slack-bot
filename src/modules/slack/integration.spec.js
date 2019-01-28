@@ -1,6 +1,6 @@
 const { mockSlackApiUrl } = require('../../test-utils/mock-implementations')
 const { readConfig, updateConfig } = require('../../bot-config')
-const { mockInitialRequest, mockConfig, mockFile } = require('../../test-utils/mock-data')
+const { mockChannel, mockInitialRequest, mockConfig, mockFile } = require('../../test-utils/mock-data')
 const {
   openDialog,
   sendMessage,
@@ -19,7 +19,6 @@ const {
   mockPostMessageApi,
   mockFilesCommentsAddApi
 } = require('../../test-utils/mock-api')
-
 
 describe('Slack integration', async () => {
   beforeAll(async () => {
@@ -85,23 +84,20 @@ describe('Slack integration', async () => {
   it('Can upload a file', async () => {
     mockSlackApiUrl()
     const api = mockFilesUploadApi()
-    const { file } = await uploadFile('test-file.txt', 'Some message', 'channel-1', 'Test File', 'some comments', 'json')
+    const { file } = await uploadFile('test-file.txt', 'Some message', mockChannel.id, 'Test File', 'some comments', 'json')
     expect(api.isDone()).toBe(true)
-    expect(file).toEqual({
+    expect(file).toMatchObject({
       id: mockFile.id,
-      permalink: mockFile.link
+      permalink: mockFile.permalink
     })
   })
 
   it('Can upload a request file', async () => {
     mockSlackApiUrl()
     const api = mockFilesUploadApi()
-    const file = await uploadRequestData(mockInitialRequest, 'some comment')
+    const file = await uploadRequestData(mockInitialRequest, mockChannel.id, 'some comment')
     expect(api.isDone()).toBe(true)
-    expect(file).toEqual({
-      id: mockFile.id,
-      permalink: mockFile.link
-    })
+    expect(file).toMatchObject(mockFile)
   })
 
   it('Add comment on file', async () => {

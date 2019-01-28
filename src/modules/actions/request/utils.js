@@ -24,7 +24,7 @@ const createBuild = (requests, deploymentId) => ({
 })
 
 const getRequestId = ({ id }) => id
-const getRequests = (ids, requests) => ids.map(id => requests[id])
+const getRequests = (ids, requests) => ids.map(id => requests[id]).filter(Boolean)
 
 const createDeployment = async (requests) => {
   const { info } = await getGitInfo(true)
@@ -75,5 +75,6 @@ module.exports = {
   getOrCreateDeployment,
   updateObject,
   getGroupType,
-  getRequestId
+  getRequestId,
+  getRequests
 }

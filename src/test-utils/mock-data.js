@@ -19,7 +19,8 @@ const mockChannel = {
 
 const mockFile = {
   id: 'file-1',
-  link: 'http://files.com/file-1'
+  permalink: 'http://files.com/file-1',
+  thread_ts: '1548689875.001000'
 }
 
 const mockGitCommit = {
@@ -85,7 +86,7 @@ const mockInitialDeployment = {
   status: DeploymentStatus.initial,
   baseCommit: mockGitCommit.gitCommitAbbrev,
   build: mockInitialBuild,
-  requests: [mockApprovedRequest.id]
+  requests: [mockInitialRequest.id]
 }
 
 const mockBranchDeployment = {

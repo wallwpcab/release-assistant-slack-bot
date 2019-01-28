@@ -16,19 +16,27 @@ const mockSlackServer = () => {
 const mockFilesUploadApi = (payloadCallback) => {
   const payload = {
     filename: /^\S+/,
-    title: /^\S+/,
     content: /^\S+/,
-    filetype: /^\S+/,
     channels: /^\S+/,
-    initial_comment: /^\S/
+    title: /^\S+/,
+    initial_comment: /^\S/,
+    filetype: /^\S+/
   }
 
   return mockSlackServer()
     .post('/files.upload', payloadCallback || payload)
     .reply(200, {
+      ok: true,
       file: {
         id: mockFile.id,
-        permalink: mockFile.link
+        permalink: mockFile.permalink,
+        shares: {
+          private: {
+            [mockChannel.id]: [{
+              ts: '1548689875.001000'
+            }]
+          }
+        }
       }
     })
 }

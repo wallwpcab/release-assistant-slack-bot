@@ -1,6 +1,7 @@
 const { RequestApproval } = require('../../request/mappings')
 const { requestIdLabel } = require('../../request/views')
 const { slackUser } = require('../../../utils')
+const { getRequests } = require('../request/utils')
 const {
   requestDetailsLabel,
   requestTypeLabel,
@@ -56,14 +57,16 @@ const requestReceivedManagerView = (request) => {
   }
 }
 
-const requestInitiatedManagerView = (request, deployment, approver) => {
-  const { id, type, file } = request
+const requestLabels = requests => requests.map(({ id, file }) => requestIdLabel(id, file)).join(', ')
+
+const requestInitiatedManagerView = (deployment, allRequests, approver) => {
+  const requests = getRequests(deployment.requests, allRequests)
 
   return {
-    text: `${slackUser(approver)} initiated ${requestIdLabel(id, file)} request.
+    text: `${slackUser(approver)} initiated ${requestLabels(requests)} requests.
 Please follow these steps:
 \`\`\`
-# Checkout the new brance from ${type === 'activation' ? 'Staging' : 'Production'}
+# Checkout the new brance from 'Production'
 ${gitCheckoutLabel(deployment)}
 
 # Cherry pick

@@ -1,6 +1,6 @@
 const { pathOr } = require('ramda')
 
-const { getOrCreateDeployment, updateObject, getInitialRequests } = require('./utils')
+const { getOrCreateDeployment, updateObject } = require('./utils')
 const { Request, RequestApproval, RequestStatus } = require('../../request/mappings')
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { getRequestData } = require('../../../transformer')
@@ -32,29 +32,19 @@ const handleIfRequestDialogAction = async ({ callback_id, response_url, submissi
   if (callback_id !== Request.callback_id) return
 
   let request = getRequestData(submission, user)
-  const [
-    { id: fileId, permalink: fileLink },
-    { releaseManagers }
-  ] = await Promise.all([
-    uploadRequestData(request, requestReceivedFileCommentView(request)),
-    readConfig()
-  ])
+  let { botChannel, releaseManagers, requests } = await readConfig()
+  const file = await uploadRequestData(request, botChannel, requestReceivedFileCommentView(request))
 
   request = {
     ...request,
-    status: RequestStatus.initial,
-    file: {
-      id: fileId,
-      link: fileLink
-    }
+    file,
+    status: RequestStatus.initial
   }
 
+  requests = updateObject(requests, request)
+
   await Promise.all([
-    updateConfig({
-      requests: {
-        [request.id]: request
-      }
-    }),
+    updateConfig({ requests }),
     postMessage(response_url, requestReceivedAuthorView(request)),
     sendMessageToUsers(releaseManagers, requestReceivedManagerView(request))
   ])
@@ -89,7 +79,7 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
 
   await Promise.all([
     updateConfig({ requests, deployments }),
-    sendMessageToUsers(releaseManagers, requestInitiatedManagerView(request, deployment, user)),
+    sendMessageToUsers(releaseManagers, requestInitiatedManagerView(deployment, requests, user)),
     postMessageToBotChannel(requestInitiatedChannelView(request, user)),
     addCommentOnFile(request.file.id, requestInitiatedCommentView(user))
   ])

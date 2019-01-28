@@ -1,10 +1,10 @@
 const axios = require('axios')
 const qs = require('querystring')
-const { pathOr } = require('ramda')
+const { path, pathOr, values, head, pipe } = require('ramda')
 
 const { httpClient } = require('./http')
 const { readConfig } = require('../../bot-config')
-const { getSlackChannelId, getSlackUserId } = require('../../utils')
+const { getSlackUserId } = require('../../utils')
 const { getFileContent } = require('../../transformer')
 const log = require('../../utils/log')
 
@@ -78,7 +78,7 @@ const uploadFile = async (filename, content, channels, title = null, comment = n
   }
   title && (file.title = title)
   title && (file.initial_comment = comment)
-  
+
   try {
     const { data } = await httpClient().post(
       '/files.upload',
@@ -90,19 +90,31 @@ const uploadFile = async (filename, content, channels, title = null, comment = n
   }
 }
 
-const uploadRequestData = async (request, comment) => {
-  const { botChannel } = await readConfig()
-
+const uploadRequestData = async (request, channel, comment) => {
   try {
-    const { file } = await uploadFile(
+    const { ok, file, error } = await uploadFile(
       `${request.id}.txt`,
       getFileContent(request),
-      getSlackChannelId(botChannel),
+      channel,
       'Release Request',
       comment,
       'text',
     )
-    return file
+
+    if (!ok) {
+      throw error
+    }
+
+    // get value of: file.shares.private['CHANNEL_ID'][0].ts
+    // const [thread_ts] = jsonPath.query(file, `$.shares.private.*[0].ts`)
+
+    const getThread = pipe(path(['shares', 'private']), values, head, head, path(['ts']))
+
+    return {
+      id: file.id,
+      permalink: file.permalink,
+      thread_ts: getThread(file)
+    }
   } catch (err) {
     log.error('error in uploadRequestData()', err)
   }

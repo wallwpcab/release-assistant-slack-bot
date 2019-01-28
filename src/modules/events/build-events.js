@@ -35,9 +35,9 @@ const handleIfStagingBuildEvent = async (build) => {
     return
   }
 
-  const { deployments: oldDeployments, releaseManagers } = await readConfig()
-  const deployment = findDeployment(oldDeployments, build)
-  const deployments = mergeRight(oldDeployments, {
+  let { deployments, releaseManagers } = await readConfig()
+  const deployment = findDeployment(deployments, build)
+  deployments = mergeRight(deployments, {
     staging: { build }
   })
 

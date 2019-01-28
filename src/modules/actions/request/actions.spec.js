@@ -185,6 +185,11 @@ describe('Request actions', async () => {
       send: jest.fn()
     }
 
+    const allRequests = {
+      [mockInitialRequest.id]: mockInitialRequest,
+      [mockApprovedRequest.id]: mockApprovedRequest
+    }
+
     setMockId('dep-1')
     setMockDate(new Date('2018-10-14').toISOString())
 
@@ -196,12 +201,11 @@ describe('Request actions', async () => {
     const gitApi = mockGitProductionApi()
     const chatApi = mockChatPostMessageApi(payload => {
       expect(payload).toMatchObject({
-        ...requestInitiatedManagerView(mockInitialRequest, mockInitialDeployment, mockApprover),
+        ...requestInitiatedManagerView(mockInitialDeployment, allRequests, mockApprover),
         channel: mockChannel.id
       })
       return true
-    }
-    )
+    })
 
     const messageApi = mockPostMessageApi(
       mockConfig.botChannelWebhook,
