@@ -1,8 +1,14 @@
-const { setMockId } = require('../../../test-utils/mock-implementations')
-const { format } = require('date-fns')
+const { setMockId, setMockDate } = require('../../../test-utils/mock-implementations')
 
 const { RequestType } = require('../../request/mappings')
-const { getInitialRequests, createDeployment, getOrCreateDeployment, getGroupType, updateObject } = require('./utils')
+const {
+  getInitialRequests,
+  createDeployment,
+  getOrCreateDeployment,
+  getGroupType,
+  updateObject,
+  trimRequestForDeployment
+} = require('./utils')
 const { mockConfig, mockInitialRequest, mockApprovedRequest, mockInitialBuild, mockInitialDeployment, mockBranchDeployment } = require('../../../test-utils/mock-data')
 const { mockGitProductionApi } = require('../../../test-utils/mock-api')
 const { updateConfig } = require('../../../bot-config')
@@ -23,41 +29,30 @@ describe('Request utils', async () => {
 
   it('Can create an initial deployment', async () => {
     const gitApi = mockGitProductionApi()
-    const id = setMockId('id-32')
-
-    const mockBuild = {
-      ...mockInitialBuild,
-      branch: `release/${format(new Date(), 'YY-MM-DD')}/${mockInitialRequest.type}/${id}`
-    }
+    const id = setMockId('dep-1')
+    setMockDate(new Date('2018-10-14').toISOString())
 
     const mockDeployment = {
       ...mockInitialDeployment,
-      id,
-      build: mockBuild
+      id
     }
-
     const deployment = await createDeployment([mockInitialRequest])
 
     expect(gitApi.isDone()).toBe(true)
     expect(deployment).toMatchObject({
       ...mockDeployment,
-      requests: [mockInitialRequest.id]
+      requests: [trimRequestForDeployment(mockInitialRequest)]
     })
   })
 
   it('Should create a new deployment', async () => {
     const gitApi = mockGitProductionApi()
-    const id = setMockId('id-32')
-
-    const mockBuild = {
-      ...mockInitialBuild,
-      branch: `release/${format(new Date(), 'YY-MM-DD')}/${mockInitialRequest.type}/${id}`
-    }
+    const id = setMockId('dep-1')
+    setMockDate(new Date('2018-10-14').toISOString())
 
     const mockDeployment = {
       ...mockBranchDeployment,
-      id,
-      build: mockBuild,
+      id
     }
 
     const deployments = {
@@ -73,20 +68,10 @@ describe('Request utils', async () => {
   it('Should get an existing deployment', async () => {
     const gitApi = mockGitProductionApi()
     const id = setMockId('id-32')
-
-    const mockBuild = {
-      ...mockInitialBuild,
-      branch: `release/${format(new Date(), 'YY-MM-DD')}/${mockInitialRequest.type}/${id}`
-    }
-
-    const mockDeployment = {
-      ...mockInitialDeployment,
-      id,
-      build: mockBuild,
-    }
+    setMockDate(new Date('2018-10-14').toISOString())
 
     const deployments = {
-      [id]: mockDeployment
+      [id]: mockInitialDeployment
     }
 
     const deployment = await getOrCreateDeployment(deployments, [mockInitialRequest])

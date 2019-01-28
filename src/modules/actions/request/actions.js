@@ -1,6 +1,6 @@
 const { pathOr } = require('ramda')
 
-const { getOrCreateDeployment, updateObject } = require('./utils')
+const { getOrCreateDeployment, updateObject, getInitialRequests } = require('./utils')
 const { Request, RequestApproval, RequestStatus } = require('../../request/mappings')
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { getRequestData } = require('../../../transformer')
@@ -16,7 +16,6 @@ const {
   requestReceivedFileCommentView,
   requestReceivedAuthorView,
   requestReceivedManagerView,
-  requestInitiatedAuthorView,
   requestInitiatedManagerView,
   requestInitiatedChannelView,
   requestInitiatedCommentView,
@@ -77,7 +76,8 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
     return
   }
 
-  const deployment = await getOrCreateDeployment(deployments, requests)
+  const initialRequests = getInitialRequests(requests)
+  const deployment = await getOrCreateDeployment(deployments, initialRequests)
 
   request = {
     ...request,
@@ -90,7 +90,6 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
 
   await Promise.all([
     updateConfig({ requests, deployments }),
-    sendMessage(request.user.id, requestInitiatedAuthorView(request, user)),
     sendMessageToUsers(releaseManagers, requestInitiatedManagerView(request, deployment, user)),
     postMessageToBotChannel(requestInitiatedChannelView(request, user)),
     addCommentOnFile(request.file.id, requestInitiatedCommentView(user))

@@ -55,7 +55,7 @@ const mockApprovedRequest = {
 }
 
 const mockInitialBuild = {
-  branch: 'release/hotfix/2018-10-14/dep-1',
+  branch: 'release/2018-10-14/hotfix/dep-1',
 };
 
 const mockBranchBuild = {
@@ -85,7 +85,7 @@ const mockInitialDeployment = {
   status: DeploymentStatus.initial,
   baseCommit: mockGitCommit.gitCommitAbbrev,
   build: mockInitialBuild,
-  requests: [mockApprovedRequest.id]
+  requests: [mockApprovedRequest]
 }
 
 const mockBranchDeployment = {

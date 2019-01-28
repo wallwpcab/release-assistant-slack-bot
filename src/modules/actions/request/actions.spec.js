@@ -11,6 +11,7 @@ const {
 const {
   requestReceivedAuthorView,
   requestReceivedManagerView,
+  requestInitiatedManagerView,
   requestInitiatedChannelView
 } = require('./views')
 const {
@@ -22,7 +23,8 @@ const {
   mockApprover,
   mockRejector,
   mockChannel,
-  mockFile
+  mockFile,
+  mockInitialDeployment
 } = require('../../../test-utils/mock-data')
 const {
   mockChatPostMessageApi,
@@ -178,11 +180,13 @@ describe('Request actions', async () => {
       RequestApproval.approve,
       mockInitialRequest.id
     )
+
     const res = {
       send: jest.fn()
     }
 
     setMockId('dep-1')
+    setMockDate(new Date('2018-10-14').toISOString())
 
     // start mock api
     mockSlackApiUrl()
@@ -190,12 +194,13 @@ describe('Request actions', async () => {
     /** mock api **/
     const filesCommentsApi = mockFilesCommentsAddApi()
     const gitApi = mockGitProductionApi()
-    const chatApi = mockChatPostMessageApi(
-      ({ text, channel }) => /initiated/.test(text) && /^\S+/.test(channel)
-    )
-
-    const chatApiForUsers = mockChatPostMessageApi(
-      ({ text, channel }) => /initiated/.test(text) && /^\S+/.test(channel)
+    const chatApi = mockChatPostMessageApi(payload => {
+      expect(payload).toMatchObject({
+        ...requestInitiatedManagerView(mockInitialRequest, mockInitialDeployment, mockApprover),
+        channel: mockChannel.id
+      })
+      return true
+      }
     )
 
     const messageApi = mockPostMessageApi(
@@ -213,7 +218,6 @@ describe('Request actions', async () => {
 
     // should call following api
     expect(chatApi.isDone()).toBe(true)
-    expect(chatApiForUsers.isDone()).toBe(true)
     expect(messageApi.isDone()).toBe(true)
     expect(gitApi.isDone()).toBe(true)
     expect(filesCommentsApi.isDone()).toBe(true)

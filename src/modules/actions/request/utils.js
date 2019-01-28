@@ -8,10 +8,6 @@ const getInitialRequests = (requests) => {
   return Object.values(requests).filter(r => r.status === RequestStatus.initial)
 }
 
-const createBuild = (type, deploymentId) => ({
-  branch: `release/${format(getDate(), 'YY-MM-DD')}/${type}/${deploymentId}`
-})
-
 const getGroupType = (requests) => {
   const hasType = (requests, type) => requests.find(r => r.type === type)
 
@@ -23,6 +19,12 @@ const getGroupType = (requests) => {
     .join('-')
 }
 
+const createBuild = (requests, deploymentId) => ({
+  branch: `release/${format(getDate(), 'YYYY-MM-DD')}/${getGroupType(requests)}/${deploymentId}`
+})
+
+const trimRequestForDeployment = ({ id, type, commits, user }) => ({ id, type, commits, user })
+
 const createDeployment = async (requests) => {
   const { info } = await getGitInfo(true)
   const id = generateId()
@@ -31,23 +33,28 @@ const createDeployment = async (requests) => {
     id,
     status: DeploymentStatus.initial,
     baseCommit: info.gitCommitAbbrev,
-    build: createBuild(getGroupType(requests), id),
-    requests: requests.map(r => r.id)
+    build: createBuild(requests, id),
+    requests: requests.map(trimRequestForDeployment)
   }
 }
 
 const getOrCreateDeployment = async (deployments, requests) => {
   let deployment = Object.values(deployments).find(d => d.status === DeploymentStatus.initial)
-  const initialRequests = getInitialRequests(requests)
 
   if (!deployment) {
-    deployment = await createDeployment(initialRequests)
+    deployment = await createDeployment(requests)
   } else {
     const { info } = await getGitInfo(true)
-    deployment.baseCommit = info.gitCommitAbbrev
-    deployment.requests = deployment.requests.concat(
-      initialRequests.map(r => r.id)
+    const mergedRequests = deployment.requests.concat(
+      requests.map(trimRequestForDeployment)
     )
+
+    deployment = {
+      ...deployment,
+      baseCommit: info.gitCommitAbbrev,
+      requests: mergedRequests,
+      build: createBuild(mergedRequests, deployment.id)
+    }
   }
 
   return deployment
@@ -65,5 +72,6 @@ module.exports = {
   createDeployment,
   getOrCreateDeployment,
   updateObject,
-  getGroupType
+  getGroupType,
+  trimRequestForDeployment
 }

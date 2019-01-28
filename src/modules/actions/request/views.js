@@ -56,13 +56,6 @@ const requestReceivedManagerView = (request) => {
   }
 }
 
-const requestInitiatedAuthorView = (request, approver) => {
-  const { id, file } = request
-  return {
-    text: `${slackUser(approver)} initiated your ${requestIdLabel(id, file)} release request.  :tada:`
-  }
-}
-
 const requestInitiatedManagerView = (request, deployment, approver) => {
   const { id, type, file } = request
 
@@ -115,7 +108,6 @@ module.exports = {
   requestReceivedFileCommentView,
   requestReceivedAuthorView,
   requestReceivedManagerView,
-  requestInitiatedAuthorView,
   requestInitiatedManagerView,
   requestInitiatedChannelView,
   requestInitiatedCommentView,
