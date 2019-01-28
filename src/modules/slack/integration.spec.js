@@ -85,7 +85,7 @@ describe('Slack integration', async () => {
   it('Can upload a file', async () => {
     mockSlackApiUrl()
     const api = mockFilesUploadApi()
-    const { file } = await uploadFile('test-file.txt', 'Test File', 'Some message', 'json', 'channel-1')
+    const { file } = await uploadFile('test-file.txt', 'Some message', 'channel-1', 'Test File', 'some comments', 'json')
     expect(api.isDone()).toBe(true)
     expect(file).toEqual({
       id: mockFile.id,
@@ -96,7 +96,7 @@ describe('Slack integration', async () => {
   it('Can upload a request file', async () => {
     mockSlackApiUrl()
     const api = mockFilesUploadApi()
-    const file = await uploadRequestData(mockInitialRequest)
+    const file = await uploadRequestData(mockInitialRequest, 'some comment')
     expect(api.isDone()).toBe(true)
     expect(file).toEqual({
       id: mockFile.id,

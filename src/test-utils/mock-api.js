@@ -19,7 +19,8 @@ const mockFilesUploadApi = (payloadCallback) => {
     title: /^\S+/,
     content: /^\S+/,
     filetype: /^\S+/,
-    channels: /^\S+/
+    channels: /^\S+/,
+    initial_comment: /^\S/
   }
 
   return mockSlackServer()

@@ -6,10 +6,8 @@ const { requestFormView } = require('../request/views')
 
 describe('Request controller', async () => {
   it('Can open request dialog', async () => {
-    const args = '<@USER1|john> <#CHANNEL1|bot-channel>'
     const req = {
       body: {
-        text: args,
         trigger_id: 'test-trigger'
       }
     }
@@ -19,7 +17,7 @@ describe('Request controller', async () => {
     }
 
     const api = mockDialogOpenApi(({ dialog }) => {
-      expect(dialog).toBe(JSON.stringify(requestFormView(args)))
+      expect(dialog).toBe(JSON.stringify(requestFormView()))
       return true
     })
 

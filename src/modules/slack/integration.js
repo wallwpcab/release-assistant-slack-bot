@@ -69,17 +69,20 @@ const openDialog = async (trigger_id, dialog) => {
   }
 }
 
-const uploadFile = async (filename, title, content, filetype = 'text', channels = '') => {
+const uploadFile = async (filename, content, channels, title = null, comment = null, filetype = 'auto') => {
+  const file = {
+    filename,
+    content,
+    channels,
+    filetype
+  }
+  title && (file.title = title)
+  title && (file.initial_comment = comment)
+  
   try {
     const { data } = await httpClient().post(
       '/files.upload',
-      qs.stringify({
-        filename,
-        title,
-        content,
-        filetype,
-        channels
-      })
+      qs.stringify(file)
     )
     return data
   } catch (err) {
@@ -87,16 +90,17 @@ const uploadFile = async (filename, title, content, filetype = 'text', channels 
   }
 }
 
-const uploadRequestData = async (request) => {
+const uploadRequestData = async (request, comment) => {
   const { botChannel } = await readConfig()
 
   try {
     const { file } = await uploadFile(
       `${request.id}.txt`,
-      'Release Request',
       getFileContent(request),
+      getSlackChannelId(botChannel),
+      'Release Request',
+      comment,
       'text',
-      getSlackChannelId(botChannel)
     )
     return file
   } catch (err) {

@@ -1,24 +1,26 @@
 const { requestIdLabel } = require('../../request/views')
 const { RequestType } = require('../../request/mappings')
+const { slackUser } = require('../../../utils')
+const { getApprovalText } = require('../../../transformer')
 
-const typeLabel = (type) => {
+const requestTypeLabel = (type) => {
   const { label, icon } = RequestType[type]
   return `*\`${label}\`* ${icon}`
 }
 
-const approvalLabel = (aproval) => {
-  return aproval ? '*`YES`*' : '*`NO`*'
+const requestCommitsLabel = (commits) => {
+  return `\`\`\`${commits.join(',\n')}\`\`\``
+}
+
+const approvalLabel = (approval) => {
+  return `*\`${getApprovalText(approval)}\`*`
 }
 
 const descriptionLabel = (desc) => {
   return `\`\`\`${desc}\`\`\``
 }
 
-const commitsLabel = (commits) => {
-  return `\`\`\`${commits.join(',\n')}\`\`\``
-}
-
-const requestLabel = ({
+const requestDetailsLabel = ({
   id,
   type,
   commits,
@@ -27,14 +29,14 @@ const requestLabel = ({
   file,
   user
 }) => {
-  return `
-Id:\t\t\t\t${requestIdLabel(id, file)}
-Author:\t\t<@${user.id}>
-Type:\t\t\t${typeLabel(type)}
-Approval:\t${approvalLabel(approval)}
-Description: ${descriptionLabel(description)}
-Commits: ${commitsLabel(commits)}
-`
+  return `Id					 : ${requestIdLabel(id, file)}
+Author			: ${slackUser(user)}
+Type				: ${requestTypeLabel(type)}
+Approval		 : ${approvalLabel(approval)}
+Description	:
+${descriptionLabel(description)}
+Commits 		:
+${requestCommitsLabel(commits)}`
 }
 
 const gitCheckoutLabel = ({ baseCommit, build }) => {
@@ -50,11 +52,9 @@ const gitCherryPickLabel = ({ requests }) => {
 }
 
 module.exports = {
-  typeLabel,
-  approvalLabel,
-  descriptionLabel,
-  commitsLabel,
-  requestLabel,
+  requestTypeLabel,
+  requestCommitsLabel,
+  requestDetailsLabel,
   gitCheckoutLabel,
   gitCherryPickLabel
 }

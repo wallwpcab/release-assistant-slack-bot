@@ -2,7 +2,7 @@ const { Request, RequestType } = require('./mappings')
 
 const requestIdLabel = (id, file) => file.link ? `*<${file.link}|\`${id}\`>*` : `*\`${id}\`*`
 
-const requestFormView = (text) => ({
+const requestFormView = () => ({
   title: 'Request a relesase',
   callback_id: Request.callback_id,
   submit_label: 'Submit',

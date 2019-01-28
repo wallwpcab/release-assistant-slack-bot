@@ -13,6 +13,7 @@ const {
   addCommentOnFile
 } = require('../../slack/integration')
 const {
+  requestReceivedFileCommentView,
   requestReceivedAuthorView,
   requestReceivedManagerView,
   requestInitiatedAuthorView,
@@ -31,17 +32,17 @@ const {
 const handleIfRequestDialogAction = async ({ callback_id, response_url, submission, user }) => {
   if (callback_id !== Request.callback_id) return
 
-  const requestData = getRequestData(submission, user)
+  let request = getRequestData(submission, user)
   const [
     { id: fileId, permalink: fileLink },
     { releaseManagers }
   ] = await Promise.all([
-    uploadRequestData(requestData),
+    uploadRequestData(request, requestReceivedFileCommentView(request)),
     readConfig()
   ])
 
-  const request = {
-    ...requestData,
+  request = {
+    ...request,
     status: RequestStatus.initial,
     file: {
       id: fileId,

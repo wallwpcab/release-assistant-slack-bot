@@ -21,25 +21,28 @@ const getConfigData = ({ config }) => {
   return JSON.parse(config)
 }
 
-const getFileContent = (request) => {
-  const { id, type, commits, description, approval, date, user } = request
+const getApprovalText = approval => {
   const approvalText = {
     ['yes']: 'Yes',
     ['no']: 'No',
   }
+  return approvalText[approval] || 'Unknown'
+}
+
+const getFileContent = (request) => {
+  const { id, type, commits, description, approval, date } = request
 
   return `Id			: ${id}
 Type		: ${makeTitleCase(type)}
-Commits		: [ ${commits.join(', ')} ]
+Commits		: [${commits.join(', ')}]
 Description	: ${description}
-Approval	: ${approvalText[approval] || 'Unknown'}
-Date		: ${format(date, 'MM.DD.YY / HH:mm')}
-User Name	: ${user.name}
-User Id		: ${user.id}`
+Approval	: ${getApprovalText(approval)}
+Date		: ${format(date, 'MM.DD.YY / HH:mm')}`
 }
 
 module.exports = {
   getRequestData,
   getConfigData,
-  getFileContent
+  getFileContent,
+  getApprovalText
 }
