@@ -15,27 +15,31 @@ const findGroup = (patterns, text) => patterns.map((regEx) => {
 
 const isAnyMatch = (patterns, text) => patterns.map(regEx => regEx.test(text)).find(match => match)
 
-const getSlackChannels = (text) => {
+const getSlackChannelTags = (text) => {
   const channelExpr = /<#[^<]+>/g
   return text.match(channelExpr) || []
 }
 
 const getSlackChannel = (text) => {
-  const channelExpr = /<#([^|>]+)/
-  const id = findGroup([channelExpr], text)
-  const channel = { id }
+  const idExpr = /<#([^|>]+)/
+  const nameExpr = /<#.+\|([^>]+)/
+  const id = findGroup([idExpr], text)
+  const name = findGroup([nameExpr], text)
+  const channel = { id, name }
   return id && channel
 }
 
-const getSlackUsers = (text) => {
+const getSlackUserTags = (text) => {
   const userExpr = /<@[^<]+>/g
   return text.match(userExpr) || []
 }
 
 const getSlackUser = (text) => {
-  const userExpr = /<@([^|>]+)/
-  const id = findGroup([userExpr], text)
-  const user = { id }
+  const idExpr = /<@([^|>]+)/
+  const nameExpr = /<@.+\|([^>]+)/
+  const id = findGroup([idExpr], text)
+  const name = findGroup([nameExpr], text)
+  const user = { id, name }
   return id && user
 }
 
@@ -49,9 +53,9 @@ module.exports = {
   splitValues,
   findGroup,
   isAnyMatch,
-  getSlackChannels,
+  getSlackChannelTags,
   getSlackChannel,
-  getSlackUsers,
+  getSlackUserTags,
   getSlackUser,
   makeTitleCase,
   slackUserTag

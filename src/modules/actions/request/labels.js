@@ -44,7 +44,7 @@ const gitCheckoutLabel = ({ baseCommit, build }) => {
   return `git checkout -b ${build.branch} ${commit}`
 }
 
-const gitCherryPickLabel = ({ requests }) => {
+const gitCherryPickLabel = requests => {
   const commits = requests.map(r => r.commits)
     .reduce((acc, r) => acc.concat(r), [])
 

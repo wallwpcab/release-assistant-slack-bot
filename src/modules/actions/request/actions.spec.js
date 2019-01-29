@@ -44,7 +44,7 @@ const actionRequest = generateActionRequest(
   mockUser
 )
 
-describe('My Request actions', async () => {
+describe('Request actions', async () => {
   beforeEach(async () => {
     const requests = updateObject({}, mockInitialRequest)
     await updateConfig({ ...mockConfig, requests }, true)
@@ -62,7 +62,6 @@ describe('My Request actions', async () => {
 
     setMockId(mockInitialRequest.id)
     setMockDate(new Date('2019-01-27T18:13:15.249Z').toISOString())
-
 
     /** mock api **/
     const fileApi = mockFileApi()
@@ -116,7 +115,6 @@ describe('My Request actions', async () => {
       send: jest.fn()
     }
 
-
     /** mock api **/
     const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
       expect(text).toBe(requestInvalidIdView(requestId).text)
@@ -146,7 +144,6 @@ describe('My Request actions', async () => {
     const res = {
       send: jest.fn()
     }
-
 
     /** mock api **/
     const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
@@ -228,7 +225,6 @@ describe('My Request actions', async () => {
       send: jest.fn()
     }
 
-
     /** mock api **/
     const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
       expect(text).toBe(requestInvalidIdView(requestId).text)
@@ -257,7 +253,6 @@ describe('My Request actions', async () => {
     const res = {
       send: jest.fn()
     }
-
 
     /** mock api **/
     const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
@@ -296,7 +291,6 @@ describe('My Request actions', async () => {
       ]).toContain(text)
       return true
     }
-
 
     /** mock api **/
     const userMessageApi = mockMessageApi(messageApiCallback)

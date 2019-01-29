@@ -3,7 +3,7 @@ const { pathOr } = require('ramda')
 const { releaseManagerUpdatedView } = require('./views')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { sendMessageToChannel } = require('../slack/integration')
-const { getSlackUsers, getSlackUser } = require('../../utils')
+const { getSlackUserTags, getSlackUser } = require('../../utils')
 const log = require('../../utils/log')
 const {
   isDeploymentEvent,
@@ -63,9 +63,9 @@ const handleIfChannelTopicEvent = async ({ type, subtype, text, topic, channel }
     return
   }
 
-  const [author] = getSlackUsers(text)
+  const [author] = getSlackUserTags(text)
   const user = getSlackUser(author)
-  const releaseManagers = getSlackUsers(topic).map(u => getSlackUser(u))
+  const releaseManagers = getSlackUserTags(topic).map(u => getSlackUser(u))
   await Promise.all([
     updateConfig({ releaseManagers }),
     sendMessageToChannel(botChannel, releaseManagerUpdatedView(user, releaseManagers))

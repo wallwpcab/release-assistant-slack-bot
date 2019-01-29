@@ -1,6 +1,6 @@
 const { pathOr } = require('ramda')
 
-const { getOrCreateDeployment, updateObject } = require('./utils')
+const { getOrCreateDeployment, updateObject, getRequests } = require('./utils')
 const { Request, RequestApproval, RequestStatus } = require('../../request/mappings')
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { getRequestData } = require('../../../transformer')
@@ -9,7 +9,7 @@ const {
   sendMessageToUsers,
   sendMessageToChannel,
   sendMessageOverUrl,
-  uploadRequestData} = require('../../slack/integration')
+  uploadRequestData } = require('../../slack/integration')
 const {
   requestReceivedAuthorView,
   requestReceivedManagerView,
@@ -63,6 +63,7 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   }
 
   const deployment = await getOrCreateDeployment(deployments, requests)
+  const deploymentRequests = getRequests(deployment.requests, requests)
 
   request = {
     ...request,
@@ -72,12 +73,14 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   }
   requests = updateObject(requests, request)
   deployments = updateObject(deployments, deployment)
-  const { file: { thread_ts } } = request
 
   await Promise.all([
     updateConfig({ requests, deployments }),
     sendMessageToUsers(releaseManagers, requestInitiatedManagerView(deployment, requests, user)),
-    sendMessageToChannel(botChannel, requestInitiatedChannelView(request, user), thread_ts)
+    ...deploymentRequests.map(request => {
+      const { file: { thread_ts } } = request
+      return sendMessageToChannel(botChannel, requestInitiatedChannelView(request, user), thread_ts)
+    })
   ])
 }
 
