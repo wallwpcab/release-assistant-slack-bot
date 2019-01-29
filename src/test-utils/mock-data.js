@@ -22,7 +22,6 @@ const mockMessage = {
 }
 
 const mockFile = {
-  id: 'file-1',
   permalink: 'http://files.com/file-1',
   thread_ts: '1548689875.001000'
 }
@@ -47,6 +46,7 @@ const mockInitialRequest = {
   approval: mockRequestFormData.approval,
   date: '2019-01-27T18:13:15.249Z',
   user: mockUser,
+  permalink: 'http://messages.slack.com/link-1',
   file: mockFile,
   status: RequestStatus.initial,
   deploymentId: 'dep-1'

@@ -26,10 +26,10 @@ const requestDetailsLabel = ({
   commits,
   description,
   approval,
-  file,
+  permalink,
   user
 }) => {
-  return `Id					 : ${requestIdLabel(id, file)}
+  return `Id					 : ${requestIdLabel({ id, permalink })}
 Author			: ${slackUserTag(user)}
 Type				: ${requestTypeLabel(type)}
 Approval		 : ${approvalLabel(approval)}

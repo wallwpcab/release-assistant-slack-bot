@@ -6,6 +6,15 @@ const { httpClient } = require('./http')
 const { getFileContent } = require('../../transformer')
 const log = require('../../utils/log')
 
+const getPermalink = async (channel, message_ts) => {
+  const payload = {
+    channel,
+    message_ts
+  }
+  const { data } = await httpClient().post('/chat.getPermalink', qs.stringify(payload))
+  return data.permalink
+}
+
 const getChannel = async (users) => {
   const { data } = await httpClient().post('/conversations.open', {
     users: users.join(',')
@@ -42,9 +51,9 @@ const sendEphemeralMessage = async (user, message) => {
   }
 }
 
-const sendMessageToUser = (user, message, thread) => sendMessage({ user: user.id, message, thread })
-const sendMessageToUsers = (users, message, thread) => sendMessage({ users: users.map(u => u.id), message, thread })
-const sendMessageToChannel = (channel, message, thread) => sendMessage({ channel: channel.id, message, thread })
+const sendMessageToUser = (user, message, thread = null) => sendMessage({ user: user.id, message, thread })
+const sendMessageToUsers = (users, message, thread = null) => sendMessage({ users: users.map(u => u.id), message, thread })
+const sendMessageToChannel = (channel, message, thread = null) => sendMessage({ channel: channel.id, message, thread })
 const sendMessageOverUrl = async (url, message) => axios.post(url, message)
 
 const openDialog = async (trigger_id, dialog) => {
@@ -111,5 +120,6 @@ module.exports = {
   sendMessageOverUrl,
   openDialog,
   uploadFile,
-  uploadRequestData
+  uploadRequestData,
+  getPermalink
 }

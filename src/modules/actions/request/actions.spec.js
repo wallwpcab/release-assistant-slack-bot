@@ -34,7 +34,8 @@ const {
   mockEphemeralMessageApi,
   mockPublicMessageApi,
   mockGitProductionApi,
-  mockFileApi
+  mockFileApi,
+  mockPermalinkApi
 } = require('../../../test-utils/mock-api')
 
 const responseUrl = 'http://response.slack.com/message'
@@ -65,6 +66,7 @@ describe('Request actions', async () => {
 
     /** mock api **/
     const fileApi = mockFileApi()
+    const permalinkApi = mockPermalinkApi()
     const messageApi = mockMessageApi(({ text, channel }) => {
       expect(text).toBe(requestReceivedManagerView(mockInitialRequest).text)
       expect(channel).toBe(mockChannel.id)
@@ -88,6 +90,7 @@ describe('Request actions', async () => {
 
     // should call following api
     expect(fileApi.isDone()).toBe(true)
+    expect(permalinkApi.isDone()).toBe(true)
     expect(messageApi.isDone()).toBe(true)
     expect(publicMessageApi.isDone()).toBe(true)
 

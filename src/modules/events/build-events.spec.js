@@ -1,17 +1,13 @@
 require('../../test-utils/mock-implementations')
-const { eventsPost } = require('./controller')
 const { waitForInternalPromises } = require('../../test-utils')
 const { readConfig, updateConfig } = require('../../bot-config')
-const { mockMessageApi, mockPublicMessageApi } = require('../../test-utils/mock-api')
+const { mockMessageApi } = require('../../test-utils/mock-api')
 const { mockConfig, mockInitialDeployment, mockBranchDeployment, mockBranchBuild, mockStagingBuild, mockProductionBuild } = require('../../test-utils/mock-data')
-const { branchBuildManagerView, stagingBuildManagerView, productionBuildChannelView } = require('./views')
-const { branchBuildView } = require('../config/views')
+const { branchBuildManagerView, stagingBuildManagerView, stagingBuildChannelView } = require('./views')
 const { DeploymentStatus } = require('../request/mappings')
-const { eventRequestGenerator } = require('./test-utils')
 const { handleIfBranchBuildEvent, handleIfStagingBuildEvent, handleIfProductionBuildEvent } = require('./build-events')
 
 describe('Events controller', async () => {
-  const generateRequest = eventRequestGenerator('bot_message', mockConfig.deployChannel.id)
 
   beforeEach(async () => {
     await updateConfig(mockConfig, true)
@@ -40,11 +36,17 @@ describe('Events controller', async () => {
   })
 
   it('Can handle staging build event', async () => {
-    /** mock api **/
-    const chatApi = mockMessageApi(message => {
-      expect(message).toMatchObject(stagingBuildManagerView(mockStagingBuild))
+    const payloadCallback = message => {
+      expect([
+        stagingBuildManagerView(mockStagingBuild).text,
+        stagingBuildChannelView(mockProductionBuild).text
+      ]).toContain(message.text)
       return true
-    })
+    }
+
+    /** mock api **/
+    const userMessageApi = mockMessageApi(payloadCallback)
+    const channelMessageApi = mockMessageApi(payloadCallback)
 
     await updateConfig({
       deployments: {
@@ -57,7 +59,8 @@ describe('Events controller', async () => {
     const { deployments } = await readConfig()
     const deployment = deployments[mockBranchDeployment.id]
 
-    expect(chatApi.isDone()).toBe(true)
+    expect(userMessageApi.isDone()).toBe(true)
+    expect(channelMessageApi.isDone()).toBe(true)
     expect(deployment.status).toEqual(DeploymentStatus.staging)
     expect(deployments.staging.build).toEqual(mockStagingBuild)
   })

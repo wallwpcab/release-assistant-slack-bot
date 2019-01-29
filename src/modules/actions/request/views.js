@@ -10,9 +10,9 @@ const {
   requestCommitsLabel
 } = require('./labels')
 
-const requestReceivedAuthorView = ({ id, type, commits, file }) => ({
+const requestReceivedAuthorView = ({ id, type, commits, permalink }) => ({
   response_type: 'ephemeral',
-  text: `We've got your ${requestTypeLabel(type)} request with following commits: ${requestCommitsLabel(commits)}\nYour request id is: ${requestIdLabel(id, file)}.`,
+  text: `We've got your ${requestTypeLabel(type)} request with following commits: ${requestCommitsLabel(commits)}\nYour request id is: ${requestIdLabel({ id, permalink })}.`,
   mrkdwn: true,
   mrkdwn_in: ['text'],
 })
@@ -57,7 +57,7 @@ const requestReceivedManagerView = (request) => {
 
 const requestReceivedChannelView = ({ user, type }) => `${slackUserTag(user)} requested following ${requestTypeLabel(type)} request.`
 
-const requestLabels = requests => requests.map(({ id, file }) => requestIdLabel(id, file)).join(', ')
+const requestLabels = requests => requests.map(request => requestIdLabel(request)).join(', ')
 
 const requestInitiatedManagerView = (deployment, requests, approver) => {
   const deploymentRequests = getRequests(deployment.requests, requests)
@@ -86,9 +86,9 @@ const requestInitiatedChannelView = (request, approver) => {
 }
 
 const requestRejectedManagerView = (request, rejector) => {
-  const { id, type, file } = request
+  const { id, type, permalink } = request
   return {
-    text: `${slackUserTag(rejector)} \`rejected\` ${requestIdLabel(id, file)} ${requestTypeLabel(type)} request.`
+    text: `${slackUserTag(rejector)} \`rejected\` ${requestIdLabel({ id, permalink })} ${requestTypeLabel(type)} request.`
   }
 }
 

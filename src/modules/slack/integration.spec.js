@@ -76,7 +76,6 @@ describe('Slack integration', async () => {
     const { file } = await uploadFile('test-file.txt', 'Some message', mockChannel.id, 'Test File', 'some comments', 'json')
     expect(api.isDone()).toBe(true)
     expect(file).toMatchObject({
-      id: mockFile.id,
       permalink: mockFile.permalink
     })
   })

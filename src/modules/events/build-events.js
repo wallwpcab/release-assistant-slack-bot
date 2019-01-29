@@ -1,5 +1,5 @@
 const { mergeRight } = require('ramda')
-const { branchBuildManagerView, stagingBuildManagerView } = require('./views')
+const { branchBuildManagerView, stagingBuildManagerView, stagingBuildChannelView } = require('./views')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { sendMessageToUsers, sendMessageToChannel } = require('../slack/integration')
 const log = require('../../utils/log')
@@ -35,7 +35,7 @@ const handleIfStagingBuildEvent = async (build) => {
     return
   }
 
-  let { deployments, releaseManagers } = await readConfig()
+  let { deployments, releaseManagers, botChannel } = await readConfig()
   const deployment = findDeployment(deployments, build)
   deployments = mergeRight(deployments, {
     staging: { build }
@@ -51,7 +51,8 @@ const handleIfStagingBuildEvent = async (build) => {
     updateConfig({
       deployments: updateDeployments(deployments, deployment, build)
     }),
-    sendMessageToUsers(releaseManagers, stagingBuildManagerView(build))
+    sendMessageToUsers(releaseManagers, stagingBuildManagerView(build)),
+    sendMessageToChannel(botChannel, stagingBuildChannelView(build))
   ])
 }
 

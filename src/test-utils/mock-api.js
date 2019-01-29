@@ -2,7 +2,7 @@ const nock = require('nock')
 const config = require('config')
 
 const {
-  mockFile, mockConfig, mockGitCommit, mockChannel
+  mockFile, mockConfig, mockGitCommit, mockChannel, mockInitialRequest
 } = require('./mock-data')
 
 const mockServer = url => nock(url)
@@ -11,6 +11,19 @@ const mockServer = url => nock(url)
 const mockSlackServer = () => {
   const { apiUrl } = config.get('slack')
   return mockServer(apiUrl)
+}
+
+const mockPermalinkApi = () => {
+  const payload = {
+    channel: /^\S+/,
+    message_ts: /^\S+/
+  }
+
+  return mockSlackServer()
+    .post('/chat.getPermalink', payload)
+    .reply(200, {
+      permalink: mockInitialRequest.permalink
+    })
 }
 
 const mockConversationsApi = () => {
@@ -117,5 +130,6 @@ module.exports = {
   mockEphemeralMessageApi,
   mockPublicMessageApi,
   mockGitStagingApi,
-  mockGitProductionApi
+  mockGitProductionApi,
+  mockPermalinkApi
 }

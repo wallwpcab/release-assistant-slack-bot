@@ -1,7 +1,7 @@
 const { Request, RequestType } = require('./mappings')
 const { slackUserTag } = require('../../utils')
 
-const requestIdLabel = (id, file) => file.permalink ? `*<${file.permalink}|\`${id}\`>*` : `*\`${id}\`*`
+const requestIdLabel = ({id, permalink}) => `*<${permalink}|\`${id}\`>*`
 
 const requestFormView = () => ({
   title: 'Request a relesase',
@@ -61,10 +61,10 @@ const requestInvalidIdView = (id) => {
 }
 
 const requestAlreadyInitiatedView = (request) => {
-  const { id, file, approver } = request
+  const { approver } = request
   return {
     response_type: 'ephemeral',
-    text: `${slackUserTag(approver)} already initiated ${requestIdLabel(id, file)} release request.`
+    text: `${slackUserTag(approver)} already initiated ${requestIdLabel(request)} release request.`
   }
 }
 

@@ -21,10 +21,7 @@ const eventsPost = async (req, res) => {
 }
 
 const handleIfBuildEvent = async ({ type, subtype, channel, attachments }) => {
-  if (
-    type !== 'message' ||
-    subtype !== 'bot_message'
-  ) {
+  if (type !== 'message' || subtype !== 'bot_message') {
     return
   }
 

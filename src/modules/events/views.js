@@ -38,6 +38,21 @@ const stagingBuildManagerView = (build) => {
   }
 }
 
+const stagingBuildChannelView = (build) => {
+  const { id, branch, commitId, triggerLink, environment } = build
+  return {
+    text: `${environment} build status is *SUCCESS*.`,
+    attachments: [
+      {
+        text: `Build: ${id}\nBranch: \`${branch}\`\nCommit Id: \`${commitId}\``
+      },
+      {
+        text: `Click <${triggerLink}|*here*> to promote to \`${DeploymentStatus.production}\` environment.`
+      }
+    ]
+  }
+}
+
 const productionBuildChannelView = (build) => {
   const { id, branch, commitId, environment } = build
   return {
@@ -54,5 +69,6 @@ module.exports = {
   releaseManagerUpdatedView,
   branchBuildManagerView,
   stagingBuildManagerView,
+  stagingBuildChannelView,
   productionBuildChannelView
 }

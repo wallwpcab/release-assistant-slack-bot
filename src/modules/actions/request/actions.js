@@ -9,7 +9,9 @@ const {
   sendMessageToUsers,
   sendMessageToChannel,
   sendMessageOverUrl,
-  uploadRequestData } = require('../../slack/integration')
+  uploadRequestData,
+  getPermalink
+} = require('../../slack/integration')
 const {
   requestReceivedAuthorView,
   requestReceivedManagerView,
@@ -24,23 +26,27 @@ const {
   requestAlreadyInitiatedView,
 } = require('../../request/views')
 
-const handleIfRequestDialogAction = async ({ callback_id, response_url, submission, user }) => {
-  if (callback_id !== Request.callback_id) return
-
-  let request = getRequestData(submission, user)
-  let { botChannel, releaseManagers, requests } = await readConfig()
-  const file = await uploadRequestData(request, botChannel.id, requestReceivedChannelView(request))
-
-  request = {
-    ...request,
+const createRequest = async (submissionData, user, botChannel) => {
+  const requestData = getRequestData(submissionData, user)
+  const file = await uploadRequestData(requestData, botChannel.id, requestReceivedChannelView(requestData))
+  const permalink = await getPermalink(botChannel.id, file.thread_ts)
+  const request = {
+    ...requestData,
+    permalink,
     file,
     status: RequestStatus.initial
   }
+  return request
+}
 
-  requests = updateObject(requests, request)
+const handleIfRequestDialogAction = async ({ callback_id, response_url, submission, user }) => {
+  if (callback_id !== Request.callback_id) return
+
+  const { botChannel, releaseManagers, requests } = await readConfig()
+  const request = await createRequest(submission, user, botChannel)
 
   await Promise.all([
-    updateConfig({ requests }),
+    updateConfig({ requests: updateObject(requests, request) }),
     sendMessageOverUrl(response_url, requestReceivedAuthorView(request)),
     sendMessageToUsers(releaseManagers, requestReceivedManagerView(request))
   ])
