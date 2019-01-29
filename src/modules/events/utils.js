@@ -1,5 +1,7 @@
-const { cond, equals, always, T, mergeRight, path, mergeWith, pick } = require('ramda')
+const { cond, equals, always, T, mergeRight, path } = require('ramda')
+
 const { findGroup, isAnyMatch } = require('../../utils')
+const { Deployment } = require('../request/model')
 const { DeploymentStatus } = require('../request/mappings')
 
 const isDeploymentEvent = (message = '') => {
@@ -9,7 +11,7 @@ const isDeploymentEvent = (message = '') => {
 const isSuccessfullDeployment = (message = '') => {
   return isAnyMatch([
     /Click .+here.+ to promote .+ to `staging`/, // for branch build
-    /Build #.+ status is: \*SUCCESS\*/          // for staging and production build
+    /Build .+ status is: \*SUCCESS\*/            // for staging and production build
   ], message)
 }
 
@@ -40,7 +42,7 @@ const getBuildInfo = (message = '') => {
 }
 
 const updateDeployments = (deployments, deployment, build) => {
-  if(!deployment || !build) {
+  if (!deployment || !build) {
     deployments
   }
 
@@ -53,8 +55,9 @@ const updateDeployments = (deployments, deployment, build) => {
 }
 
 const findDeployment = (deployments, build) => {
-  return Object.values(deployments)
+  const deployment = Object.values(deployments)
     .find(d => path(['build', 'branch'], d) === build.branch)
+  return deployment ? new Deployment(deployment) : null
 }
 
 module.exports = {

@@ -8,9 +8,14 @@ const log = require('../../utils/log')
 const {
   isDeploymentEvent,
   isSuccessfullDeployment,
-  getBuildInfo } = require('./utils')
+  getBuildInfo
+} = require('./utils')
 
-const { handleIfBranchBuildEvent } = require('./build-events')
+const {
+  handleIfBranchBuildEvent,
+  handleIfStagingBuildEvent,
+  handleIfProductionBuildEvent
+} = require('./build-events')
 
 const eventsPost = async (req, res) => {
   const event = pathOr({}, ['body', 'event'], req)
@@ -45,6 +50,8 @@ const handleIfBuildEvent = async ({ type, subtype, channel, attachments }) => {
   }
 
   handleIfBranchBuildEvent(build)
+  handleIfStagingBuildEvent(build)
+  handleIfProductionBuildEvent(build)
 }
 
 const handleIfChannelTopicEvent = async ({ type, subtype, text, topic, channel }) => {

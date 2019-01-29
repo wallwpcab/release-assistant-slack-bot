@@ -1,9 +1,4 @@
-const { mergeRight } = require('ramda')
 const { RequestType, RequestStatus } = require('./mappings')
-
-const getRequestId = ({ id }) => id
-
-const getRequests = (ids, requests) => ids.map(id => requests[id]).filter(Boolean)
 
 const getInitialRequests = (requests) => {
   return Object.values(requests).filter(r => r.status === RequestStatus.initial)
@@ -21,8 +16,6 @@ const getGroupType = (requests) => {
 }
 
 module.exports = {
-  getRequestId,
-  getRequests,
   getInitialRequests,
   getGroupType
 }

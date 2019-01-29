@@ -5,7 +5,6 @@ const { Request, RequestApproval } = require('../../request/mappings')
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { waitForInternalPromises } = require('../../../test-utils')
 const { updateById } = require('../../../utils')
-const { Deployment } = require('./model')
 const {
   requestInvalidIdView,
   requestAlreadyInitiatedView
@@ -182,7 +181,7 @@ describe('Request actions', async () => {
     const messageApiCallback = ({ text }) => {
       expect([
         requestInitiatedManagerView(mockInitialDeployment, mockApprover).text,
-        requestInitiatedChannelView([mockInitialRequest], mockApprover).text
+        requestInitiatedChannelView(mockInitialDeployment, mockApprover).text
       ]).toContain(text)
       return true
     }

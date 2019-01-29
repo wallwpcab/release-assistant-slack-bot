@@ -1,4 +1,4 @@
-const { split, reject, map, mergeRight } = require('ramda')
+const { split, reject, map, mergeRight, mergeDeepRight } = require('ramda')
 
 const splitValues = (str, sep = /[\s+,]/) => reject(
   s => !s,
@@ -50,10 +50,7 @@ const makeTitleCase = (message = '') => message.replace(
 )
 
 const updateById = (parent, child) => {
-  return {
-    ...parent,
-    [child.id]: child
-  }
+  return mergeRight(parent, { [child.id]: child })
 }
 
 const updateByKeys = (object, keys, callback) => {

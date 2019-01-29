@@ -3,11 +3,9 @@ const { format } = require('date-fns')
 const { generateId, getDate } = require('../../../utils/generator')
 const { getGitInfo } = require('../../../git-integration')
 const { DeploymentStatus } = require('../../request/mappings')
-const { Deployment } = require('./model')
+const { Deployment } = require('../../request/model')
 const {
-  getRequestId,
   getInitialRequests,
-  getRequests,
   getGroupType
 } = require('../../request/utils')
 

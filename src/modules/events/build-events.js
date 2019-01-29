@@ -1,13 +1,17 @@
-const { pick, mergeWith, mergeRight } = require('ramda')
-const { branchBuildManagerView, stagingBuildManagerView, stagingBuildChannelView } = require('./views')
+const { mergeRight } = require('ramda')
+
+const log = require('../../utils/log')
+const { updateByKeys, updateById } = require('../../utils')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { sendMessageToUsers, sendMessageToChannel } = require('../slack/integration')
-const log = require('../../utils/log')
 const { RequestStatus, DeploymentStatus } = require('../request/mappings')
+const { findDeployment } = require('./utils')
 const {
-  findDeployment,
-  updateDeployments
-} = require('./utils')
+  branchBuildManagerView,
+  stagingBuildManagerView,
+  stagingBuildChannelView,
+  productionBuildChannelView
+} = require('./views')
 
 const handleIfBranchBuildEvent = async (build) => {
   if (build.environment !== DeploymentStatus.branch) {
@@ -22,18 +26,21 @@ const handleIfBranchBuildEvent = async (build) => {
     return
   }
 
-  deployments = updateDeployments(deployments, deployment, build)
-  requests = mergeWith(request => ({
-    ...request,
+  deployment.expand(requests)
+  deployment.update({
+    status: DeploymentStatus.branch,
+    build
+  })
+  deployments = updateById(deployments, deployment.compact())
+
+  const keys = deployment.compact().requests
+  requests = updateByKeys(requests, keys, () => ({
     status: RequestStatus.branch
-  }),
-    requests,
-    pick(deployment.requests, requests)
-  )
+  }))
 
   await Promise.all([
     updateConfig({ deployments, requests }),
-    sendMessageToUsers(releaseManagers, branchBuildManagerView(build))
+    sendMessageToUsers(releaseManagers, branchBuildManagerView(deployment))
   ])
 }
 
@@ -54,19 +61,26 @@ const handleIfStagingBuildEvent = async (build) => {
     return
   }
 
-  deployments = updateDeployments(deployments, deployment, build)
-  requests = mergeWith(request => ({
-    ...request,
+  deployment.expand(requests)
+  deployment.update({
+    status: DeploymentStatus.staging,
+    build
+  })
+  deployments = updateById(deployments, deployment.compact())
+
+  const keys = deployment.compact().requests
+  requests = updateByKeys(requests, keys, () => ({
     status: RequestStatus.staging
-  }),
-    requests,
-    pick(deployment.requests, requests)
-  )
+  }))
 
   await Promise.all([
     updateConfig({ deployments, requests }),
-    sendMessageToUsers(releaseManagers, stagingBuildManagerView(build)),
-    sendMessageToChannel(botChannel, stagingBuildChannelView(build))
+    sendMessageToUsers(releaseManagers, stagingBuildManagerView(deployment)),
+    sendMessageToChannel(
+      botChannel,
+      stagingBuildChannelView(deployment),
+      deployment.getRequestThread()
+    )
   ])
 }
 
@@ -83,18 +97,21 @@ const handleIfProductionBuildEvent = async (build) => {
     return
   }
 
-  deployments = updateDeployments(deployments, deployment, build)
-  requests = mergeWith(request => ({
-    ...request,
-    status: RequestStatus.staging
-  }),
-    requests,
-    pick(deployment.requests, requests)
-  )
+  deployment.expand(requests)
+  deployment.update({
+    status: DeploymentStatus.production,
+    build
+  })
+  deployments = updateById(deployments, deployment.compact())
+
+  const keys = deployment.compact().requests
+  requests = updateByKeys(requests, keys, () => ({
+    status: RequestStatus.production
+  }))
 
   await Promise.all([
     updateConfig({ deployments, requests }),
-    sendMessageToChannel(botChannel, stagingBuildManagerView(build))
+    sendMessageToChannel(botChannel, productionBuildChannelView(deployment))
   ])
 }
 

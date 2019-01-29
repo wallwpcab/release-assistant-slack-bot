@@ -1,7 +1,6 @@
 const { pathOr } = require('ramda')
 
-const { updateById, updateByKeys } = require('../../../utils')
-const { getRequests } = require('../../request/utils')
+const { updateById } = require('../../../utils')
 const { getOrCreateDeployment } = require('./utils')
 const { Request, RequestApproval, RequestStatus } = require('../../request/mappings')
 const { readConfig, updateConfig } = require('../../../bot-config')
@@ -71,18 +70,22 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   }
 
   const deployment = await getOrCreateDeployment(deployments, requests)
-  const requestThread = deployment.requests.length === 1 ? request.file.thread_ts : null
   deployments = updateById(deployments, deployment.compact())
-  requests = updateByKeys(requests, [request.id], () => ({
+  requests = updateById(requests, {
+    ...request,
     status: RequestStatus.approved,
     approver: user,
     deploymentId: deployment.id
-  }))
+  })
 
   await Promise.all([
     updateConfig({ requests, deployments }),
     sendMessageToUsers(releaseManagers, requestInitiatedManagerView(deployment, user)),
-    sendMessageToChannel(botChannel, requestInitiatedChannelView(deployment.requests, user), requestThread)
+    sendMessageToChannel(
+      botChannel,
+      requestInitiatedChannelView(deployment, user),
+      deployment.getRequestThread()
+    )
   ])
 }
 

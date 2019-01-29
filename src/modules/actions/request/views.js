@@ -1,7 +1,6 @@
 const { RequestApproval } = require('../../request/mappings')
 const { requestIdLabel } = require('../../request/views')
 const { slackUserTag } = require('../../../utils')
-const { getRequests } = require('../../request/utils')
 const {
   requestDetailsLabel,
   requestTypeLabel,
@@ -74,10 +73,17 @@ git push origin HEAD
 \`\`\``
 })
 
-const requestInitiatedChannelView = (requests, approver) => {
-  const userTags = requests.map(user => slackUserTag(user)).join(', ')
+const requestInitiatedChannelView = ({ requests }, approver) => {
+  if (requests.length > 1) {
+    const userTags = requests.map(user => slackUserTag(user)).join(', ')
+    return {
+      text: `${slackUserTag(approver)} initiated ${requestLabels(requests)} requests.\n//cc ${userTags}`
+    }
+  }
+
+  const [{ user }] = requests
   return {
-    text: `${slackUserTag(approver)} initiated this request.\n//cc ${userTags}`
+    text: `${slackUserTag(approver)} initiated this request.\n//cc ${slackUserTag(user)}`
   }
 }
 

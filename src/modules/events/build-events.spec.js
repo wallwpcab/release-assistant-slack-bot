@@ -5,16 +5,20 @@ const { mockMessageApi } = require('../../test-utils/mock-api')
 const { DeploymentStatus } = require('../request/mappings')
 const {
   mockConfig,
+  mockInitialRequest,
   mockInitialDeployment,
-  mockBranchDeployment,
   mockBranchBuild,
   mockStagingBuild,
-  mockProductionBuild
+  mockBranchDeployment,
+  mockProductionBuild,
+  mockStagingDeployment,
+  mockProductionDeployment
 } = require('../../test-utils/mock-data')
 const {
   branchBuildManagerView,
   stagingBuildManagerView,
-  stagingBuildChannelView
+  stagingBuildChannelView,
+  productionBuildChannelView
 } = require('./views')
 const {
   handleIfBranchBuildEvent,
@@ -24,13 +28,18 @@ const {
 
 describe('Events controller', async () => {
   beforeEach(async () => {
-    await updateConfig(mockConfig, true)
+    await updateConfig({
+      ...mockConfig,
+      requests: {
+        [mockInitialRequest.id]: mockInitialRequest
+      }
+    }, true)
   })
 
   it('Can handle branch build event', async () => {
     /** mock api **/
     const chatApi = mockMessageApi(message => {
-      expect(message).toMatchObject(branchBuildManagerView(mockBranchDeployment.build))
+      expect(message).toMatchObject(branchBuildManagerView(mockBranchDeployment))
       return true
     })
 
@@ -52,8 +61,8 @@ describe('Events controller', async () => {
   it('Can handle staging build event', async () => {
     const payloadCallback = message => {
       expect([
-        stagingBuildManagerView(mockStagingBuild).text,
-        stagingBuildChannelView(mockProductionBuild).text
+        stagingBuildManagerView(mockStagingDeployment).text,
+        stagingBuildChannelView(mockStagingDeployment).text
       ]).toContain(message.text)
       return true
     }
@@ -82,7 +91,7 @@ describe('Events controller', async () => {
   it('Can handle production build event', async () => {
     /** mock api **/
     const chatApi = mockMessageApi(message => {
-      expect(message).toMatchObject(stagingBuildManagerView(mockProductionBuild))
+      expect(message).toMatchObject(productionBuildChannelView(mockProductionDeployment))
       return true
     })
 
