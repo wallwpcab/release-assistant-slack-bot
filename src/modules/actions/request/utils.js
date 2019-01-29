@@ -2,29 +2,12 @@ const { format } = require('date-fns')
 
 const { generateId, getDate } = require('../../../utils/generator')
 const { getGitInfo } = require('../../../git-integration')
-const { RequestType, RequestStatus, DeploymentStatus } = require('../../request/mappings')
-
-const getInitialRequests = (requests) => {
-  return Object.values(requests).filter(r => r.status === RequestStatus.initial)
-}
-
-const getGroupType = (requests) => {
-  const hasType = (requests, type) => requests.find(r => r && r.type === type)
-
-  return [
-    RequestType.hotfix.value,
-    RequestType.activation.value
-  ].map(type => hasType(requests, type) && type)
-    .filter(Boolean)
-    .join('-')
-}
+const { DeploymentStatus } = require('../../request/mappings')
+const { getRequestId, getInitialRequests, getRequests, getGroupType } = require('../../request/utils')
 
 const createBuild = (requests, deploymentId) => ({
   branch: `release/${format(getDate(), 'YYYY-MM-DD')}/${getGroupType(requests)}/${deploymentId}`
 })
-
-const getRequestId = ({ id }) => id
-const getRequests = (ids, requests) => ids.map(id => requests[id]).filter(Boolean)
 
 const createDeployment = async (requests) => {
   const { info } = await getGitInfo(true)
@@ -62,19 +45,7 @@ const getOrCreateDeployment = async (deployments, requests) => {
   return deployment
 }
 
-const updateObject = (parent, child, key = 'id') => {
-  return {
-    ...parent,
-    [child[key]]: child
-  }
-}
-
 module.exports = {
-  getInitialRequests,
   createDeployment,
-  getOrCreateDeployment,
-  updateObject,
-  getGroupType,
-  getRequestId,
-  getRequests
+  getOrCreateDeployment
 }

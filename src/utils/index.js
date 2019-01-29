@@ -49,6 +49,13 @@ const makeTitleCase = (message = '') => message.replace(
   /\w\S*/g, word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
 )
 
+const updateObject = (parent, child, key = 'id') => {
+  return {
+    ...parent,
+    [child[key]]: child
+  }
+}
+
 module.exports = {
   splitValues,
   findGroup,
@@ -58,5 +65,6 @@ module.exports = {
   getSlackUserTags,
   getSlackUser,
   makeTitleCase,
-  slackUserTag
+  slackUserTag,
+  updateObject
 }

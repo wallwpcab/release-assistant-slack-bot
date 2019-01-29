@@ -4,7 +4,7 @@ const { generateDialogRequest, generateActionRequest } = require('../test-utils'
 const { Request, RequestApproval } = require('../../request/mappings')
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { waitForInternalPromises } = require('../../../test-utils')
-const { updateObject } = require('./utils')
+const { updateObject } = require('../../../utils')
 const {
   requestInvalidIdView,
   requestAlreadyInitiatedView

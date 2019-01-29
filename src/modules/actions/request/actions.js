@@ -1,6 +1,8 @@
 const { pathOr } = require('ramda')
 
-const { getOrCreateDeployment, updateObject, getRequests } = require('./utils')
+const { updateObject } = require('../../../utils')
+const { getRequests } = require('../../request/utils')
+const { getOrCreateDeployment } = require('./utils')
 const { Request, RequestApproval, RequestStatus } = require('../../request/mappings')
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { getRequestData } = require('../../../transformer')
