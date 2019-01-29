@@ -2,7 +2,7 @@ const minimist = require('minimist')
 
 const { openDialog, sendMessageToChannel } = require('../slack/integration')
 const { readConfig } = require('../../bot-config')
-const { splitValues } = require('../../utils')
+const { splitValues, getSlackChannel } = require('../../utils')
 const log = require('../../utils/log')
 const {
   configReadView,
@@ -68,19 +68,20 @@ const handleIfTestProductionBuild = async ({ testProductionBuild, branch }, res)
 const handleIfUpdateConfig = async (args, res, req) => {
   if (!args.update) return
 
-  const config = await readConfig()
-  // TODO: ??
+  let config = await readConfig()
   const {
-    deployChannel = config.deployChannel,
-    botChannel = config.botChannel,
+    botChannel: botCh,
+    deployChannel: depCh
   } = args
+  const botChannel = botCh ? getSlackChannel(botCh) : config.botChannel
+  const deployChannel = depCh ? getSlackChannel(depCh) : config.deployChannel
 
-  const configValue = JSON.stringify({
+  config = {
     ...config,
     deployChannel,
     botChannel
-  }, null, 2)
-
+  }
+  const configValue = JSON.stringify(config, null, 2)
   const { trigger_id } = req.body
 
   await openDialog(trigger_id, configDialogView(configValue))

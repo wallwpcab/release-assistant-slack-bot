@@ -1,9 +1,9 @@
 const {
   splitValues,
   getSlackChannels,
-  getSlackChannelId,
+  getSlackChannel,
   getSlackUsers,
-  getSlackUserId
+  getSlackUser
 } = require('./index')
 
 describe('Utils', () => {
@@ -16,7 +16,9 @@ describe('Utils', () => {
   })
 
   it('Can extract Slack channel id from text', () => {
-    expect(getSlackChannelId('bla bla <#CHANNEL1|channel1>')).toEqual('CHANNEL1')
+    expect(getSlackChannel('bla bla <#CHANNEL1|channel1>')).toEqual({
+      id: 'CHANNEL1'
+    })
   })
 
   it('Can extract Slack users from text', () => {
@@ -24,6 +26,8 @@ describe('Utils', () => {
   })
 
   it('Can extract Slack userId from text', () => {
-    expect(getSlackUserId('bla bla <@USER1|user1> abc')).toEqual('USER1')
+    expect(getSlackUser('bla bla <@USER1|user1> abc')).toEqual({
+      id: 'USER1'
+    })
   })
 })

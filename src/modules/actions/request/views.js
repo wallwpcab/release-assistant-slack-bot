@@ -1,6 +1,6 @@
 const { RequestApproval } = require('../../request/mappings')
 const { requestIdLabel } = require('../../request/views')
-const { slackUser } = require('../../../utils')
+const { slackUserTag } = require('../../../utils')
 const { getRequests } = require('../request/utils')
 const {
   requestDetailsLabel,
@@ -55,7 +55,7 @@ const requestReceivedManagerView = (request) => {
   }
 }
 
-const requestReceivedChannelView = ({ user, type }) => `${slackUser(user)} requested following ${requestTypeLabel(type)} request.`
+const requestReceivedChannelView = ({ user, type }) => `${slackUserTag(user)} requested following ${requestTypeLabel(type)} request.`
 
 const requestLabels = requests => requests.map(({ id, file }) => requestIdLabel(id, file)).join(', ')
 
@@ -63,7 +63,7 @@ const requestInitiatedManagerView = (deployment, allRequests, approver) => {
   const requests = getRequests(deployment.requests, allRequests)
 
   return {
-    text: `${slackUser(approver)} initiated ${requestLabels(requests)} requests.
+    text: `${slackUserTag(approver)} initiated ${requestLabels(requests)} requests.
 Please follow these steps:
 \`\`\`
 # Checkout the new brance from 'Production'
@@ -81,21 +81,21 @@ git push origin HEAD
 const requestInitiatedChannelView = (request, approver) => {
   const { user, type } = request
   return {
-    text: `${slackUser(approver)} initiated ${slackUser(user)}'s ${requestTypeLabel(type)} request.`
+    text: `${slackUserTag(approver)} initiated ${slackUserTag(user)}'s ${requestTypeLabel(type)} request.`
   }
 }
 
 const requestRejectedManagerView = (request, rejector) => {
   const { id, type, file } = request
   return {
-    text: `${slackUser(rejector)} rejected ${requestIdLabel(id, file)} ${requestTypeLabel(type)} request.`
+    text: `${slackUserTag(rejector)} rejected ${requestIdLabel(id, file)} ${requestTypeLabel(type)} request.`
   }
 }
 
 const requestRejectedChannelView = (request, rejector) => {
   const { user, type } = request
   return {
-    text: `${slackUser(rejector)} rejected ${slackUser(user)}'s ${requestTypeLabel(type)} request.`
+    text: `${slackUserTag(rejector)} rejected ${slackUserTag(user)}'s ${requestTypeLabel(type)} request.`
   }
 }
 

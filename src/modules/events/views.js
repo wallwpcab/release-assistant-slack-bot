@@ -1,8 +1,10 @@
 const { DeploymentStatus } = require('../request/mappings')
+const { slackUserTag } = require('../../utils')
 
-const releaseManagerUpdatedView = (auther, releaseManagers) => {
+const releaseManagerUpdatedView = (user, releaseManagers) => {
+  const slackUsers = releaseManagers.map(m => slackUserTag(m)).join(', ')
   return {
-    text: `${auther} set ${releaseManagers.join(', ')} as Release Manager`
+    text: `${slackUserTag(user)} set ${slackUsers} as Release Manager`
   }
 }
 

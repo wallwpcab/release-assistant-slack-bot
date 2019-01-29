@@ -115,11 +115,21 @@ const mockProductionDeployment = {
 }
 
 const mockConfig = {
-  botChannel: { id: 'GEL8D0QRG', name: 'release-bot-test' },
-  deployChannel: { id: 'GEL8D0QRG', name: 'release-bot-test' },
+  botChannel: {
+    id: 'GEL8D0QRG',
+    name: 'release-bot-test'
+  },
+  deployChannel: {
+    id: 'CEML3BEK0',
+    name: 'release-bot'
+  },
   stagingInfoUrl: 'http://staging.git.com/info',
   productionInfoUrl: 'http://production.git.com/info',
-  releaseManagers: [{ id: 'UC29BCUN6' }],
+  releaseManagers: [
+    {
+      id: 'UC29BCUN6'
+    }
+  ],
   requests: {},
   deployments: {
     staging: {}

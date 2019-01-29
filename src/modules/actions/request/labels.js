@@ -1,6 +1,6 @@
 const { requestIdLabel } = require('../../request/views')
 const { RequestType } = require('../../request/mappings')
-const { slackUser } = require('../../../utils')
+const { slackUserTag } = require('../../../utils')
 const { getApprovalText } = require('../../../transformer')
 
 const requestTypeLabel = (type) => {
@@ -30,7 +30,7 @@ const requestDetailsLabel = ({
   user
 }) => {
   return `Id					 : ${requestIdLabel(id, file)}
-Author			: ${slackUser(user)}
+Author			: ${slackUserTag(user)}
 Type				: ${requestTypeLabel(type)}
 Approval		 : ${approvalLabel(approval)}
 Description	:

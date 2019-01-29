@@ -20,9 +20,11 @@ const getSlackChannels = (text) => {
   return text.match(channelExpr) || []
 }
 
-const getSlackChannelId = (text) => {
+const getSlackChannel = (text) => {
   const channelExpr = /<#([^|>]+)/
-  return findGroup([channelExpr], text) || ''
+  const id = findGroup([channelExpr], text)
+  const channel = { id }
+  return id && channel
 }
 
 const getSlackUsers = (text) => {
@@ -30,25 +32,27 @@ const getSlackUsers = (text) => {
   return text.match(userExpr) || []
 }
 
-const getSlackUserId = (text) => {
+const getSlackUser = (text) => {
   const userExpr = /<@([^|>]+)/
-  return findGroup([userExpr], text) || ''
+  const id = findGroup([userExpr], text)
+  const user = { id }
+  return id && user
 }
+
+const slackUserTag = user => `<@${user.id}>`
 
 const makeTitleCase = (message = '') => message.replace(
   /\w\S*/g, word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
 )
-
-const slackUser = user => `<@${user.id}>`
 
 module.exports = {
   splitValues,
   findGroup,
   isAnyMatch,
   getSlackChannels,
-  getSlackChannelId,
+  getSlackChannel,
   getSlackUsers,
-  getSlackUserId,
+  getSlackUser,
   makeTitleCase,
-  slackUser
+  slackUserTag
 }

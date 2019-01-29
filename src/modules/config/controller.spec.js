@@ -1,5 +1,6 @@
 require('../../test-utils/mock-implementations')
 const { configPost } = require('./controller')
+const { getSlackChannel } = require('../../utils')
 const { waitForInternalPromises } = require('../../test-utils')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { configReadView, branchBuildView, stagingBuildView, productionBuildView } = require('./views')
@@ -27,9 +28,11 @@ describe('Config controller', async () => {
   })
 
   it('Can handle update config', async () => {
+    const botChannel = '<#GEL8D0QRG|release-bot-test>'
+    const deployChannel = '<#CEML3BEK0|release-bot>'
     const req = {
       body: {
-        text: '--update --deployChannel #deploy --botChannel #bot-channel'
+        text: `--update --botChannel ${botChannel} --deployChannel ${deployChannel}`
       }
     }
 
@@ -39,9 +42,10 @@ describe('Config controller', async () => {
 
     const api = mockDialogOpenApi(({ dialog }) => {
       const [{ value }] = JSON.parse(dialog).elements
-      expect(JSON.parse(value)).toMatchObject({
-        deployChannel: '#deploy',
-        botChannel: '#bot-channel'
+      const config = JSON.parse(value)
+      expect(config).toEqual({
+        botChannel: getSlackChannel(botChannel),
+        deployChannel: getSlackChannel(deployChannel)
       })
       return true
     })

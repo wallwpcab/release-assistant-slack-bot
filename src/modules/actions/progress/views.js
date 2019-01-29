@@ -1,15 +1,15 @@
 const { requestIdLabel } = require('../../request/views')
-const { slackUser } = require('../../../utils')
+const { slackUserTag } = require('../../../utils')
 
 const requestCanceledManagerView = ({ id, file }, user) => {
   return {
-    text: `${slackUser(user)} canceled ${requestIdLabel(id, file)} progress`
+    text: `${slackUserTag(user)} canceled ${requestIdLabel(id, file)} progress`
   }
 }
 
 const requestCanceledChannelView = (user) => {
   return {
-    text: `${slackUser(user)} canceled this request`
+    text: `${slackUserTag(user)} canceled this request`
   }
 }
 

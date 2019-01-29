@@ -1,6 +1,5 @@
 require('../../test-utils/mock-implementations')
 const { eventsPost } = require('./controller')
-const { getSlackChannelId } = require('../../utils')
 const { waitForInternalPromises } = require('../../test-utils')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { mockMessageApi, mockPublicMessageApi } = require('../../test-utils/mock-api')
@@ -12,7 +11,7 @@ const { eventRequestGenerator } = require('./test-utils')
 const { handleIfBranchBuildEvent, handleIfStagingBuildEvent, handleIfProductionBuildEvent } = require('./build-events')
 
 describe('Events controller', async () => {
-  const generateRequest = eventRequestGenerator('bot_message', getSlackChannelId(mockConfig.deployChannel))
+  const generateRequest = eventRequestGenerator('bot_message', mockConfig.deployChannel.id)
 
   beforeEach(async () => {
     await updateConfig(mockConfig, true)
@@ -66,9 +65,9 @@ describe('Events controller', async () => {
   it('Can handle production build event', async () => {
     /** mock api **/
     const chatApi = mockMessageApi(message => {
-        expect(message).toMatchObject(stagingBuildManagerView(mockProductionBuild))
-        return true
-      })
+      expect(message).toMatchObject(stagingBuildManagerView(mockProductionBuild))
+      return true
+    })
 
     await updateConfig({
       deployments: {

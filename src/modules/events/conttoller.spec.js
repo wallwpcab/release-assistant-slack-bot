@@ -1,6 +1,6 @@
 require('../../test-utils/mock-implementations')
 const { eventsPost } = require('./controller')
-const { getSlackChannelId } = require('../../utils')
+const { getSlackUser } = require('../../utils')
 const { waitForInternalPromises } = require('../../test-utils')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { mockMessageApi } = require('../../test-utils/mock-api')
@@ -43,9 +43,12 @@ describe('Events controller', async () => {
       send: jest.fn()
     }
 
+    const user = getSlackUser(author)
+    const users = managers.map(u => getSlackUser(u))
+
     const messageApi = mockMessageApi(
       ({ text }) => {
-        expect(text).toBe(releaseManagerUpdatedView(author, managers).text)
+        expect(text).toBe(releaseManagerUpdatedView(user, users).text)
         return true
       }
     )
@@ -54,8 +57,7 @@ describe('Events controller', async () => {
     await waitForInternalPromises()
 
     expect(messageApi.isDone()).toEqual(true)
-
     const { releaseManagers } = await readConfig();
-    expect(releaseManagers).toEqual(managers)
+    expect(releaseManagers).toEqual(users)
   })
 })

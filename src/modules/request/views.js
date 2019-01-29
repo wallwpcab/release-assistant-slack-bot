@@ -1,5 +1,5 @@
 const { Request, RequestType } = require('./mappings')
-const { slackUser } = require('../../utils')
+const { slackUserTag } = require('../../utils')
 
 const requestIdLabel = (id, file) => file.permalink ? `*<${file.permalink}|\`${id}\`>*` : `*\`${id}\`*`
 
@@ -64,7 +64,7 @@ const requestAlreadyInitiatedView = (request) => {
   const { id, file, approver } = request
   return {
     response_type: 'ephemeral',
-    text: `${slackUser(approver)} already initiated ${requestIdLabel(id, file)} release request.`
+    text: `${slackUserTag(approver)} already initiated ${requestIdLabel(id, file)} release request.`
   }
 }
 
