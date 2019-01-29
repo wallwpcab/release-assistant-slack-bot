@@ -44,7 +44,7 @@ const sendEphemeralMessage = async (user, message) => {
 
 const sendMessageToUser = (user, message, thread) => sendMessage({ user: user.id, message, thread })
 const sendMessageToUsers = (users, message, thread) => sendMessage({ users: users.map(u => u.id), message, thread })
-const sendMessageToChannel = (channelId, message, thread) => sendMessage({ channel: channelId, message, thread })
+const sendMessageToChannel = (channel, message, thread) => sendMessage({ channel: channel.id, message, thread })
 const sendMessageOverUrl = async (url, message) => axios.post(url, message)
 
 const openDialog = async (trigger_id, dialog) => {
@@ -103,18 +103,6 @@ const uploadRequestData = async (request, channel, comment) => {
   }
 }
 
-const addCommentOnFile = async (file, comment) => {
-  try {
-    await httpClient().post(
-      '/files.comments.add', {
-        file,
-        comment
-      })
-  } catch (err) {
-    log.error('error in commentOnFile()', err)
-  }
-}
-
 module.exports = {
   sendEphemeralMessage,
   sendMessageToUser,
@@ -123,6 +111,5 @@ module.exports = {
   sendMessageOverUrl,
   openDialog,
   uploadFile,
-  uploadRequestData,
-  addCommentOnFile
+  uploadRequestData
 }

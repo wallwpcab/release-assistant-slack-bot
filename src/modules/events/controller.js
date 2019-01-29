@@ -67,7 +67,7 @@ const handleIfChannelTopicEvent = async ({ type, subtype, text, topic, channel }
   const releaseManagers = getSlackUsers(topic)
   await Promise.all([
     updateConfig({ releaseManagers }),
-    sendMessageToChannel(botChannel.id, releaseManagerUpdatedView(author, releaseManagers))
+    sendMessageToChannel(botChannel, releaseManagerUpdatedView(author, releaseManagers))
   ])
 }
 

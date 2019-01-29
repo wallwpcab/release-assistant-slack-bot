@@ -1,7 +1,6 @@
 require('../../test-utils/mock-implementations')
 const { mockUser, mockMessage, mockChannel, mockFile, mockInitialRequest } = require('../../test-utils/mock-data')
 const {
-  addCommentOnFile,
   openDialog,
   sendEphemeralMessage,
   sendMessageOverUrl,
@@ -15,7 +14,6 @@ const {
   mockDialogOpenApi,
   mockEphemeralMessageApi,
   mockFileApi,
-  mockFilesCommentsAddApi,
   mockMessageApi,
   mockPublicMessageApi,
 } = require('../../test-utils/mock-api')
@@ -62,7 +60,7 @@ describe('Slack integration', async () => {
 
   it('Can send a message to a channel', async () => {
     const api = mockMessageApi()
-    await sendMessageToChannel(mockChannel.id, mockMessage)
+    await sendMessageToChannel(mockChannel, mockMessage)
     expect(api.isDone()).toBe(true)
   })
 
@@ -88,11 +86,5 @@ describe('Slack integration', async () => {
     const file = await uploadRequestData(mockInitialRequest, mockChannel.id, 'some comment')
     expect(api.isDone()).toBe(true)
     expect(file).toMatchObject(mockFile)
-  })
-
-  it('Can add comment on file', async () => {
-    const api = mockFilesCommentsAddApi()
-    await addCommentOnFile('file-1', 'comment-1')
-    expect(api.isDone()).toBe(true)
   })
 })

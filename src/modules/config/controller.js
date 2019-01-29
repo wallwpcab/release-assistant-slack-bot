@@ -46,7 +46,7 @@ const handleIfTestBranchBuild = async ({ testBranchBuild, branch }, res) => {
 
   const { botChannel } = await readConfig()
   res.send()
-  sendMessageToChannel(botChannel.id, branchBuildView(branch))
+  sendMessageToChannel(botChannel, branchBuildView(branch))
 }
 
 const handleIfTestStagingBuild = async ({ testStagingBuild, branch }, res) => {
@@ -54,7 +54,7 @@ const handleIfTestStagingBuild = async ({ testStagingBuild, branch }, res) => {
 
   const { botChannel } = await readConfig()
   res.send()
-  sendMessageToChannel(botChannel.id, stagingBuildView(branch))
+  sendMessageToChannel(botChannel, stagingBuildView(branch))
 }
 
 const handleIfTestProductionBuild = async ({ testProductionBuild, branch }, res) => {
@@ -62,7 +62,7 @@ const handleIfTestProductionBuild = async ({ testProductionBuild, branch }, res)
 
   const { botChannel } = await readConfig()
   res.send()
-  sendMessageToChannel(botChannel.id, productionBuildView(branch))
+  sendMessageToChannel(botChannel, productionBuildView(branch))
 }
 
 const handleIfUpdateConfig = async (args, res, req) => {

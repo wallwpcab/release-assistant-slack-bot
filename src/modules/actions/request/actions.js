@@ -77,7 +77,7 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   await Promise.all([
     updateConfig({ requests, deployments }),
     sendMessageToUsers(releaseManagers, requestInitiatedManagerView(deployment, requests, user)),
-    sendMessageToChannel(botChannel.id, requestInitiatedChannelView(request, user), thread_ts)
+    sendMessageToChannel(botChannel, requestInitiatedChannelView(request, user), thread_ts)
   ])
 }
 
@@ -102,7 +102,7 @@ const handleIfRejectRequestAction = async ({ callback_id, actions: [action], use
   await Promise.all([
     updateConfig({ requests }, true),
     sendMessageToUsers(releaseManagers, requestRejectedManagerView(request, user)),
-    sendMessageToChannel(botChannel.id, requestRejectedChannelView(request, user), thread_ts)
+    sendMessageToChannel(botChannel, requestRejectedChannelView(request, user), thread_ts)
   ])
 }
 

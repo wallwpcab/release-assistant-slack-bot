@@ -99,17 +99,6 @@ const mockFileApi = (payloadCallback) => {
     })
 }
 
-const mockFilesCommentsAddApi = (payloadCallback) => {
-  const payload = {
-    file: /^\S+/,
-    comment: /^\S+/
-  }
-
-  return mockSlackServer()
-    .post('/files.comments.add', payloadCallback || payload)
-    .reply(200)
-}
-
 const mockGitStagingApi = () => mockServer(mockConfig.stagingInfoUrl).get('')
   .reply(200, {
     info: mockGitCommit
@@ -127,7 +116,6 @@ module.exports = {
   mockMessageApi,
   mockEphemeralMessageApi,
   mockPublicMessageApi,
-  mockFilesCommentsAddApi,
   mockGitStagingApi,
   mockGitProductionApi
 }

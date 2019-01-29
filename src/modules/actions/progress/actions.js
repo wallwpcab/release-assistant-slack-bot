@@ -4,9 +4,8 @@ const { RequestProgress } = require('../../progress/mappings')
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { RequestStatus } = require('../../request/mappings')
 const {
-  requestCanceledAuthorView,
   requestCanceledManagerView,
-  requestCanceledCommentView
+  requestCanceledChannelView
 } = require('./views')
 const {
   requestInvalidIdView,
@@ -15,8 +14,7 @@ const {
 const {
   sendEphemeralMessage,
   sendMessageToUsers,
-  sendMessageToChannel,
-  addCommentOnFile
+  sendMessageToChannel
 } = require('../../slack/integration')
 
 const handleIfRequestProgressAction = async ({ callback_id, actions: [action], user }) => {
@@ -36,14 +34,13 @@ const handleIfRequestProgressAction = async ({ callback_id, actions: [action], u
     return
   }
 
-  const { file } = request
+  const { file: { thread_ts } } = request
   delete requests[requestId]
 
   await Promise.all([
     updateConfig({ requests }, true),
-    sendMessageToChannel(botChannel.id, requestCanceledAuthorView(request)),
     sendMessageToUsers(releaseManagers, requestCanceledManagerView(request, user)),
-    addCommentOnFile(file.id, requestCanceledCommentView(user))
+    sendMessageToChannel(botChannel, requestCanceledChannelView(user), thread_ts)
   ])
 }
 

@@ -1,4 +1,4 @@
-const { mockSlackApiUrl } = require('../../../test-utils/mock-implementations')
+require('../../../test-utils/mock-implementations')
 const { actionsPost } = require('../controller')
 const { generateActionRequest } = require('../test-utils')
 const { RequestProgress } = require('../../progress/mappings')
@@ -9,6 +9,10 @@ const {
   requestAlreadyInitiatedView
 } = require('../../request/views')
 const {
+  requestCanceledManagerView,
+  requestCanceledChannelView
+} = require('./views')
+const {
   mockInitialRequest,
   mockApprovedRequest,
   mockUser,
@@ -17,8 +21,7 @@ const {
 } = require('../../../test-utils/mock-data')
 const {
   mockMessageApi,
-  mockEphemeralMessageApi,
-  mockFilesCommentsAddApi
+  mockEphemeralMessageApi
 } = require('../../../test-utils/mock-api')
 
 const actionRequest = generateActionRequest(
@@ -99,15 +102,17 @@ describe('Cancel request actions', async () => {
       send: jest.fn()
     }
 
-    /** mock api **/
-    const filesCommentsApi = mockFilesCommentsAddApi()
-    const chatApi = mockMessageApi(
-      ({ text, channel }) => /canceled/.test(text) && /^\S+/.test(channel)
-    )
+    const messageApiCallback = ({ text }) => {
+      expect([
+        requestCanceledManagerView(mockInitialRequest, mockUser).text,
+        requestCanceledChannelView(mockUser).text
+      ]).toContain(text)
+      return true
+    }
 
-    const chatApiForUsers = mockMessageApi(
-      ({ text, channel }) => /canceled/.test(text) && /^\S+/.test(channel)
-    )
+    /** mock api **/
+    const userMessageApi = mockMessageApi(messageApiCallback)
+    const channelMessageApi = mockMessageApi(messageApiCallback)
     /** mock api **/
 
     // simulate controller method call
@@ -120,8 +125,7 @@ describe('Cancel request actions', async () => {
     expect(requests[mockApprovedRequest.id]).toBe(undefined)
 
     // should call following api
-    expect(chatApi.isDone()).toBe(true)
-    expect(chatApiForUsers.isDone()).toBe(true)
-    expect(filesCommentsApi.isDone()).toBe(true)
+    expect(userMessageApi.isDone()).toBe(true)
+    expect(channelMessageApi.isDone()).toBe(true)
   })
 })

@@ -72,7 +72,7 @@ const handleIfProductionBuildEvent = async (build) => {
     updateConfig({
       deployments: updateDeployments(deployments, deployment, build)
     }),
-    sendMessageToChannel(botChannel.id, stagingBuildManagerView(build))
+    sendMessageToChannel(botChannel, stagingBuildManagerView(build))
   ])
 }
 
