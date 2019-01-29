@@ -4,7 +4,8 @@ const { generateDialogRequest, generateActionRequest } = require('../test-utils'
 const { Request, RequestApproval } = require('../../request/mappings')
 const { readConfig, updateConfig } = require('../../../bot-config')
 const { waitForInternalPromises } = require('../../../test-utils')
-const { updateObject } = require('../../../utils')
+const { updateById } = require('../../../utils')
+const { Deployment } = require('./model')
 const {
   requestInvalidIdView,
   requestAlreadyInitiatedView
@@ -47,7 +48,7 @@ const actionRequest = generateActionRequest(
 
 describe('Request actions', async () => {
   beforeEach(async () => {
-    const requests = updateObject({}, mockInitialRequest)
+    const requests = updateById({}, mockInitialRequest)
     await updateConfig({ ...mockConfig, requests }, true)
   })
 
@@ -178,15 +179,10 @@ describe('Request actions', async () => {
       send: jest.fn()
     }
 
-    const allRequests = {
-      [mockInitialRequest.id]: mockInitialRequest,
-      [mockApprovedRequest.id]: mockApprovedRequest
-    }
-
     const messageApiCallback = ({ text }) => {
       expect([
-        requestInitiatedManagerView(mockInitialDeployment, allRequests, mockApprover).text,
-        requestInitiatedChannelView(mockInitialRequest, mockApprover).text
+        requestInitiatedManagerView(mockInitialDeployment, mockApprover).text,
+        requestInitiatedChannelView([mockInitialRequest], mockApprover).text
       ]).toContain(text)
       return true
     }

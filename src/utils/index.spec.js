@@ -4,7 +4,8 @@ const {
   getSlackChannel,
   getSlackUserTags,
   getSlackUser,
-  updateObject
+  updateById,
+  updateByKeys
 } = require('./index')
 
 describe('Utils', () => {
@@ -34,7 +35,7 @@ describe('Utils', () => {
     })
   })
 
-  it('Can update child object', () => {
+  it('Can update parent with child by id', () => {
     const child = {
       id: '1',
       b: 'b'
@@ -46,7 +47,26 @@ describe('Utils', () => {
       }
     }
 
-    expect(updateObject(parent, child, 'id')).toMatchObject({
+    expect(updateById(parent, child)).toMatchObject({
+      ...parent,
+      [child.id]: child
+    })
+  })
+
+  it('Can update parent with children by keys', () => {
+    const child = {
+      id: '1',
+      b: 'b'
+    }
+
+    const parent = {
+      '1': {
+        id: '1',
+        a: 'a'
+      }
+    }
+
+    expect(updateByKeys(parent, ['1'], () => child)).toMatchObject({
       ...parent,
       [child.id]: child
     })

@@ -1,9 +1,9 @@
-const { mergeRight } = require('ramda')
+const { pick, mergeWith, mergeRight } = require('ramda')
 const { branchBuildManagerView, stagingBuildManagerView, stagingBuildChannelView } = require('./views')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { sendMessageToUsers, sendMessageToChannel } = require('../slack/integration')
 const log = require('../../utils/log')
-const { DeploymentStatus } = require('../request/mappings')
+const { RequestStatus, DeploymentStatus } = require('../request/mappings')
 const {
   findDeployment,
   updateDeployments
@@ -14,7 +14,7 @@ const handleIfBranchBuildEvent = async (build) => {
     return
   }
 
-  const { deployments, releaseManagers } = await readConfig()
+  let { deployments, releaseManagers, requests } = await readConfig()
   const deployment = findDeployment(deployments, build)
 
   if (!deployment) {
@@ -22,10 +22,17 @@ const handleIfBranchBuildEvent = async (build) => {
     return
   }
 
+  deployments = updateDeployments(deployments, deployment, build)
+  requests = mergeWith(request => ({
+    ...request,
+    status: RequestStatus.branch
+  }),
+    requests,
+    pick(deployment.requests, requests)
+  )
+
   await Promise.all([
-    updateConfig({
-      deployments: updateDeployments(deployments, deployment, build)
-    }),
+    updateConfig({ deployments, requests }),
     sendMessageToUsers(releaseManagers, branchBuildManagerView(build))
   ])
 }
@@ -35,7 +42,7 @@ const handleIfStagingBuildEvent = async (build) => {
     return
   }
 
-  let { deployments, releaseManagers, botChannel } = await readConfig()
+  let { deployments, releaseManagers, botChannel, requests } = await readConfig()
   const deployment = findDeployment(deployments, build)
   deployments = mergeRight(deployments, {
     staging: { build }
@@ -47,10 +54,17 @@ const handleIfStagingBuildEvent = async (build) => {
     return
   }
 
+  deployments = updateDeployments(deployments, deployment, build)
+  requests = mergeWith(request => ({
+    ...request,
+    status: RequestStatus.staging
+  }),
+    requests,
+    pick(deployment.requests, requests)
+  )
+
   await Promise.all([
-    updateConfig({
-      deployments: updateDeployments(deployments, deployment, build)
-    }),
+    updateConfig({ deployments, requests }),
     sendMessageToUsers(releaseManagers, stagingBuildManagerView(build)),
     sendMessageToChannel(botChannel, stagingBuildChannelView(build))
   ])
@@ -61,7 +75,7 @@ const handleIfProductionBuildEvent = async (build) => {
     return
   }
 
-  const { deployments, botChannel } = await readConfig()
+  let { deployments, requests, botChannel } = await readConfig()
   const deployment = findDeployment(deployments, build)
 
   if (!deployment) {
@@ -69,10 +83,17 @@ const handleIfProductionBuildEvent = async (build) => {
     return
   }
 
+  deployments = updateDeployments(deployments, deployment, build)
+  requests = mergeWith(request => ({
+    ...request,
+    status: RequestStatus.staging
+  }),
+    requests,
+    pick(deployment.requests, requests)
+  )
+
   await Promise.all([
-    updateConfig({
-      deployments: updateDeployments(deployments, deployment, build)
-    }),
+    updateConfig({ deployments, requests }),
     sendMessageToChannel(botChannel, stagingBuildManagerView(build))
   ])
 }

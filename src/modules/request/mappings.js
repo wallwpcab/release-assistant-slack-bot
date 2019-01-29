@@ -25,7 +25,9 @@ const RequestStatus = {
   initial: 'initial',
   approved: 'approved',
   rejected: 'rejected',
-  inProgress: 'inProgress',
+  branch: 'branch',
+  staging: 'staging',
+  production: 'production'
 }
 
 const DeploymentStatus = {

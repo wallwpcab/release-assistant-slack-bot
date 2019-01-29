@@ -1,4 +1,4 @@
-const { split, reject, map } = require('ramda')
+const { split, reject, map, mergeRight } = require('ramda')
 
 const splitValues = (str, sep = /[\s+,]/) => reject(
   s => !s,
@@ -49,11 +49,20 @@ const makeTitleCase = (message = '') => message.replace(
   /\w\S*/g, word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
 )
 
-const updateObject = (parent, child, key = 'id') => {
+const updateById = (parent, child) => {
   return {
     ...parent,
-    [child[key]]: child
+    [child.id]: child
   }
+}
+
+const updateByKeys = (object, keys, callback) => {
+  const subset = keys.reduce((map, key) => {
+    const value = object[key]
+    map[key] = mergeRight(value, callback(value))
+    return map
+  }, {})
+  return mergeRight(object, subset)
 }
 
 module.exports = {
@@ -66,5 +75,6 @@ module.exports = {
   getSlackUser,
   makeTitleCase,
   slackUserTag,
-  updateObject
+  updateById,
+  updateByKeys
 }

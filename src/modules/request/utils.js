@@ -1,3 +1,4 @@
+const { mergeRight } = require('ramda')
 const { RequestType, RequestStatus } = require('./mappings')
 
 const getRequestId = ({ id }) => id

@@ -1,6 +1,6 @@
 const { pathOr } = require('ramda')
 
-const { updateObject } = require('../../../utils')
+const { updateById, updateByKeys } = require('../../../utils')
 const { getRequests } = require('../../request/utils')
 const { getOrCreateDeployment } = require('./utils')
 const { Request, RequestApproval, RequestStatus } = require('../../request/mappings')
@@ -48,7 +48,7 @@ const handleIfRequestDialogAction = async ({ callback_id, response_url, submissi
   const request = await createRequest(submission, user, botChannel)
 
   await Promise.all([
-    updateConfig({ requests: updateObject(requests, request) }),
+    updateConfig({ requests: updateById(requests, request) }),
     sendMessageOverUrl(response_url, requestReceivedAuthorView(request)),
     sendMessageToUsers(releaseManagers, requestReceivedManagerView(request))
   ])
@@ -71,24 +71,18 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   }
 
   const deployment = await getOrCreateDeployment(deployments, requests)
-  const deploymentRequests = getRequests(deployment.requests, requests)
-
-  request = {
-    ...request,
+  const requestThread = deployment.requests.length === 1 ? request.file.thread_ts : null
+  deployments = updateById(deployments, deployment.compact())
+  requests = updateByKeys(requests, [request.id], () => ({
     status: RequestStatus.approved,
     approver: user,
     deploymentId: deployment.id
-  }
-  requests = updateObject(requests, request)
-  deployments = updateObject(deployments, deployment)
+  }))
 
   await Promise.all([
     updateConfig({ requests, deployments }),
-    sendMessageToUsers(releaseManagers, requestInitiatedManagerView(deployment, requests, user)),
-    ...deploymentRequests.map(request => {
-      const { file: { thread_ts } } = request
-      return sendMessageToChannel(botChannel, requestInitiatedChannelView(request, user), thread_ts)
-    })
+    sendMessageToUsers(releaseManagers, requestInitiatedManagerView(deployment, user)),
+    sendMessageToChannel(botChannel, requestInitiatedChannelView(deployment.requests, user), requestThread)
   ])
 }
 

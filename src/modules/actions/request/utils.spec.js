@@ -23,7 +23,7 @@ describe('Request actions utils', async () => {
     expect(gitApi.isDone()).toBe(true)
     expect(deployment).toMatchObject({
       ...mockDeployment,
-      requests: [mockInitialRequest.id]
+      requests: [mockInitialRequest]
     })
   })
 

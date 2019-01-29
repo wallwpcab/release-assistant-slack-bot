@@ -2,13 +2,27 @@ require('../../test-utils/mock-implementations')
 const { waitForInternalPromises } = require('../../test-utils')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { mockMessageApi } = require('../../test-utils/mock-api')
-const { mockConfig, mockInitialDeployment, mockBranchDeployment, mockBranchBuild, mockStagingBuild, mockProductionBuild } = require('../../test-utils/mock-data')
-const { branchBuildManagerView, stagingBuildManagerView, stagingBuildChannelView } = require('./views')
 const { DeploymentStatus } = require('../request/mappings')
-const { handleIfBranchBuildEvent, handleIfStagingBuildEvent, handleIfProductionBuildEvent } = require('./build-events')
+const {
+  mockConfig,
+  mockInitialDeployment,
+  mockBranchDeployment,
+  mockBranchBuild,
+  mockStagingBuild,
+  mockProductionBuild
+} = require('../../test-utils/mock-data')
+const {
+  branchBuildManagerView,
+  stagingBuildManagerView,
+  stagingBuildChannelView
+} = require('./views')
+const {
+  handleIfBranchBuildEvent,
+  handleIfStagingBuildEvent,
+  handleIfProductionBuildEvent
+} = require('./build-events')
 
 describe('Events controller', async () => {
-
   beforeEach(async () => {
     await updateConfig(mockConfig, true)
   })

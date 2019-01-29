@@ -59,29 +59,25 @@ const requestReceivedChannelView = ({ user, type }) => `${slackUserTag(user)} re
 
 const requestLabels = requests => requests.map(request => requestIdLabel(request)).join(', ')
 
-const requestInitiatedManagerView = (deployment, requests, approver) => {
-  const deploymentRequests = getRequests(deployment.requests, requests)
-
-  return {
-    text: `${slackUserTag(approver)} initiated ${requestLabels(deploymentRequests)} requests.
+const requestInitiatedManagerView = (deployment, approver) => ({
+  text: `${slackUserTag(approver)} initiated ${requestLabels(deployment.requests)} requests.
 Please follow these steps:
 \`\`\`
 # Checkout the new brance from 'Production'
 ${gitCheckoutLabel(deployment)}
 
 # Cherry pick
-${gitCherryPickLabel(deploymentRequests)}
+${gitCherryPickLabel(deployment.requests)}
 
 # Push
 git push origin HEAD
 \`\`\``
-  }
-}
+})
 
-const requestInitiatedChannelView = (request, approver) => {
-  const { user } = request
+const requestInitiatedChannelView = (requests, approver) => {
+  const userTags = requests.map(user => slackUserTag(user)).join(', ')
   return {
-    text: `${slackUserTag(approver)} initiated this request.\n//cc ${slackUserTag(user)}`
+    text: `${slackUserTag(approver)} initiated this request.\n//cc ${userTags}`
   }
 }
 

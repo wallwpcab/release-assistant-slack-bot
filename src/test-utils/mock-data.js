@@ -90,7 +90,7 @@ const mockInitialDeployment = {
   status: DeploymentStatus.initial,
   baseCommit: mockGitCommit.gitCommitAbbrev,
   build: mockInitialBuild,
-  requests: [mockInitialRequest.id]
+  requests: [mockInitialRequest]
 }
 
 const mockBranchDeployment = {
