@@ -1,5 +1,5 @@
 const RequestProgress = {
-  callback_id: 'requestProgress',
+  callback_id: 'progress',
   cancel: 'cancel'
 }
 

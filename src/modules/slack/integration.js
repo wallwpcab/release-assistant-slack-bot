@@ -33,8 +33,8 @@ const sendEphemeralMessage = async (user, message) => {
   try {
     const payload = {
       ...message,
-      channel: await getChannel([user]),
-      user
+      channel: await getChannel([user.id]),
+      user: user.id
     }
     await httpClient().post('/chat.postEphemeral', payload)
   } catch (err) {

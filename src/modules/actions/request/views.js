@@ -88,14 +88,14 @@ const requestInitiatedChannelView = (request, approver) => {
 const requestRejectedManagerView = (request, rejector) => {
   const { id, type, file } = request
   return {
-    text: `${slackUserTag(rejector)} rejected ${requestIdLabel(id, file)} ${requestTypeLabel(type)} request.`
+    text: `${slackUserTag(rejector)} \`rejected\` ${requestIdLabel(id, file)} ${requestTypeLabel(type)} request.`
   }
 }
 
 const requestRejectedChannelView = (request, rejector) => {
   const { user } = request
   return {
-    text: `${slackUserTag(rejector)} rejected this request.\n//cc ${slackUserTag(user)}`
+    text: `${slackUserTag(rejector)} \`rejected\` this request.\n//cc ${slackUserTag(user)}`
   }
 }
 

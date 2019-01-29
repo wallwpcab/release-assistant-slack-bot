@@ -1,12 +1,10 @@
 require('../../test-utils/mock-implementations')
-const { mockConfig, mockInitialDeployment, mockBranchDeployment, mockStagingDeployment, mockBranchBuild, mockStagingBuild } = require('../../test-utils/mock-data')
-const { readConfig, updateConfig } = require('../../bot-config')
-const { branchBuildView, stagingBuildView, productionBuildView } = require('../config/views')
+const { mockConfig } = require('../../test-utils/mock-data')
+const { updateConfig } = require('../../bot-config')
+const { branchBuildView, stagingBuildView, productionBuildView } = require('../dryrun/views')
 const {
   isDeploymentEvent,
-  getBuildInfo,
-  updateDeployment
-} = require('./utils')
+  getBuildInfo } = require('./utils')
 
 const buildMessage = ({ attachments }) => attachments
   .reduce((acc, { text }) => acc + text + '\n', '')

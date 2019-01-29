@@ -1,16 +1,10 @@
 const minimist = require('minimist')
 
-const { openDialog, sendMessageToChannel } = require('../slack/integration')
+const { openDialog } = require('../slack/integration')
 const { readConfig } = require('../../bot-config')
 const { splitValues, getSlackChannel } = require('../../utils')
+const { configReadView, configDialogView } = require('./views')
 const log = require('../../utils/log')
-const {
-  configReadView,
-  configDialogView,
-  branchBuildView,
-  stagingBuildView,
-  productionBuildView
-} = require('./views')
 
 const configPost = async (req, res) => {
   const { text } = req.body
@@ -18,51 +12,19 @@ const configPost = async (req, res) => {
     const args = minimist(splitValues(text))
     handleIfReadConfig(args, res)
     handleIfUpdateConfig(args, res, req)
-    handleIfTestBranchBuild(args, res)
-    handleIfTestStagingBuild(args, res)
-    handleIfTestProductionBuild(args, res)
   } catch (err) {
-    log.error('handleIfUpdateConfig() > openDialog failed', err)
+    log.error('configPost > failed', err)
     res.sendStatus(500)
   }
 }
 
 const handleIfReadConfig = async (args, res) => {
-  if (
-    args.update ||
-    args.testBranchBuild ||
-    args.testStagingBuild ||
-    args.testProductionBuild
-  ) {
+  if (args.update) {
     return
   }
 
   const config = await readConfig()
   res.send(configReadView(config))
-}
-
-const handleIfTestBranchBuild = async ({ testBranchBuild, branch }, res) => {
-  if (!testBranchBuild) return
-
-  const { botChannel } = await readConfig()
-  res.send()
-  sendMessageToChannel(botChannel, branchBuildView(branch))
-}
-
-const handleIfTestStagingBuild = async ({ testStagingBuild, branch }, res) => {
-  if (!testStagingBuild) return
-
-  const { botChannel } = await readConfig()
-  res.send()
-  sendMessageToChannel(botChannel, stagingBuildView(branch))
-}
-
-const handleIfTestProductionBuild = async ({ testProductionBuild, branch }, res) => {
-  if (!testProductionBuild) return
-
-  const { botChannel } = await readConfig()
-  res.send()
-  sendMessageToChannel(botChannel, productionBuildView(branch))
 }
 
 const handleIfUpdateConfig = async (args, res, req) => {
