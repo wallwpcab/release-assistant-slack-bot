@@ -3,8 +3,8 @@ const { DeploymentStatus } = require('../../request/mappings')
 const { readConfig } = require('../../../bot-config')
 const { sendMessageToUsers } = require('../../slack/integration')
 const {
-  stagingBuildConfirmedReleaseManagerView,
-  stagingBuildIncorrectReleaseManagerView
+  buildConfirmedManagerView,
+  buildIncorrectManagerView
 } = require('./views')
 const log = require('../../../utils/log')
 
@@ -23,7 +23,7 @@ const handleIfStagingBuildConfirmAction = async ({ callback_id, actions, user })
   }
 
   const request = requests[reqId]
-  sendMessageToUsers(releaseManagers, stagingBuildConfirmedReleaseManagerView(user, request, deployment.build))
+  sendMessageToUsers(releaseManagers, buildConfirmedManagerView(user, request, deployment.build))
 }
 
 const handleIfStagingBuildIncorrectAction = async ({ callback_id, actions, user }) => {
@@ -41,7 +41,7 @@ const handleIfStagingBuildIncorrectAction = async ({ callback_id, actions, user 
   }
 
   const request = requests[reqId]
-  sendMessageToUsers(releaseManagers, stagingBuildIncorrectReleaseManagerView(user, request, deployment.build))
+  sendMessageToUsers(releaseManagers, buildIncorrectManagerView(user, request, deployment.build))
 }
 
 module.exports = {

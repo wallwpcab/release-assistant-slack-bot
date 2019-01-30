@@ -11,7 +11,7 @@ const { mockPublicMessageApi } = require('../../../test-utils/mock-api')
 const responseUrl = 'http://response.slack.com/message'
 const dialogRequest = generateDialogRequest(responseUrl, mockUser)
 
-describe('Dialog actions', async () => {
+describe('Config actions', async () => {
   beforeAll(async () => {
     await updateConfig(mockConfig, true)
   })
