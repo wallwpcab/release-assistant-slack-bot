@@ -40,7 +40,7 @@ const stagingBuildManagerView = ({ build }) => {
 
 const stagingBuildChannelView = ({ build, requests }) => {
   const { id, branch, commitId } = build
-  const userTags = requests.map((user) => slackUserTag(user)).join(', ')
+  const userTags = requests.map(({ user }) => slackUserTag(user)).join(', ')
   return {
     text: `\*\`${makeTitleCase(DeploymentStatus.staging)}\`\* build status is *SUCCESS*.\n${userTags} please confirm.`,
     attachments: [
@@ -53,7 +53,7 @@ const stagingBuildChannelView = ({ build, requests }) => {
 
 const productionBuildChannelView = ({ build, requests }) => {
   const { id, branch, commitId } = build
-  const userTags = requests.map((user) => slackUserTag(user)).join(', ')
+  const userTags = requests.map(({ user }) => slackUserTag(user)).join(', ')
   return {
     text: `@here \*\`${makeTitleCase(DeploymentStatus.production)}\`\* build status is *SUCCESS*. :tada:\n//cc ${userTags}`,
     attachments: [

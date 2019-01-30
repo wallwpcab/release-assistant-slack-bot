@@ -6,6 +6,7 @@ const { DeploymentStatus } = require('../request/mappings')
 const {
   mockConfig,
   mockInitialRequest,
+  mockApprovedRequest,
   mockInitialDeployment,
   mockBranchBuild,
   mockStagingBuild,
@@ -31,7 +32,8 @@ describe('Events controller', async () => {
     await updateConfig({
       ...mockConfig,
       requests: {
-        [mockInitialRequest.id]: mockInitialRequest
+        [mockInitialRequest.id]: mockInitialRequest,
+        [mockApprovedRequest.id]: mockApprovedRequest
       }
     }, true)
   })

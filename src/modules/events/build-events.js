@@ -26,14 +26,14 @@ const handleIfBranchBuildEvent = async (build) => {
     return
   }
 
-  deployment.expand(requests)
+  deployment.mapRequests(requests)
   deployment.update({
     status: DeploymentStatus.branch,
     build
   })
-  deployments = updateById(deployments, deployment.compact())
+  deployments = updateById(deployments, deployment.export())
 
-  const keys = deployment.compact().requests
+  const keys = deployment.export().requests
   requests = updateByKeys(requests, keys, () => ({
     status: RequestStatus.branch
   }))
@@ -61,14 +61,14 @@ const handleIfStagingBuildEvent = async (build) => {
     return
   }
 
-  deployment.expand(requests)
+  deployment.mapRequests(requests)
   deployment.update({
     status: DeploymentStatus.staging,
     build
   })
-  deployments = updateById(deployments, deployment.compact())
+  deployments = updateById(deployments, deployment.export())
 
-  const keys = deployment.compact().requests
+  const keys = deployment.export().requests
   requests = updateByKeys(requests, keys, () => ({
     status: RequestStatus.staging
   }))
@@ -97,14 +97,14 @@ const handleIfProductionBuildEvent = async (build) => {
     return
   }
 
-  deployment.expand(requests)
+  deployment.mapRequests(requests)
   deployment.update({
     status: DeploymentStatus.production,
     build
   })
-  deployments = updateById(deployments, deployment.compact())
+  deployments = updateById(deployments, deployment.export())
 
-  const keys = deployment.compact().requests
+  const keys = deployment.export().requests
   requests = updateByKeys(requests, keys, () => ({
     status: RequestStatus.production
   }))

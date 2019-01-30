@@ -70,7 +70,7 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   }
 
   const deployment = await getOrCreateDeployment(deployments, requests)
-  deployments = updateById(deployments, deployment.compact())
+  deployments = updateById(deployments, deployment.export())
   requests = updateById(requests, {
     ...request,
     status: RequestStatus.approved,

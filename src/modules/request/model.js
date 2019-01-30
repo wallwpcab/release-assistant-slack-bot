@@ -14,9 +14,13 @@ class Deployment {
     this.requests = requests
   }
 
-  compact() {
+  isExpanded() {
     const [request] = this.requests
-    const requests = is(Object, request) ? this.requests.map(({ id }) => id) : this.requests
+    return is(Object, request)
+  }
+
+  export() {
+    const requests = this.isExpanded() ? this.requests.map(({ id }) => id) : this.requests
     return {
       id: this.id,
       status: this.status,
@@ -26,7 +30,8 @@ class Deployment {
     }
   }
 
-  expand(requests) {
+  mapRequests(requests) {
+    if(this.isExpanded()) return
     this.requests = this.requests.map((id) => requests[id])
   }
 
@@ -35,7 +40,7 @@ class Deployment {
       return null
     }
     const [request] = this.requests
-    return is(Object, request) ? request.file.thread_ts : null
+    return this.isExpanded() ? request.file.thread_ts : null
   }
 }
 
