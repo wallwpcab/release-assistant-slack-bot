@@ -106,6 +106,12 @@ const mockProductionDeployment = {
   build: mockProductionBuild
 }
 
+const mockReportFormData = {
+  section: 'landing-page',
+  status: 'ok',
+  error: ''
+}
+
 const mockDailyReport = {
   'landing-page': {
     ok: true,
@@ -171,5 +177,6 @@ module.exports = {
   mockStagingBuild,
   mockStagingDeployment,
   mockProductionBuild,
+  mockReportFormData,
   mockProductionDeployment
 }
