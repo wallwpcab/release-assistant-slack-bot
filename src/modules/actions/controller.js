@@ -4,6 +4,10 @@ const log = require('../../utils/log')
 const { handleIfEditDialogAction } = require('./config/actions')
 const { handleIfRequestProgressAction } = require('./progress/actions')
 const {
+  handleIfStagingBuildConfirmAction,
+  handleIfStagingBuildIncorrectAction
+} = require('./build-event/actions')
+const {
   handleIfRequestDialogAction,
   handleIfInitiateRequestAction,
   handleIfRejectRequestAction
@@ -36,6 +40,8 @@ const handleIfInteractiveMessage = (payload) => {
   handleIfInitiateRequestAction(payload)
   handleIfRejectRequestAction(payload)
   handleIfRequestProgressAction(payload)
+  handleIfStagingBuildConfirmAction(payload)
+  handleIfStagingBuildIncorrectAction(payload)
 }
 
 module.exports = {

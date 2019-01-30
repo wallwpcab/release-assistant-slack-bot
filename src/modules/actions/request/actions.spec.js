@@ -110,8 +110,8 @@ describe('Request actions', async () => {
   it('Can handle initiate request action with invalid request id', async () => {
     const requestId = 'invalid-id'
     const req = actionRequest(
-      RequestApproval.approve,
-      requestId
+      requestId,
+      RequestApproval.approve
     )
 
     const res = {
@@ -140,8 +140,8 @@ describe('Request actions', async () => {
     await updateConfig({ requests }, true)
 
     const req = actionRequest(
-      RequestApproval.approve,
-      mockApprovedRequest.id
+      mockApprovedRequest.id,
+      RequestApproval.approve
     )
 
     const res = {
@@ -170,8 +170,8 @@ describe('Request actions', async () => {
     )
 
     const req = actionRequest(
-      RequestApproval.approve,
-      mockInitialRequest.id
+      mockInitialRequest.id,
+      RequestApproval.approve
     )
 
     const res = {
@@ -216,8 +216,8 @@ describe('Request actions', async () => {
   it('Can handle reject request action with invalid request id', async () => {
     const requestId = 'invalid-id'
     const req = actionRequest(
-      RequestApproval.reject,
-      requestId
+      requestId,
+      RequestApproval.reject
     )
     const res = {
       send: jest.fn()
@@ -245,8 +245,8 @@ describe('Request actions', async () => {
     await updateConfig({ requests }, true)
 
     const req = actionRequest(
-      RequestApproval.reject,
-      mockApprovedRequest.id
+      mockApprovedRequest.id,
+      RequestApproval.reject
     )
     const res = {
       send: jest.fn()
@@ -274,8 +274,8 @@ describe('Request actions', async () => {
     )
 
     const req = actionRequest(
-      RequestApproval.reject,
-      mockInitialRequest.id
+      mockInitialRequest.id,
+      RequestApproval.reject
     )
 
     const res = {

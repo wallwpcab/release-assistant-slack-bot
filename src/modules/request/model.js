@@ -1,4 +1,4 @@
-const { is, mergeRight, path } = require('ramda')
+const { is, mergeRight, isEmpty } = require('ramda')
 
 class Deployment {
   constructor({ id, status, baseCommit, build, requests }) {
@@ -31,16 +31,16 @@ class Deployment {
   }
 
   mapRequests(requests) {
-    if(this.isExpanded()) return
+    if (this.isExpanded()) return
     this.requests = this.requests.map((id) => requests[id])
   }
 
   getRequestThread() {
     if (!this.requests.length === 1) {
-      return null
+      return undefined
     }
     const [request] = this.requests
-    return this.isExpanded() ? request.file.thread_ts : null
+    return this.isExpanded() ? request.file.thread_ts : undefined
   }
 }
 

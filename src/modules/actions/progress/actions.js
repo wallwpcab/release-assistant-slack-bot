@@ -18,8 +18,8 @@ const {
 } = require('../../slack/integration')
 
 const handleIfRequestProgressAction = async ({ callback_id, actions: [action], user }) => {
-  const { name, value: requestId } = action || {}
-  if (callback_id !== RequestProgress.callback_id || name !== RequestProgress.cancel) return
+  const { name: requestId, value } = action || {}
+  if (callback_id !== RequestProgress.callback_id || value !== RequestProgress.cancel) return
 
   const config = await readConfig()
   const { releaseManagers, requests, botChannel } = config

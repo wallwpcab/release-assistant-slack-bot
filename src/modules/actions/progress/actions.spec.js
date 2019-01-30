@@ -40,8 +40,8 @@ describe('Cancel request actions', async () => {
   it('Can handle cancel request action with invalid request id', async () => {
     const requestId = 'invalid-id'
     const req = actionRequest(
-      RequestProgress.cancel,
-      requestId
+      requestId,
+      RequestProgress.cancel
     )
     const res = {
       send: jest.fn()
@@ -69,8 +69,8 @@ describe('Cancel request actions', async () => {
     await updateConfig({ requests }, true)
 
     const req = actionRequest(
-      RequestProgress.cancel,
-      mockApprovedRequest.id
+      mockApprovedRequest.id,
+      RequestProgress.cancel
     )
 
     const res = {
@@ -94,8 +94,8 @@ describe('Cancel request actions', async () => {
 
   it('Can handle cancel request action', async () => {
     const req = actionRequest(
-      RequestProgress.cancel,
-      mockInitialRequest.id
+      mockInitialRequest.id,
+      RequestProgress.cancel
     )
 
     const res = {

@@ -22,30 +22,30 @@ const requestReceivedManagerView = (request) => {
     text: `You've got following release request.\n ${requestDetailsLabel(request)}`,
     attachments: [
       {
-        text: "Do you like to proceed?",
-        fallback: "You've got a release request. Please check.",
+        text: 'Do you like to proceed?',
+        fallback: 'You\'ve got a release request. Please check.',
         callback_id,
-        color: "#3AA3E3",
-        attachment_type: "default",
+        color: '#3AA3E3',
+        attachment_type: 'default',
         actions: [
           {
-            name: approve,
-            text: "Yes",
-            type: "button",
-            style: "primary",
-            value: request.id
+            name: request.id,
+            text: 'Yes',
+            type: 'button',
+            style: 'primary',
+            value: approve
           },
           {
-            name: reject,
-            text: "No",
-            type: "button",
-            style: "danger",
-            value: request.id,
+            name: request.id,
+            text: 'No',
+            type: 'button',
+            style: 'danger',
+            value: reject,
             confirm: {
-              title: "Are you sure?",
-              text: "Wouldn't you like to proceed?",
-              ok_text: "Yes",
-              dismiss_text: "No"
+              title: 'Are you sure?',
+              text: 'Wouldn\'t you like to proceed?',
+              ok_text: 'Yes',
+              dismiss_text: 'No'
             }
           }
         ]

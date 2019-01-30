@@ -57,7 +57,7 @@ const updateDeployments = (deployments, deployment, build) => {
 const findDeployment = (deployments, build) => {
   const deployment = Object.values(deployments)
     .find(d => path(['build', 'branch'], d) === build.branch)
-  return deployment ? new Deployment(deployment) : null
+  return deployment && deployment.id ? new Deployment(deployment) : null
 }
 
 module.exports = {

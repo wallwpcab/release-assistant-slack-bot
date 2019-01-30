@@ -54,8 +54,8 @@ const handleIfRequestDialogAction = async ({ callback_id, response_url, submissi
 }
 
 const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], user }) => {
-  const { name, value: requestId } = action || {}
-  if (callback_id !== RequestApproval.callback_id || name !== RequestApproval.approve) return
+  const { name: requestId, value } = action || {}
+  if (callback_id !== RequestApproval.callback_id || value !== RequestApproval.approve) return
 
   let { releaseManagers, requests, deployments, botChannel } = await readConfig()
   let request = pathOr(null, [requestId], requests)
@@ -90,8 +90,8 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
 }
 
 const handleIfRejectRequestAction = async ({ callback_id, actions: [action], user }) => {
-  const { name, value: requestId } = action || {}
-  if (callback_id !== RequestApproval.callback_id || name !== RequestApproval.reject) return
+  const { name: requestId, value } = action || {}
+  if (callback_id !== RequestApproval.callback_id || value !== RequestApproval.reject) return
 
   const { releaseManagers, requests, botChannel } = await readConfig()
   const request = pathOr(null, [requestId], requests)

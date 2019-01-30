@@ -29,11 +29,11 @@ const confirmRequestCancelView = request => {
             style: "primary"
           },
           {
-            name: yes,
+            name: request.id,
             text: "Yes",
             type: "button",
             style: "danger",
-            value: request.id,
+            value: yes,
             confirm: {
               title: "Are you sure?",
               text: "Would you like to cancel?",
