@@ -33,7 +33,7 @@ const handleIfViewProgress = async (args, res) => {
   }
 
   res.send(requestInvalidIdView(id))
-  log.error('handleIfViewProgress() error')
+  log.info('handleIfViewProgress() error')
 }
 
 const handleIfCancelProgress = async (args, res) => {

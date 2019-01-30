@@ -1,6 +1,7 @@
+const tracer = require('tracer')
 require('../../test-utils/mock-implementations')
 const { requestPost } = require('./controller')
-const { waitForInternalPromises } = require('../../test-utils')
+const { waitForInternalPromises, toggleLogger } = require('../../test-utils')
 const { mockDialogOpenApi } = require('../../test-utils/mock-api')
 const { requestFormView } = require('../request/views')
 
@@ -38,8 +39,10 @@ describe('Request controller', async () => {
       sendStatus: jest.fn()
     }
 
+    toggleLogger()
     await requestPost(req, res)
     await waitForInternalPromises()
+    toggleLogger()
 
     expect(res.sendStatus).toBeCalledWith(500)
   })

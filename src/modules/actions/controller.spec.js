@@ -1,5 +1,5 @@
 const { actionsPost } = require('./controller')
-const { waitForInternalPromises } = require('../../test-utils')
+const { waitForInternalPromises, toggleLogger } = require('../../test-utils')
 
 describe('Actions controller', async () => {
   it('Can handle invalid payload', async () => {
@@ -13,8 +13,10 @@ describe('Actions controller', async () => {
       send: jest.fn()
     }
 
+    toggleLogger()
     await actionsPost(req, res)
     await waitForInternalPromises()
+    toggleLogger()
 
     expect(res.send).toBeCalled()
   })

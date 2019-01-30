@@ -1,4 +1,5 @@
 require('../src/test-utils/mock-implementations')
+const { toggleLogger } = require('./test-utils')
 const { mockConfig, mockGitCommit } = require('./test-utils/mock-data')
 const { mockServer, mockGitStagingApi, mockGitProductionApi } = require('./test-utils/mock-api')
 const { getStagingInfo, getProductionInfo, getGitInfo } = require('./git-integration')
@@ -23,7 +24,9 @@ describe('Git Integration', () => {
         message: 'Error'
       })
 
+    toggleLogger()
     const result = await getStagingInfo()
+    toggleLogger()
 
     expect(api.isDone()).toBe(true)
     expect(result).toEqual({})

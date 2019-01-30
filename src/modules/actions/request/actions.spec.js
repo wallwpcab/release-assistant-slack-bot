@@ -19,15 +19,13 @@ const {
 } = require('./views')
 const {
   mockApprovedRequest,
-  mockApprover,
+  mockUser,
   mockChannel,
   mockConfig,
   mockFile,
   mockInitialDeployment,
   mockInitialRequest,
-  mockRejector,
-  mockRequestFormData,
-  mockUser
+  mockRequestFormData
 } = require('../../../test-utils/mock-data')
 const {
   mockMessageApi,
@@ -166,7 +164,7 @@ describe('Request actions', async () => {
   it('Can handle initiate request action', async () => {
     const actionRequest = generateActionRequest(
       RequestApproval.callback_id,
-      mockApprover
+      mockUser
     )
 
     const req = actionRequest(
@@ -180,8 +178,8 @@ describe('Request actions', async () => {
 
     const messageApiCallback = ({ text }) => {
       expect([
-        requestInitiatedManagerView(mockInitialDeployment, mockApprover).text,
-        requestInitiatedChannelView(mockInitialDeployment, mockApprover).text
+        requestInitiatedManagerView(mockInitialDeployment, mockUser).text,
+        requestInitiatedChannelView(mockInitialDeployment, mockUser).text
       ]).toContain(text)
       return true
     }
@@ -270,7 +268,7 @@ describe('Request actions', async () => {
   it('Can handle reject request action', async () => {
     const actionRequest = generateActionRequest(
       RequestApproval.callback_id,
-      mockRejector
+      mockUser
     )
 
     const req = actionRequest(
@@ -284,8 +282,8 @@ describe('Request actions', async () => {
 
     const messageApiCallback = ({ text }) => {
       expect([
-        requestRejectedManagerView(mockInitialRequest, mockRejector).text,
-        requestRejectedChannelView(mockInitialRequest, mockRejector).text
+        requestRejectedManagerView(mockInitialRequest, mockUser).text,
+        requestRejectedChannelView(mockInitialRequest, mockUser).text
       ]).toContain(text)
       return true
     }

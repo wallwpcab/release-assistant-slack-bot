@@ -5,14 +5,6 @@ const mockUser = {
   id: 'user'
 }
 
-const mockApprover = {
-  id: 'approver'
-}
-
-const mockRejector = {
-  id: 'rejector'
-}
-
 const mockChannel = {
   id: 'channel-1'
 }
@@ -56,7 +48,7 @@ const mockApprovedRequest = {
   ...mockInitialRequest,
   id: 'req-2',
   status: RequestStatus.approved,
-  approver: mockApprover
+  approver: mockUser
 }
 
 const mockInitialBuild = {
@@ -114,6 +106,21 @@ const mockProductionDeployment = {
   build: mockProductionBuild
 }
 
+const mockDailyReport = {
+  'landing-page': {
+    ok: true,
+    date: '2019-01-27T18:13:15.249Z',
+    user: mockUser,
+    error: ''
+  },
+  'checkout': {
+    ok: false,
+    date: '2019-01-27T19:12:15.249Z',
+    user: mockUser,
+    error: 'not ok'
+  }
+}
+
 const mockConfig = {
   botChannel: {
     id: 'GEL8D0QRG',
@@ -130,6 +137,17 @@ const mockConfig = {
       id: 'UC29BCUN6'
     }
   ],
+  reportSections: [
+    {
+      id: 'landing-page',
+      label: 'Landing Page'
+    },
+    {
+      id: 'checkout',
+      label: 'Checkout'
+    }
+  ],
+  dailyReport: mockDailyReport,
   requests: {},
   deployments: {
     staging: {}
@@ -140,11 +158,9 @@ module.exports = {
   mockConfig,
   mockRequestFormData,
   mockInitialRequest,
-  mockApprover,
   mockApprovedRequest,
-  mockRejector,
-  mockMessage,
   mockUser,
+  mockMessage,
   mockFile,
   mockGitCommit,
   mockChannel,
