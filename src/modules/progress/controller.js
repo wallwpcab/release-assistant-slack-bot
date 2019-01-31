@@ -3,7 +3,7 @@ const minimist = require('minimist')
 const { showProgressView, confirmRequestCancelView } = require('./views')
 const { RequestStatus } = require('../request/mappings')
 const { requestInvalidIdView, requestAlreadyInitiatedView } = require('../request/views')
-const { readConfig } = require('../../bot-config')
+const { readState } = require('../../bot-state')
 const { splitValues } = require('../../utils')
 const log = require('../../utils/log')
 
@@ -19,7 +19,7 @@ const handleIfViewProgress = async (args, res) => {
   if (args.cancel) return
 
   const { i: id } = args
-  const { requests } = await readConfig()
+  const { requests } = await readState()
 
   if (!id) {
     const requestArray = Object.values(requests).map(v => v)
@@ -40,7 +40,7 @@ const handleIfCancelProgress = async (args, res) => {
   if (!args.cancel) return
 
   const { i: id } = args
-  const { requests } = await readConfig()
+  const { requests } = await readState()
 
   if (!requests[id]) {
     res.send(requestInvalidIdView(id))

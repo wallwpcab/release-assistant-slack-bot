@@ -2,7 +2,7 @@ const nock = require('nock')
 const config = require('config')
 
 const {
-  mockFile, mockConfig, mockGitCommit, mockChannel, mockInitialRequest
+  mockFile, mockState, mockGitCommit, mockChannel, mockInitialRequest
 } = require('./mock-data')
 
 const mockServer = url => nock(url)
@@ -112,12 +112,12 @@ const mockFileApi = (payloadCallback) => {
     })
 }
 
-const mockGitStagingApi = () => mockServer(mockConfig.stagingInfoUrl).get('')
+const mockGitStagingApi = () => mockServer(mockState.stagingInfoUrl).get('')
   .reply(200, {
     info: mockGitCommit
   })
 
-const mockGitProductionApi = () => mockServer(mockConfig.productionInfoUrl).get('')
+const mockGitProductionApi = () => mockServer(mockState.productionInfoUrl).get('')
   .reply(200, {
     info: mockGitCommit
   })

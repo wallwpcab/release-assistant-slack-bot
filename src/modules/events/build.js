@@ -1,6 +1,6 @@
 const log = require('../../utils/log')
 const { updateByKeys, updateById } = require('../../utils')
-const { readConfig, updateConfig } = require('../../bot-config')
+const { readState, updateState } = require('../../bot-state')
 const { sendMessageToUsers, sendMessageToChannel } = require('../slack/integration')
 const { RequestStatus, DeploymentStatus } = require('../request/mappings')
 const { findDeployment, updateStagingBuild } = require('./utils')
@@ -16,7 +16,7 @@ const handleIfBranchBuildEvent = async (build) => {
     return
   }
 
-  let { deployments, releaseManagers, requests } = await readConfig()
+  let { deployments, releaseManagers, requests } = await readState()
   const deployment = findDeployment(deployments, build)
 
   if (!deployment) {
@@ -37,7 +37,7 @@ const handleIfBranchBuildEvent = async (build) => {
   }))
 
   await Promise.all([
-    updateConfig({ deployments, requests }),
+    updateState({ deployments, requests }),
     sendMessageToUsers(releaseManagers, branchBuildManagerView(deployment))
   ])
 }
@@ -47,13 +47,13 @@ const handleIfStagingBuildEvent = async (build) => {
     return
   }
 
-  let { deployments, releaseManagers, botChannel, requests } = await readConfig()
+  let { deployments, releaseManagers, botChannel, requests } = await readState()
   deployments = updateStagingBuild(deployments, build)
   const deployment = findDeployment(deployments, build)
 
   if (!deployment) {
     log.info(`Build Event > branch:${build.branch} is not found in deployments: ${deployments}`)
-    await updateConfig({ deployments })
+    await updateState({ deployments })
     return
   }
 
@@ -70,7 +70,7 @@ const handleIfStagingBuildEvent = async (build) => {
   }))
 
   await Promise.all([
-    updateConfig({ deployments, requests }),
+    updateState({ deployments, requests }),
     sendMessageToUsers(releaseManagers, stagingBuildManagerView(deployment)),
     sendMessageToChannel(
       botChannel,
@@ -85,7 +85,7 @@ const handleIfProductionBuildEvent = async (build) => {
     return
   }
 
-  let { deployments, requests, botChannel } = await readConfig()
+  let { deployments, requests, botChannel } = await readState()
   const deployment = findDeployment(deployments, build)
 
   if (!deployment) {
@@ -106,7 +106,7 @@ const handleIfProductionBuildEvent = async (build) => {
   }))
 
   await Promise.all([
-    updateConfig({ deployments, requests }),
+    updateState({ deployments, requests }),
     sendMessageToChannel(botChannel, productionBuildChannelView(deployment))
   ])
 }

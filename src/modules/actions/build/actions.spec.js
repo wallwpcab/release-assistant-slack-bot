@@ -1,6 +1,6 @@
 require('../../../test-utils/mock-implementations')
 const { DeploymentEvent } = require('../../events/mappings')
-const { updateConfig } = require('../../../bot-config')
+const { updateState } = require('../../../bot-state')
 const { waitForInternalPromises } = require('../../../test-utils')
 const { mockMessageApi, mockEphemeralMessageApi } = require('../../../test-utils/mock-api')
 const {
@@ -15,7 +15,7 @@ const {
 } = require('./views')
 const {
   mockUser,
-  mockConfig,
+  mockState,
   mockStagingBuild,
   mockStagingDeployment,
   mockApprovedRequest
@@ -24,8 +24,8 @@ const {
 
 describe('Build event actions', async () => {
   beforeAll(async () => {
-    await updateConfig({
-      ...mockConfig,
+    await updateState({
+      ...mockState,
       requests: {
         [mockApprovedRequest.id]: mockApprovedRequest
       },

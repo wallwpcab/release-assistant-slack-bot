@@ -2,7 +2,7 @@ require('../../../test-utils/mock-implementations')
 const { actionsPost } = require('../controller')
 const { generateActionRequest } = require('../test-utils')
 const { RequestProgress } = require('../../progress/mappings')
-const { readConfig, updateConfig } = require('../../../bot-config')
+const { readState, updateState } = require('../../../bot-state')
 const { waitForInternalPromises } = require('../../../test-utils')
 const {
   requestInvalidIdView,
@@ -16,7 +16,7 @@ const {
   mockInitialRequest,
   mockApprovedRequest,
   mockUser,
-  mockConfig,
+  mockState,
   mockChannel
 } = require('../../../test-utils/mock-data')
 const {
@@ -34,7 +34,7 @@ describe('Cancel request actions', async () => {
     const requests = {
       [mockInitialRequest.id]: mockInitialRequest
     }
-    await updateConfig({ ...mockConfig, requests }, true)
+    await updateState({ ...mockState, requests }, true)
   })
 
   it('Can handle cancel request action with invalid request id', async () => {
@@ -66,7 +66,7 @@ describe('Cancel request actions', async () => {
     const requests = {
       [mockApprovedRequest.id]: mockApprovedRequest
     }
-    await updateConfig({ requests }, true)
+    await updateState({ requests }, true)
 
     const req = actionRequest(
       mockApprovedRequest.id,
@@ -119,7 +119,7 @@ describe('Cancel request actions', async () => {
     await actionsPost(req, res)
     await waitForInternalPromises()
 
-    const { requests } = await readConfig()
+    const { requests } = await readState()
 
     // request should not contain mockApprovedRequest data
     expect(requests[mockApprovedRequest.id]).toBe(undefined)

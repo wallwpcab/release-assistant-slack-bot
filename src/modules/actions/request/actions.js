@@ -3,7 +3,7 @@ const { pathOr } = require('ramda')
 const { updateById } = require('../../../utils')
 const { getOrCreateDeployment } = require('./utils')
 const { Request, RequestApproval, RequestStatus } = require('../../request/mappings')
-const { readConfig, updateConfig } = require('../../../bot-config')
+const { readState, updateState } = require('../../../bot-state')
 const { getRequestData } = require('../../../transformer')
 const {
   sendEphemeralMessage,
@@ -43,11 +43,11 @@ const createRequest = async (submissionData, user, botChannel) => {
 const handleIfRequestDialogAction = async ({ callback_id, response_url, submission, user }) => {
   if (callback_id !== Request.callback_id) return
 
-  const { botChannel, releaseManagers, requests } = await readConfig()
+  const { botChannel, releaseManagers, requests } = await readState()
   const request = await createRequest(submission, user, botChannel)
 
   await Promise.all([
-    updateConfig({ requests: updateById(requests, request) }),
+    updateState({ requests: updateById(requests, request) }),
     sendMessageOverUrl(response_url, requestReceivedAuthorView(request)),
     sendMessageToUsers(releaseManagers, requestReceivedManagerView(request))
   ])
@@ -57,7 +57,7 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   const { name: requestId, value } = action || {}
   if (callback_id !== RequestApproval.callback_id || value !== RequestApproval.approve) return
 
-  let { releaseManagers, requests, deployments, botChannel } = await readConfig()
+  let { releaseManagers, requests, deployments, botChannel } = await readState()
   let request = pathOr(null, [requestId], requests)
   if (!request) {
     await sendEphemeralMessage(user, requestInvalidIdView(requestId))
@@ -79,7 +79,7 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   })
 
   await Promise.all([
-    updateConfig({ requests, deployments }),
+    updateState({ requests, deployments }),
     sendMessageToUsers(releaseManagers, requestInitiatedManagerView(deployment, user)),
     sendMessageToChannel(
       botChannel,
@@ -93,7 +93,7 @@ const handleIfRejectRequestAction = async ({ callback_id, actions: [action], use
   const { name: requestId, value } = action || {}
   if (callback_id !== RequestApproval.callback_id || value !== RequestApproval.reject) return
 
-  const { releaseManagers, requests, botChannel } = await readConfig()
+  const { releaseManagers, requests, botChannel } = await readState()
   const request = pathOr(null, [requestId], requests)
   if (!request) {
     await sendEphemeralMessage(user, requestInvalidIdView(requestId))
@@ -108,7 +108,7 @@ const handleIfRejectRequestAction = async ({ callback_id, actions: [action], use
   const { file: { thread_ts } } = request
   delete requests[requestId]
   await Promise.all([
-    updateConfig({ requests }, true),
+    updateState({ requests }, true),
     sendMessageToUsers(releaseManagers, requestRejectedManagerView(request, user)),
     sendMessageToChannel(botChannel, requestRejectedChannelView(request, user), thread_ts)
   ])

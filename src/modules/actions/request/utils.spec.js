@@ -1,12 +1,12 @@
 const { setMockId, setMockDate } = require('../../../test-utils/mock-implementations')
 const { createDeployment, getOrCreateDeployment } = require('./utils')
-const { mockConfig, mockInitialRequest, mockInitialDeployment, mockBranchDeployment } = require('../../../test-utils/mock-data')
+const { mockState, mockInitialRequest, mockInitialDeployment, mockBranchDeployment } = require('../../../test-utils/mock-data')
 const { mockGitProductionApi } = require('../../../test-utils/mock-api')
-const { updateConfig } = require('../../../bot-config')
+const { updateState } = require('../../../bot-state')
 
 describe('Request actions utils', async () => {
   beforeEach(async () => {
-    await updateConfig(mockConfig)
+    await updateState(mockState)
   })
 
   it('Can create an initial deployment', async () => {

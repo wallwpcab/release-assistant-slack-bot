@@ -1,10 +1,10 @@
 require('../../test-utils/mock-implementations')
 const { waitForInternalPromises } = require('../../test-utils')
-const { readConfig, updateConfig } = require('../../bot-config')
+const { readState, updateState } = require('../../bot-state')
 const { mockMessageApi } = require('../../test-utils/mock-api')
 const { DeploymentStatus } = require('../request/mappings')
 const {
-  mockConfig,
+  mockState,
   mockInitialRequest,
   mockApprovedRequest,
   mockInitialDeployment,
@@ -29,8 +29,8 @@ const {
 
 describe('Events controller', async () => {
   beforeEach(async () => {
-    await updateConfig({
-      ...mockConfig,
+    await updateState({
+      ...mockState,
       requests: {
         [mockInitialRequest.id]: mockInitialRequest,
         [mockApprovedRequest.id]: mockApprovedRequest
@@ -45,7 +45,7 @@ describe('Events controller', async () => {
       return true
     })
 
-    await updateConfig({
+    await updateState({
       deployments: {
         [mockInitialDeployment.id]: mockInitialDeployment
       }
@@ -53,7 +53,7 @@ describe('Events controller', async () => {
     await handleIfBranchBuildEvent(mockBranchBuild)
     await waitForInternalPromises()
 
-    const { deployments } = await readConfig()
+    const { deployments } = await readState()
     const deployment = deployments[mockInitialDeployment.id]
     expect(deployment.status).toEqual(DeploymentStatus.branch)
 
@@ -73,7 +73,7 @@ describe('Events controller', async () => {
     const userMessageApi = mockMessageApi(payloadCallback)
     const channelMessageApi = mockMessageApi(payloadCallback)
 
-    await updateConfig({
+    await updateState({
       deployments: {
         [mockBranchDeployment.id]: mockBranchDeployment
       }
@@ -81,7 +81,7 @@ describe('Events controller', async () => {
     await handleIfStagingBuildEvent(mockStagingBuild)
     await waitForInternalPromises()
 
-    const { deployments } = await readConfig()
+    const { deployments } = await readState()
     const deployment = deployments[mockBranchDeployment.id]
 
     expect(userMessageApi.isDone()).toBe(true)
@@ -97,7 +97,7 @@ describe('Events controller', async () => {
       return true
     })
 
-    await updateConfig({
+    await updateState({
       deployments: {
         [mockBranchDeployment.id]: mockBranchDeployment
       }
@@ -105,7 +105,7 @@ describe('Events controller', async () => {
     await handleIfProductionBuildEvent(mockProductionBuild)
     await waitForInternalPromises()
 
-    const { deployments } = await readConfig()
+    const { deployments } = await readState()
     const deployment = deployments[mockBranchDeployment.id]
 
     expect(chatApi.isDone()).toBe(true)

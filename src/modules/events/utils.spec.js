@@ -1,6 +1,6 @@
 require('../../test-utils/mock-implementations')
-const { mockConfig } = require('../../test-utils/mock-data')
-const { updateConfig } = require('../../bot-config')
+const { mockState } = require('../../test-utils/mock-data')
+const { updateState } = require('../../bot-state')
 const { branchBuildView, stagingBuildView, productionBuildView } = require('../dryrun/views')
 const {
   isDeploymentEvent,
@@ -11,7 +11,7 @@ const buildMessage = ({ attachments }) => attachments
 
 describe('Events Utils', async () => {
   beforeEach(async () => {
-    await updateConfig(mockConfig, true)
+    await updateState(mockState, true)
   })
 
   it('Can detect if a branch deployment occured from event message', () => {

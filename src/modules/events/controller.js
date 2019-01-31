@@ -1,7 +1,7 @@
 const { pathOr } = require('ramda')
 
 const { releaseManagerUpdatedView } = require('./views')
-const { readConfig, updateConfig } = require('../../bot-config')
+const { readState, updateState } = require('../../bot-state')
 const { sendMessageToChannel } = require('../slack/integration')
 const { getSlackUserTags, getSlackUser } = require('../../utils')
 const log = require('../../utils/log')
@@ -29,7 +29,7 @@ const handleIfBuildEvent = async ({ type, subtype, channel, attachments }) => {
   if (type !== 'message' || subtype !== 'bot_message') return
   if (!attachments) return
 
-  const { deployChannel } = await readConfig()
+  const { deployChannel } = await readState()
   if (channel !== deployChannel.id) {
     log.log(`Build Event > channel miss-matched, current: ${channel}, interest: ${deployChannel}`)
     return
@@ -61,7 +61,7 @@ const handleIfChannelTopicEvent = async ({ type, subtype, text, topic, channel }
     return
   }
 
-  const { botChannel } = await readConfig()
+  const { botChannel } = await readState()
   if (channel !== botChannel.id) {
     return
   }
@@ -70,7 +70,7 @@ const handleIfChannelTopicEvent = async ({ type, subtype, text, topic, channel }
   const user = getSlackUser(author)
   const releaseManagers = getSlackUserTags(topic).map(u => getSlackUser(u))
   await Promise.all([
-    updateConfig({ releaseManagers }),
+    updateState({ releaseManagers }),
     sendMessageToChannel(botChannel, releaseManagerUpdatedView(user, releaseManagers))
   ])
 }

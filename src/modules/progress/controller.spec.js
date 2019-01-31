@@ -1,8 +1,8 @@
 require('../../test-utils/mock-implementations')
 const { progressPost } = require('./controller')
 const { waitForInternalPromises } = require('../../test-utils')
-const { updateConfig } = require('../../bot-config')
-const { mockConfig, mockInitialRequest, mockApprovedRequest } = require('../../test-utils/mock-data')
+const { updateState } = require('../../bot-state')
+const { mockState, mockInitialRequest, mockApprovedRequest } = require('../../test-utils/mock-data')
 const { showProgressView, confirmRequestCancelView } = require('./views')
 const {
   requestInvalidIdView,
@@ -16,8 +16,8 @@ const requests = {
 
 describe('Progress controller', async () => {
   beforeEach(async () => {
-    await updateConfig({
-      ...mockConfig,
+    await updateState({
+      ...mockState,
       requests
     }, true)
   })

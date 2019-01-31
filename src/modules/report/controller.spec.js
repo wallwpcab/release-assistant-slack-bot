@@ -2,9 +2,9 @@ require('../../test-utils/mock-implementations')
 const { reportPost } = require('./controller')
 const { reportFormView } = require('./views')
 const { waitForInternalPromises } = require('../../test-utils')
-const { mockConfig } = require('../../test-utils/mock-data')
+const { mockState } = require('../../test-utils/mock-data')
 const { mockDialogOpenApi } = require('../../test-utils/mock-api')
-const { updateConfig } = require('../../bot-config')
+const { updateState } = require('../../bot-state')
 
 describe('Report controller', async () => {
   it('Can open report dialog', async () => {
@@ -18,7 +18,7 @@ describe('Report controller', async () => {
       send: jest.fn()
     }
 
-    const config = mockConfig.config
+    const config = mockState.config
 
     /* mock api */
     const api = mockDialogOpenApi(({ dialog }) => {
@@ -26,7 +26,7 @@ describe('Report controller', async () => {
       return true
     })
 
-    await updateConfig(mockConfig, true)
+    await updateState(mockState, true)
     await reportPost(req, res)
     await waitForInternalPromises()
 

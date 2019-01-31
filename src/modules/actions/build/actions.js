@@ -1,6 +1,6 @@
 const { DeploymentEvent } = require('../../events/mappings')
 const { DeploymentStatus } = require('../../request/mappings')
-const { readConfig } = require('../../../bot-config')
+const { readState } = require('../../../bot-state')
 const { sendEphemeralMessage, sendMessageToUsers } = require('../../slack/integration')
 const {
   buildConfirmedAuthorView,
@@ -17,7 +17,7 @@ const handleIfStagingBuildConfirmAction = async ({ callback_id, actions, user })
   if (value !== DeploymentEvent.staging.confirmed) return
 
   const { depId, reqId } = JSON.parse(name)
-  const { requests, deployments, releaseManagers } = await readConfig()
+  const { requests, deployments, releaseManagers } = await readState()
   const deployment = deployments[depId]
 
   if (!deployment || deployment.status !== DeploymentStatus.staging) {
@@ -39,7 +39,7 @@ const handleIfStagingBuildIncorrectAction = async ({ callback_id, actions, user 
   if (value !== DeploymentEvent.staging.incorrect) return
 
   const { depId, reqId } = JSON.parse(name)
-  const { requests, deployments, releaseManagers } = await readConfig()
+  const { requests, deployments, releaseManagers } = await readState()
   const deployment = deployments[depId]
 
   if (!deployment || deployment.status !== DeploymentStatus.staging) {

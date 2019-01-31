@@ -2,15 +2,15 @@ require('../../test-utils/mock-implementations')
 const { eventsPost } = require('./controller')
 const { getSlackUser } = require('../../utils')
 const { waitForInternalPromises } = require('../../test-utils')
-const { readConfig, updateConfig } = require('../../bot-config')
+const { readState, updateState } = require('../../bot-state')
 const { mockMessageApi } = require('../../test-utils/mock-api')
-const { mockConfig } = require('../../test-utils/mock-data')
+const { mockState } = require('../../test-utils/mock-data')
 const { releaseManagerUpdatedView } = require('./views')
 const { eventRequestGenerator } = require('./test-utils')
 
 describe('Events controller', async () => {
   beforeEach(async () => {
-    await updateConfig(mockConfig, true)
+    await updateState(mockState, true)
   })
 
   it('Can send-back slack challenge', async () => {
@@ -33,7 +33,7 @@ describe('Events controller', async () => {
   it('Can handle channel topic change event', async () => {
     const author = '<@USER1|Fred>'
     const managers = ['<@USER2|Kerl>']
-    const generateRequest = eventRequestGenerator('group_topic', mockConfig.botChannel.id)
+    const generateRequest = eventRequestGenerator('group_topic', mockState.botChannel.id)
     const req = generateRequest({
       text: `${author} set topic to: ${managers.join(', ')} are DevOps for this week`,
       topic: `${managers.join(', ')} are DevOps for this week`,
@@ -57,7 +57,7 @@ describe('Events controller', async () => {
     await waitForInternalPromises()
 
     expect(messageApi.isDone()).toEqual(true)
-    const { releaseManagers } = await readConfig();
+    const { releaseManagers } = await readState();
     expect(releaseManagers).toEqual(users)
   })
 })

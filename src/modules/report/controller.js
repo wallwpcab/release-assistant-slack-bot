@@ -3,12 +3,12 @@ const minimist = require('minimist')
 const { reportFormView } = require('./views')
 const { openDialog } = require('../slack/integration')
 const log = require('../../utils/log')
-const { readConfig } = require('../../bot-config')
+const { readState } = require('../../bot-state')
 
 const reportPost = async (req, res) => {
   try {
     const { trigger_id } = req.body
-    const { config } = await readConfig()
+    const { config } = await readState()
     const { reportSections } = config
     await openDialog(trigger_id, reportFormView(reportSections))
     res.send()

@@ -2,7 +2,7 @@ require('../../test-utils/mock-implementations')
 const { configPost } = require('./controller')
 const { getSlackChannel } = require('../../utils')
 const { waitForInternalPromises, toggleLogger } = require('../../test-utils')
-const { readConfig, updateConfig } = require('../../bot-config')
+const { readState, updateState } = require('../../bot-state')
 const { configReadView } = require('./views')
 const { mockDialogOpenApi } = require('../../test-utils/mock-api')
 
@@ -18,11 +18,11 @@ describe('Config controller', async () => {
       send: jest.fn()
     }
 
-    await updateConfig({ test: 'test' }, true)
+    await updateState({ test: 'test' }, true)
     await configPost(req, res)
     await waitForInternalPromises()
 
-    const config = await readConfig()
+    const config = await readState()
     expect(res.send).toBeCalledWith(configReadView(config))
   })
 
@@ -49,7 +49,7 @@ describe('Config controller', async () => {
       return true
     })
 
-    await updateConfig({}, true)
+    await updateState({}, true)
     await configPost(req, res)
     await waitForInternalPromises()
 

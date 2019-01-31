@@ -135,7 +135,7 @@ const mockDailyReport = {
   [mockIncorrectReport]: mockIncorrectReport
 }
 
-const mockConfig = {
+const mockState = {
   botChannel: {
     id: 'GEL8D0QRG',
     name: 'release-bot-test'
@@ -171,7 +171,7 @@ const mockConfig = {
 }
 
 module.exports = {
-  mockConfig,
+  mockState,
   mockRequestFormData,
   mockInitialRequest,
   mockApprovedRequest,

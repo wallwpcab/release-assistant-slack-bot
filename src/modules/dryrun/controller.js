@@ -1,7 +1,7 @@
 const minimist = require('minimist')
 
 const { sendMessageToChannel } = require('../slack/integration')
-const { readConfig } = require('../../bot-config')
+const { readState } = require('../../bot-state')
 const { splitValues } = require('../../utils')
 const log = require('../../utils/log')
 const {
@@ -26,7 +26,7 @@ const dryrunPost = async (req, res) => {
 const handleIfTestBranchBuild = async ({ branchBuild, b: branch }, res) => {
   if (!branchBuild) return
 
-  const { botChannel } = await readConfig()
+  const { botChannel } = await readState()
   res.send()
   sendMessageToChannel(botChannel, branchBuildView(branch))
 }
@@ -34,7 +34,7 @@ const handleIfTestBranchBuild = async ({ branchBuild, b: branch }, res) => {
 const handleIfTestStagingBuild = async ({ stagingBuild, b: branch }, res) => {
   if (!stagingBuild) return
 
-  const { botChannel } = await readConfig()
+  const { botChannel } = await readState()
   res.send()
   sendMessageToChannel(botChannel, stagingBuildView(branch))
 }
@@ -42,7 +42,7 @@ const handleIfTestStagingBuild = async ({ stagingBuild, b: branch }, res) => {
 const handleIfTestProductionBuild = async ({ productionBuild, b: branch }, res) => {
   if (!productionBuild) return
 
-  const { botChannel } = await readConfig()
+  const { botChannel } = await readState()
   res.send()
   sendMessageToChannel(botChannel, productionBuildView(branch))
 }

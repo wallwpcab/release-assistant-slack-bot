@@ -1,7 +1,7 @@
 const _axios = require('axios')
 const https = require('https')
 
-const { readConfig } = require('./bot-config')
+const { readState } = require('./bot-state')
 const log = require('./utils/log')
 
 const axios = _axios.create({
@@ -11,7 +11,7 @@ const axios = _axios.create({
 })
 
 const getStagingInfo = async () => {
-  const { stagingInfoUrl } = await readConfig()
+  const { stagingInfoUrl } = await readState()
   try {
     const { data } = await axios.get(stagingInfoUrl)
     return data
@@ -22,7 +22,7 @@ const getStagingInfo = async () => {
 }
 
 const getProductionInfo = async () => {
-  const { productionInfoUrl } = await readConfig()
+  const { productionInfoUrl } = await readState()
   try {
     const { data } = await axios.get(productionInfoUrl)
     return data

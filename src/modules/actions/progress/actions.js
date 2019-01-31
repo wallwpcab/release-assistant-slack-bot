@@ -1,7 +1,7 @@
 const { pathOr } = require('ramda')
 
 const { RequestProgress } = require('../../progress/mappings')
-const { readConfig, updateConfig } = require('../../../bot-config')
+const { readState, updateState } = require('../../../bot-state')
 const { RequestStatus } = require('../../request/mappings')
 const {
   requestCanceledManagerView,
@@ -21,7 +21,7 @@ const handleIfRequestProgressAction = async ({ callback_id, actions: [action], u
   const { name: requestId, value } = action || {}
   if (callback_id !== RequestProgress.callback_id || value !== RequestProgress.cancel) return
 
-  const config = await readConfig()
+  const config = await readState()
   const { releaseManagers, requests, botChannel } = config
   const request = pathOr(null, [requestId], requests)
   if (!request) {
@@ -38,7 +38,7 @@ const handleIfRequestProgressAction = async ({ callback_id, actions: [action], u
   delete requests[requestId]
 
   await Promise.all([
-    updateConfig({ requests }, true),
+    updateState({ requests }, true),
     sendMessageToUsers(releaseManagers, requestCanceledManagerView(request, user)),
     sendMessageToChannel(botChannel, requestCanceledChannelView(user), thread_ts)
   ])

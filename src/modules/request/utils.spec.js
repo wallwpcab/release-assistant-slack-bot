@@ -1,12 +1,12 @@
 require('../../test-utils/mock-implementations')
 const { RequestType } = require('./mappings')
 const { getInitialRequests, getGroupType } = require('./utils')
-const { updateConfig } = require('../../bot-config')
-const { mockConfig, mockInitialRequest, mockApprovedRequest } = require('../../test-utils/mock-data')
+const { updateState } = require('../../bot-state')
+const { mockState, mockInitialRequest, mockApprovedRequest } = require('../../test-utils/mock-data')
 
 describe('Request utils', async () => {
   beforeEach(async () => {
-    await updateConfig(mockConfig)
+    await updateState(mockState)
   })
 
   it('Can filter initial requests', () => {

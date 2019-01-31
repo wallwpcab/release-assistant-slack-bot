@@ -1,8 +1,8 @@
 const { setMockDate } = require('../../../test-utils/mock-implementations')
-const { mockConfig, mockReportFormData, mockConfirmedReport, mockUser, mockStagingBuild } = require('../../../test-utils/mock-data')
+const { mockState, mockReportFormData, mockConfirmedReport, mockUser, mockStagingBuild } = require('../../../test-utils/mock-data')
 const { mockMessageApi, mockPublicMessageApi } = require('../../../test-utils/mock-api')
 const { waitForInternalPromises } = require('../../../test-utils')
-const { readConfig, updateConfig } = require('../../../bot-config')
+const { readState, updateState } = require('../../../bot-state')
 const { Report } = require('../../report/mappings')
 const { handleIfReportOkAction } = require('./actions')
 const { confirmedReportAuthorView, confirmedReportManagerView } = require('./views')
@@ -12,13 +12,13 @@ const responseUrl = 'http://response.slack.com/message'
 
 describe('Report actions', async () => {
   beforeEach(async () => {
-    await updateConfig(mockConfig, true)
+    await updateState(mockState, true)
   })
 
   it('Can post a report', async () => {
-    const config = mockConfig.config
+    const config = mockState.config
     const section = getSection(mockReportFormData, config.reportSections)
-    const pendingSections = getPendingSections(config.reportSections, mockConfig.dailyReport)
+    const pendingSections = getPendingSections(config.reportSections, mockState.dailyReport)
       .filter(s => s.id !== section.id)
     const report = createReport(mockReportFormData, mockUser)
 
@@ -42,7 +42,7 @@ describe('Report actions', async () => {
       user: mockUser
     }
 
-    await updateConfig({
+    await updateState({
       deployments: {
         staging: {
           build: mockStagingBuild
@@ -52,7 +52,7 @@ describe('Report actions', async () => {
     await handleIfReportOkAction(payload)
     await waitForInternalPromises()
 
-    const { dailyReport } = await readConfig()
+    const { dailyReport } = await readState()
 
     // should call following api
     expect(publicMessageApi.isDone()).toBe(true)

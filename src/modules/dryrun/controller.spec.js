@@ -1,9 +1,9 @@
 require('../../test-utils/mock-implementations')
 const { dryrunPost } = require('./controller')
 const { waitForInternalPromises } = require('../../test-utils')
-const { updateConfig } = require('../../bot-config')
+const { updateState } = require('../../bot-state')
 const { branchBuildView, stagingBuildView, productionBuildView } = require('./views')
-const { mockConfig } = require('../../test-utils/mock-data')
+const { mockState } = require('../../test-utils/mock-data')
 const { mockMessageApi } = require('../../test-utils/mock-api')
 
 describe('Dryrun controller', async () => {
@@ -23,7 +23,7 @@ describe('Dryrun controller', async () => {
       return true
     })
 
-    await updateConfig(mockConfig)
+    await updateState(mockState)
     await dryrunPost(req, res)
     await waitForInternalPromises()
 
@@ -48,7 +48,7 @@ describe('Dryrun controller', async () => {
       }
     )
 
-    await updateConfig(mockConfig)
+    await updateState(mockState)
     await dryrunPost(req, res)
     await waitForInternalPromises()
 
@@ -73,7 +73,7 @@ describe('Dryrun controller', async () => {
       }
     )
 
-    await updateConfig(mockConfig)
+    await updateState(mockState)
     await dryrunPost(req, res)
     await waitForInternalPromises()
 

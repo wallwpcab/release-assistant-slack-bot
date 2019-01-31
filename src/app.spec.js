@@ -2,20 +2,20 @@ const request = require('supertest')
 
 require('./test-utils/mock-implementations')
 const app = require('./app')
-const { mockConfig } = require('./test-utils/mock-data')
+const { mockState } = require('./test-utils/mock-data')
 const { mockDialogOpenApi } = require('./test-utils/mock-api')
-const { updateConfig } = require('./bot-config')
+const { updateState } = require('./bot-state')
 const { reportFormView } = require('./modules/report/views')
 
 describe('App tests', async () => {
   it('Can post to /slack/command/report', async () => {
-    const config = mockConfig.config
+    const config = mockState.config
     const api = mockDialogOpenApi(({ dialog }) => {
       expect(dialog).toBe(JSON.stringify(reportFormView(config.reportSections)))
       return true
     })
 
-    await updateConfig(mockConfig, true)
+    await updateState(mockState, true)
 
     await request(app)
       .post('/slack/command/report')

@@ -1,13 +1,13 @@
 require('../src/test-utils/mock-implementations')
 const { toggleLogger } = require('./test-utils')
-const { mockConfig, mockGitCommit } = require('./test-utils/mock-data')
+const { mockState, mockGitCommit } = require('./test-utils/mock-data')
 const { mockServer, mockGitStagingApi, mockGitProductionApi } = require('./test-utils/mock-api')
 const { getStagingInfo, getProductionInfo, getGitInfo } = require('./git-integration')
-const { updateConfig } = require('./bot-config')
+const { updateState } = require('./bot-state')
 
 describe('Git Integration', () => {
   beforeAll(async () => {
-    await updateConfig(mockConfig)
+    await updateState(mockState)
   })
 
   it('Can get git staging info', async () => {
@@ -19,7 +19,7 @@ describe('Git Integration', () => {
   })
 
   it('Can handle exception on get git staging info', async () => {
-    const api = mockServer(mockConfig.stagingInfoUrl).get('')
+    const api = mockServer(mockState.stagingInfoUrl).get('')
       .reply(500, {
         message: 'Error'
       })
@@ -41,7 +41,7 @@ describe('Git Integration', () => {
   })
 
   it('Can handle exception on get git production info', async () => {
-    const api = mockServer(mockConfig.productionInfoUrl).get('')
+    const api = mockServer(mockState.productionInfoUrl).get('')
       .reply(500, {
         message: 'Error'
       })

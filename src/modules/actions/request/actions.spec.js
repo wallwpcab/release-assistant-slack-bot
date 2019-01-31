@@ -2,7 +2,7 @@ const { setMockId, setMockDate } = require('../../../test-utils/mock-implementat
 const { actionsPost } = require('../controller')
 const { generateDialogRequest, generateActionRequest } = require('../test-utils')
 const { Request, RequestApproval } = require('../../request/mappings')
-const { readConfig, updateConfig } = require('../../../bot-config')
+const { readState, updateState } = require('../../../bot-state')
 const { waitForInternalPromises } = require('../../../test-utils')
 const { updateById } = require('../../../utils')
 const {
@@ -21,7 +21,7 @@ const {
   mockApprovedRequest,
   mockUser,
   mockChannel,
-  mockConfig,
+  mockState,
   mockFile,
   mockInitialDeployment,
   mockInitialRequest,
@@ -46,7 +46,7 @@ const actionRequest = generateActionRequest(
 describe('Request actions', async () => {
   beforeEach(async () => {
     const requests = updateById({}, mockInitialRequest)
-    await updateConfig({ ...mockConfig, requests }, true)
+    await updateState({ ...mockState, requests }, true)
   })
 
   it('Can handle a dialog action', async () => {
@@ -83,7 +83,7 @@ describe('Request actions', async () => {
     // simulate controller method call
     await actionsPost(req, res)
     await waitForInternalPromises()
-    const { requests } = await readConfig()
+    const { requests } = await readState()
     const [request] = Object.values(requests)
 
     // should call following api
@@ -135,7 +135,7 @@ describe('Request actions', async () => {
     const requests = {
       [mockApprovedRequest.id]: mockApprovedRequest
     }
-    await updateConfig({ requests }, true)
+    await updateState({ requests }, true)
 
     const req = actionRequest(
       mockApprovedRequest.id,
@@ -203,7 +203,7 @@ describe('Request actions', async () => {
     expect(channelMessageApi.isDone()).toBe(true)
 
     // request should contain mockApprovedRequest data
-    const { requests } = await readConfig()
+    const { requests } = await readState()
     const [request] = Object.values(requests)
     expect(request).toMatchObject({
       ...mockApprovedRequest,
@@ -240,7 +240,7 @@ describe('Request actions', async () => {
     const requests = {
       [mockApprovedRequest.id]: mockApprovedRequest
     }
-    await updateConfig({ requests }, true)
+    await updateState({ requests }, true)
 
     const req = actionRequest(
       mockApprovedRequest.id,
@@ -297,7 +297,7 @@ describe('Request actions', async () => {
     await actionsPost(req, res)
     await waitForInternalPromises()
 
-    const { requests } = await readConfig()
+    const { requests } = await readState()
 
     // request should not contain mockApprovedRequest data
     expect(requests[mockApprovedRequest.id]).toBe(undefined)

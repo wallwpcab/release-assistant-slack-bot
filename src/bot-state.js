@@ -2,12 +2,12 @@ const { mergeDeepRight, mergeRight, isEmpty } = require('ramda')
 
 const { readStore, writeStore } = require('./persistence')
 
-const readConfig = async () => {
+const readState = async () => {
   return readStore()
 }
 
-const updateConfig = async (config, overwrite = false) => {
-  const currentValue = await readConfig()
+const updateState = async (config, overwrite = false) => {
+  const currentValue = await readState()
 
   let updatedValue
   if(overwrite) {
@@ -20,6 +20,6 @@ const updateConfig = async (config, overwrite = false) => {
 }
 
 module.exports = {
-  readConfig,
-  updateConfig
+  readState,
+  updateState
 }
