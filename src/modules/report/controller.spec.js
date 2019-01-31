@@ -18,9 +18,11 @@ describe('Report controller', async () => {
       send: jest.fn()
     }
 
+    const config = mockConfig.config
+
     /* mock api */
     const api = mockDialogOpenApi(({ dialog }) => {
-      expect(dialog).toBe(JSON.stringify(reportFormView(mockConfig.reportSections)))
+      expect(dialog).toBe(JSON.stringify(reportFormView(config.reportSections)))
       return true
     })
 

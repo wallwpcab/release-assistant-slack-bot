@@ -109,22 +109,28 @@ const mockProductionDeployment = {
 const mockReportFormData = {
   section: 'landing-page',
   status: 'ok',
-  error: ''
+  description: ''
+}
+
+const mockConfirmedReport = {
+  id: 'landing-page',
+  ok: true,
+  date: '2019-01-27T18:13:15.249Z',
+  user: mockUser,
+  description: ''
+}
+
+const mockIncorrectReport = {
+  id: 'checkout',
+  ok: false,
+  date: '2019-02-27T19:12:15.249Z',
+  user: mockUser,
+  description: 'not ok'
 }
 
 const mockDailyReport = {
-  'landing-page': {
-    ok: true,
-    date: '2019-01-27T18:13:15.249Z',
-    user: mockUser,
-    error: ''
-  },
-  'checkout': {
-    ok: false,
-    date: '2019-01-27T19:12:15.249Z',
-    user: mockUser,
-    error: 'not ok'
-  }
+  [mockConfirmedReport.id]: mockConfirmedReport,
+  [mockIncorrectReport]: mockIncorrectReport
 }
 
 const mockConfig = {
@@ -143,16 +149,18 @@ const mockConfig = {
       id: 'UC29BCUN6'
     }
   ],
-  reportSections: [
-    {
-      id: 'landing-page',
-      label: 'Landing Page'
-    },
-    {
-      id: 'checkout',
-      label: 'Checkout'
-    }
-  ],
+  config: {
+    reportSections: [
+      {
+        id: 'landing-page',
+        label: 'Landing Page'
+      },
+      {
+        id: 'checkout',
+        label: 'Checkout'
+      }
+    ]
+  },
   dailyReport: mockDailyReport,
   requests: {},
   deployments: {
@@ -178,5 +186,7 @@ module.exports = {
   mockStagingDeployment,
   mockProductionBuild,
   mockReportFormData,
+  mockConfirmedReport,
+  mockIncorrectReport,
   mockProductionDeployment
 }

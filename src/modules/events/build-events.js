@@ -22,7 +22,7 @@ const handleIfBranchBuildEvent = async (build) => {
   const deployment = findDeployment(deployments, build)
 
   if (!deployment) {
-    log.log(`Build Event > branch:${branch} is not found in deployments: ${deployments}`)
+    log.info(`Build Event > branch:${build.branch} is not found in deployments: ${deployments}`)
     return
   }
 
@@ -56,7 +56,7 @@ const handleIfStagingBuildEvent = async (build) => {
   })
 
   if (!deployment) {
-    log.log(`Build Event > branch:${build.branch} is not found in deployments: ${deployments}`)
+    log.info(`Build Event > branch:${build.branch} is not found in deployments: ${deployments}`)
     await updateConfig({ deployments })
     return
   }
@@ -93,7 +93,7 @@ const handleIfProductionBuildEvent = async (build) => {
   const deployment = findDeployment(deployments, build)
 
   if (!deployment) {
-    log.log(`Build Event > branch:${branch} is not found in deployments: ${deployments}`)
+    log.info(`Build Event > branch:${build.branch} is not found in deployments: ${deployments}`)
     return
   }
 

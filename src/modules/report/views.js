@@ -6,7 +6,7 @@ const reportFormView = (sections) => ({
   submit_label: 'Submit',
   elements: [
     {
-      label: 'Page section',
+      label: 'Report section',
       name: Report.section,
       type: 'select',
       hint: 'Choose a section',
@@ -29,9 +29,9 @@ const reportFormView = (sections) => ({
       ]
     },
     {
-      label: 'Error',
+      label: 'Description',
       type: 'textarea',
-      name: Report.error,
+      name: Report.description,
       optional: true,
       hint: 'Put problem description'
     }

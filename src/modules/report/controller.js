@@ -8,7 +8,8 @@ const { readConfig } = require('../../bot-config')
 const reportPost = async (req, res) => {
   try {
     const { trigger_id } = req.body
-    const { reportSections } = await readConfig()
+    const { config } = await readConfig()
+    const { reportSections } = config
     await openDialog(trigger_id, reportFormView(reportSections))
     res.send()
   } catch (err) {

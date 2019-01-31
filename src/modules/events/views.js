@@ -19,7 +19,7 @@ const branchBuildManagerView = ({ build }) => {
         text: `Branch: \`${branch}\`\nCommit Id: \`${commitId}\``
       },
       {
-        text: `Click <${triggerLink}|*here*> to promote to \`${DeploymentStatus.staging}\` environment.`
+        text: `Click <${triggerLink}|*here*> to promote to \`${makeTitleCase(DeploymentStatus.staging)}\` environment.`
       }
     ]
   }
@@ -34,7 +34,7 @@ const stagingBuildManagerView = ({ build }) => {
         text: `Build: ${id}\nBranch: \`${branch}\`\nCommit Id: \`${commitId}\``
       },
       {
-        text: `Click <${triggerLink}|*here*> to promote to \`${DeploymentStatus.staging}\` environment.`
+        text: `Click <${triggerLink}|*here*> to promote to \`${makeTitleCase(DeploymentStatus.staging)}\` environment.`
       }
     ]
   }
@@ -55,14 +55,26 @@ const stagingBuildChannelView = ({ id, build, requests }) => {
             text: "Go! :rocket:",
             type: "button",
             style: "primary",
-            value: DeploymentEvent.staging.confirmed
+            value: DeploymentEvent.staging.confirmed,
+            confirm: {
+              title: 'Are you sure?',
+              text: 'Would you like to mark as Confirmed?',
+              ok_text: 'Yes',
+              dismiss_text: 'No'
+            }
           },
           {
             name: getActionName(request.id),
             text: "Incorrect :no_entry:",
             type: "button",
             style: "danger",
-            value: DeploymentEvent.staging.incorrect
+            value: DeploymentEvent.staging.incorrect,
+            confirm: {
+              title: 'Are you sure?',
+              text: 'Would you like to mark as Incorrect?',
+              ok_text: 'Yes',
+              dismiss_text: 'No'
+            }
           }
         ]
       }))

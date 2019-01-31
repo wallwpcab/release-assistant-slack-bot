@@ -4,7 +4,7 @@ const Report = {
   status: 'status',
   ok: 'ok',
   problemetic: 'problemetic',
-  error: 'error'
+  description: 'description'
 }
 
 module.exports = {
