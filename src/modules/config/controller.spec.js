@@ -22,8 +22,8 @@ describe('Config controller', async () => {
     await configPost(req, res)
     await waitForInternalPromises()
 
-    const { config } = await readState()
-    expect(res.send).toBeCalledWith(configReadView(config))
+    const state = await readState()
+    expect(res.send).toBeCalledWith(configReadView(state))
   })
 
   it('Can handle update config', async () => {
@@ -43,8 +43,10 @@ describe('Config controller', async () => {
       const [{ value }] = JSON.parse(dialog).elements
       const config = JSON.parse(value)
       expect(config).toEqual({
-        botChannel: getSlackChannel(botChannel),
-        deployChannel: getSlackChannel(deployChannel)
+        config: {
+          botChannel: getSlackChannel(botChannel),
+          deployChannel: getSlackChannel(deployChannel)
+        }
       })
       return true
     })

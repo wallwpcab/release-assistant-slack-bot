@@ -20,7 +20,7 @@ describe('Config actions', async () => {
     const req = dialogRequest(
       Config.callback_id,
       {
-        config: JSON.stringify(mockState)
+        state: JSON.stringify(mockState)
       }
     )
 
