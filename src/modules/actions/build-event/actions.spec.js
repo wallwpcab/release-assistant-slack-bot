@@ -1,12 +1,16 @@
 require('../../../test-utils/mock-implementations')
-const { actionsPost } = require('../controller')
 const { DeploymentEvent } = require('../../events/mappings')
 const { updateConfig } = require('../../../bot-config')
 const { waitForInternalPromises } = require('../../../test-utils')
-const { generateActionRequest } = require('../test-utils')
-const { mockMessageApi } = require('../../../test-utils/mock-api')
+const { mockMessageApi, mockEphemeralMessageApi } = require('../../../test-utils/mock-api')
 const {
+  handleIfStagingBuildConfirmAction,
+  handleIfStagingBuildIncorrectAction
+} = require('./actions')
+const {
+  buildConfirmedAuthorView,
   buildConfirmedManagerView,
+  buildIncorrectAuthorView,
   buildIncorrectManagerView
 } = require('./views')
 const {
@@ -17,7 +21,6 @@ const {
   mockApprovedRequest
 } = require('../../../test-utils/mock-data')
 
-const actionRequest = generateActionRequest(DeploymentEvent.staging.callback_id, mockUser)
 
 describe('Build event actions', async () => {
   beforeAll(async () => {
@@ -38,31 +41,45 @@ describe('Build event actions', async () => {
       reqId: mockApprovedRequest.id
     }
 
-    const req = actionRequest(JSON.stringify(name), DeploymentEvent.staging.confirmed)
-
-    const res = {
-      send: jest.fn()
+    const payload = {
+      callback_id: DeploymentEvent.staging.callback_id,
+      actions: [
+        {
+          name: JSON.stringify(name),
+          value: DeploymentEvent.staging.confirmed
+        }
+      ],
+      user: mockUser,
     }
 
     /** mock api **/
+    const ephemeralMessageApi = mockEphemeralMessageApi(({ text }) => {
+      expect(text).toBe(
+        buildConfirmedAuthorView(mockStagingBuild, mockApprovedRequest).text
+      )
+      return true
+    })
+
     const messageApi = mockMessageApi(
       ({ text }) => {
         expect(text).toBe(
           buildConfirmedManagerView(
-            mockUser,
+            mockStagingBuild,
             mockApprovedRequest,
-            mockStagingBuild
+            mockUser
           ).text
         )
         return true
       }
     )
+    /** mock api **/
 
     // simulate controller method call
-    await actionsPost(req, res)
+    await handleIfStagingBuildConfirmAction(payload)
     await waitForInternalPromises()
 
     // should call following api
+    expect(ephemeralMessageApi.isDone()).toBe(true)
     expect(messageApi.isDone()).toBe(true)
   })
 
@@ -72,31 +89,41 @@ describe('Build event actions', async () => {
       reqId: mockApprovedRequest.id
     }
 
-    const req = actionRequest(JSON.stringify(name), DeploymentEvent.staging.incorrect)
-
-    const res = {
-      send: jest.fn()
+    const payload = {
+      callback_id: DeploymentEvent.staging.callback_id,
+      actions: [
+        {
+          name: JSON.stringify(name),
+          value: DeploymentEvent.staging.incorrect
+        }
+      ],
+      user: mockUser,
     }
 
     /** mock api **/
+    const ephemeralMessageApi = mockEphemeralMessageApi(({ text }) => {
+      expect(text).toBe(
+        buildIncorrectAuthorView(mockStagingBuild, mockApprovedRequest).text
+      )
+      return true
+    })
+
     const messageApi = mockMessageApi(
       ({ text }) => {
         expect(text).toBe(
-          buildIncorrectManagerView(
-            mockUser,
-            mockApprovedRequest,
-            mockStagingBuild
-          ).text
+          buildIncorrectManagerView(mockStagingBuild, mockApprovedRequest, mockUser).text
         )
         return true
       }
     )
+    /** mock api **/
 
     // simulate controller method call
-    await actionsPost(req, res)
+    await handleIfStagingBuildIncorrectAction(payload)
     await waitForInternalPromises()
 
     // should call following api
     expect(messageApi.isDone()).toBe(true)
+    expect(ephemeralMessageApi.isDone()).toBe(true)
   })
 })

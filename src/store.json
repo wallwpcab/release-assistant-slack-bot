@@ -1,4 +1,16 @@
 {
+  "config": {
+    "reportSections": [
+      {
+        "id": "landing-page",
+        "label": "Landing Page"
+      },
+      {
+        "id": "checkout",
+        "label": "Checkout"
+      }
+    ]
+  },
   "botChannel": {
     "id": "GEL8D0QRG",
     "name": "release-bot-test"

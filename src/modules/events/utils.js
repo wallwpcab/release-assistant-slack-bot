@@ -23,6 +23,7 @@ const getBuildInfo = (message = '') => {
 
   const id = findGroup([/Build <.+\|#(.+)>/], message)
   const commitId = findGroup([/version `(.+)`/], message)
+  const infoLink = findGroup([/Build <(.+)\|#.+>/], message)
   const triggerLink = findGroup([/Click <([^\|]+).+here.+ to promote/], message)
   const env = findGroup([/Deployed .*\*(.+)\*/], message)
   const mapEnv = cond([
@@ -36,6 +37,7 @@ const getBuildInfo = (message = '') => {
     id,
     branch,
     commitId,
+    infoLink,
     triggerLink,
     environment: mapEnv(env)
   }

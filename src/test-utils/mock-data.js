@@ -66,6 +66,7 @@ const mockStagingBuild = {
   ...mockInitialBuild,
   id: '104',
   commitId: mockGitCommit.gitCommitAbbrev,
+  infoLink: 'https://google.com',
   triggerLink: 'https://google.com',
   environment: DeploymentStatus.staging
 }
@@ -74,6 +75,7 @@ const mockProductionBuild = {
   ...mockInitialBuild,
   id: '105',
   commitId: mockGitCommit.gitCommitAbbrev,
+  infoLink: 'https://google.com',
   environment: DeploymentStatus.production
 }
 
