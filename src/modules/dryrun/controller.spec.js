@@ -10,7 +10,7 @@ describe('Dryrun controller', async () => {
   it('Can handle test branch build', async () => {
     const req = {
       body: {
-        text: '--branchBuild --branch release/hotfix/20134455'
+        text: '--branchBuild -b release/hotfix/20134455'
       }
     }
 
@@ -33,7 +33,7 @@ describe('Dryrun controller', async () => {
   it('Can handle test staging build', async () => {
     const req = {
       body: {
-        text: '--stagingBuild --branch release/hotfix/20134456'
+        text: '--stagingBuild -b release/hotfix/20134456'
       }
     }
 
@@ -58,7 +58,7 @@ describe('Dryrun controller', async () => {
   it('Can handle test production build', async () => {
     const req = {
       body: {
-        text: '--productionBuild --branch release/hotfix/20134457'
+        text: '--productionBuild -b release/hotfix/20134457'
       }
     }
 

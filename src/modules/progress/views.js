@@ -10,7 +10,7 @@ const showProgressView = (requests = []) => {
 }
 
 const confirmRequestCancelView = request => {
-  const { callback_id, yes, no } = RequestProgress
+  const { callback_id } = RequestProgress
   return {
     response_type: 'ephemeral',
     text: '',
@@ -23,23 +23,24 @@ const confirmRequestCancelView = request => {
         attachment_type: "default",
         actions: [
           {
-            name: no,
-            text: "No",
-            type: "button",
-            style: "primary"
-          },
-          {
             name: request.id,
             text: "Yes",
             type: "button",
             style: "danger",
-            value: yes,
+            value: RequestProgress.cancel,
             confirm: {
               title: "Are you sure?",
               text: "Would you like to cancel?",
               ok_text: "Yes",
               dismiss_text: "No"
             }
+          },
+          {
+            name: request.id,
+            text: "No",
+            type: "button",
+            style: "primary",
+            value: 'no',
           }
         ]
       }

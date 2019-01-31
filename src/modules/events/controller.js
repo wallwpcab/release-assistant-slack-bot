@@ -26,9 +26,8 @@ const eventsPost = async (req, res) => {
 }
 
 const handleIfBuildEvent = async ({ type, subtype, channel, attachments }) => {
-  if (type !== 'message' || subtype !== 'bot_message') {
-    return
-  }
+  if (type !== 'message' || subtype !== 'bot_message') return
+  if (!attachments) return
 
   const { deployChannel } = await readConfig()
   if (channel !== deployChannel.id) {
@@ -38,14 +37,14 @@ const handleIfBuildEvent = async ({ type, subtype, channel, attachments }) => {
 
   const message = attachments.reduce((acc, { text }) => acc + text + '\n', '')
   if (!isDeploymentEvent(message)) {
-    log.log(`Build Event > not a build event, message: ${message}`)
+    log.info(`Build Event > not a build event, message: ${message}`)
     return
   }
 
   const build = getBuildInfo(message)
   const { branch, environment } = build
   if (!isSuccessfullDeployment(message)) {
-    log.log(`Build Event > failed build event, branch: ${branch}, environment: ${environment}`)
+    log.info(`Build Event > failed build event, branch: ${branch}, environment: ${environment}`)
     return
   }
 

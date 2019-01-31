@@ -1,4 +1,4 @@
-const { cond, equals, always, T, mergeRight, path } = require('ramda')
+const { cond, equals, always, T, mergeRight, path, isNil } = require('ramda')
 
 const { findGroup, isAnyMatch } = require('../../utils')
 const { Deployment } = require('../request/model')
@@ -58,8 +58,15 @@ const updateDeployments = (deployments, deployment, build) => {
 
 const findDeployment = (deployments, build) => {
   const deployment = Object.values(deployments)
+    .filter(d => !isNil(d.id))
     .find(d => path(['build', 'branch'], d) === build.branch)
-  return deployment && deployment.id ? new Deployment(deployment) : null
+  return deployment ? new Deployment(deployment) : null
+}
+
+const updateStagingBuild = (deployments, build) => {
+  return mergeRight(deployments, {
+    staging: { build }
+  })
 }
 
 module.exports = {
@@ -67,5 +74,6 @@ module.exports = {
   isSuccessfullDeployment,
   getBuildInfo,
   updateDeployments,
-  findDeployment
+  findDeployment,
+  updateStagingBuild
 }

@@ -43,7 +43,7 @@ describe('Progress controller', async () => {
   it('Can handle view progress for a request', async () => {
     const req = {
       body: {
-        text: `--id ${mockInitialRequest.id}`
+        text: `-i ${mockInitialRequest.id}`
       }
     }
 
@@ -61,7 +61,7 @@ describe('Progress controller', async () => {
     const requestId = 'invalid-id'
     const req = {
       body: {
-        text: `--id ${requestId}`
+        text: `-i ${requestId}`
       }
     }
 
@@ -78,7 +78,7 @@ describe('Progress controller', async () => {
   it('Can handle cancel progress for already initiated request', async () => {
     const req = {
       body: {
-        text: `--id ${mockApprovedRequest.id} --cancel`
+        text: `-i ${mockApprovedRequest.id} --cancel`
       }
     }
 
@@ -97,7 +97,7 @@ describe('Progress controller', async () => {
   it('Can handle cancel progress', async () => {
     const req = {
       body: {
-        text: `--id ${mockInitialRequest.id} --cancel`
+        text: `-i ${mockInitialRequest.id} --cancel`
       }
     }
 

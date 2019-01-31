@@ -23,7 +23,7 @@ const dryrunPost = async (req, res) => {
   }
 }
 
-const handleIfTestBranchBuild = async ({ branchBuild, branch }, res) => {
+const handleIfTestBranchBuild = async ({ branchBuild, b: branch }, res) => {
   if (!branchBuild) return
 
   const { botChannel } = await readConfig()
@@ -31,7 +31,7 @@ const handleIfTestBranchBuild = async ({ branchBuild, branch }, res) => {
   sendMessageToChannel(botChannel, branchBuildView(branch))
 }
 
-const handleIfTestStagingBuild = async ({ stagingBuild, branch }, res) => {
+const handleIfTestStagingBuild = async ({ stagingBuild, b: branch }, res) => {
   if (!stagingBuild) return
 
   const { botChannel } = await readConfig()
@@ -39,7 +39,7 @@ const handleIfTestStagingBuild = async ({ stagingBuild, branch }, res) => {
   sendMessageToChannel(botChannel, stagingBuildView(branch))
 }
 
-const handleIfTestProductionBuild = async ({ productionBuild, branch }, res) => {
+const handleIfTestProductionBuild = async ({ productionBuild, b: branch }, res) => {
   if (!productionBuild) return
 
   const { botChannel } = await readConfig()

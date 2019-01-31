@@ -22,6 +22,7 @@ const handleIfStagingBuildConfirmAction = async ({ callback_id, actions, user })
 
   if (!deployment || deployment.status !== DeploymentStatus.staging) {
     log.info(`handleIfStagingBuildAction() > Deployment ${depId} is not in staging anymore`)
+    return
   }
 
   const request = requests[reqId]
@@ -43,6 +44,7 @@ const handleIfStagingBuildIncorrectAction = async ({ callback_id, actions, user 
 
   if (!deployment || deployment.status !== DeploymentStatus.staging) {
     log.info(`handleIfStagingBuildAction() > Deployment ${depId} is not in staging anymore`)
+    return
   }
 
   const request = requests[reqId]

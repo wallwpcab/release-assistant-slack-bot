@@ -1,11 +1,9 @@
-const { mergeRight } = require('ramda')
-
 const log = require('../../utils/log')
 const { updateByKeys, updateById } = require('../../utils')
 const { readConfig, updateConfig } = require('../../bot-config')
 const { sendMessageToUsers, sendMessageToChannel } = require('../slack/integration')
 const { RequestStatus, DeploymentStatus } = require('../request/mappings')
-const { findDeployment } = require('./utils')
+const { findDeployment, updateStagingBuild } = require('./utils')
 const {
   branchBuildManagerView,
   stagingBuildManagerView,
@@ -50,10 +48,8 @@ const handleIfStagingBuildEvent = async (build) => {
   }
 
   let { deployments, releaseManagers, botChannel, requests } = await readConfig()
+  deployments = updateStagingBuild(deployments, build)
   const deployment = findDeployment(deployments, build)
-  deployments = mergeRight(deployments, {
-    staging: { build }
-  })
 
   if (!deployment) {
     log.info(`Build Event > branch:${build.branch} is not found in deployments: ${deployments}`)
