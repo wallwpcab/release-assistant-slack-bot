@@ -1,4 +1,4 @@
-const { configReadView } = require('../../state/views')
+const { stateReadView } = require('../../state/views')
 const { Config } = require('../../state/mappings')
 const { sendMessageOverUrl } = require('../../slack/integration')
 const { readState, updateState } = require('../../../bot-state')
@@ -10,7 +10,7 @@ const handleIfEditDialogAction = async ({ callback_id, response_url, submission 
   let state = getConfigData(submission)
   await updateState(state, true)
   state = await readState()
-  return sendMessageOverUrl(response_url, configReadView(state))
+  return sendMessageOverUrl(response_url, stateReadView(state))
 }
 
 module.exports = {

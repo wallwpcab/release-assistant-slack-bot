@@ -1,7 +1,7 @@
 require('../../../test-utils/mock-implementations')
 const { handleIfEditDialogAction } = require('./actions')
 const { Config } = require('../../state/mappings')
-const { configReadView } = require('../../state/views')
+const { stateReadView } = require('../../state/views')
 const { mockUser, mockState } = require('../../../test-utils/mock-data')
 const { readState, updateState } = require('../../../bot-state')
 const { waitForInternalPromises } = require('../../../test-utils')
@@ -26,7 +26,7 @@ describe('State actions', async () => {
 
     /** mock api **/
     const messageApi = mockPublicMessageApi(responseUrl, ({ text }) => {
-      expect(text).toBe(configReadView(mockState).text)
+      expect(text).toBe(stateReadView(mockState).text)
       return true
     }
     )

@@ -3,7 +3,7 @@ const { statePost } = require('./controller')
 const { getSlackChannel } = require('../../utils')
 const { waitForInternalPromises, toggleLogger } = require('../../test-utils')
 const { readState, updateState } = require('../../bot-state')
-const { configReadView } = require('./views')
+const { stateReadView } = require('./views')
 const { mockDialogOpenApi } = require('../../test-utils/mock-api')
 
 describe('Config controller', async () => {
@@ -23,7 +23,7 @@ describe('Config controller', async () => {
     await waitForInternalPromises()
 
     const state = await readState()
-    expect(res.send).toBeCalledWith(configReadView(state))
+    expect(res.send).toBeCalledWith(stateReadView(state))
   })
 
   it('Can handle update config', async () => {

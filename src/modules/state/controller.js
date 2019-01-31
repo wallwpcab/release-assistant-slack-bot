@@ -3,7 +3,7 @@ const minimist = require('minimist')
 const { openDialog } = require('../slack/integration')
 const { readState } = require('../../bot-state')
 const { splitValues, getSlackChannel } = require('../../utils')
-const { configReadView, configDialogView } = require('./views')
+const { stateReadView, stateDialogView } = require('./views')
 const log = require('../../utils/log')
 
 const statePost = async (req, res) => {
@@ -24,7 +24,7 @@ const handleIfReadConfig = async (args, res) => {
   }
 
   const state = await readState()
-  res.send(configReadView(state))
+  res.send(stateReadView(state))
 }
 
 const handleIfUpdateConfig = async (args, res, req) => {
@@ -51,7 +51,7 @@ const handleIfUpdateConfig = async (args, res, req) => {
   const configValue = JSON.stringify(state, null, 2)
   const { trigger_id } = req.body
 
-  await openDialog(trigger_id, configDialogView(configValue))
+  await openDialog(trigger_id, stateDialogView(configValue))
   res.send()
 }
 
