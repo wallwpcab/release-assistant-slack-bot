@@ -7,7 +7,7 @@ const { handleIfReportOkAction } = require('./report/actions')
 const {
   handleIfStagingBuildConfirmAction,
   handleIfStagingBuildIncorrectAction
-} = require('./build-event/actions')
+} = require('./build/actions')
 const {
   handleIfRequestDialogAction,
   handleIfInitiateRequestAction,

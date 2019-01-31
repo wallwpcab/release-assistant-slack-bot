@@ -15,7 +15,7 @@ const {
   handleIfBranchBuildEvent,
   handleIfStagingBuildEvent,
   handleIfProductionBuildEvent
-} = require('./build-events')
+} = require('./build')
 
 const eventsPost = async (req, res) => {
   const event = pathOr({}, ['body', 'event'], req)

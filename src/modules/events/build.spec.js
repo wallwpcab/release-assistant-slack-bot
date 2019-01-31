@@ -25,7 +25,7 @@ const {
   handleIfBranchBuildEvent,
   handleIfStagingBuildEvent,
   handleIfProductionBuildEvent
-} = require('./build-events')
+} = require('./build')
 
 describe('Events controller', async () => {
   beforeEach(async () => {
