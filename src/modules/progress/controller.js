@@ -19,7 +19,7 @@ const handleIfViewProgress = async (args, res) => {
   if (args.cancel) return
 
   const { i: id } = args
-  const { requests } = await readState()
+  const { requests = {} } = await readState()
 
   if (!id) {
     const requestArray = Object.values(requests).map(v => v)

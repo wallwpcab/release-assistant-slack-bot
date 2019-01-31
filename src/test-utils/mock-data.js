@@ -136,22 +136,20 @@ const mockDailyReport = {
 }
 
 const mockState = {
-  botChannel: {
-    id: 'GEL8D0QRG',
-    name: 'release-bot-test'
-  },
-  deployChannel: {
-    id: 'CEML3BEK0',
-    name: 'release-bot'
-  },
-  stagingInfoUrl: 'http://staging.git.com/info',
-  productionInfoUrl: 'http://production.git.com/info',
-  releaseManagers: [
-    {
-      id: 'UC29BCUN6'
-    }
-  ],
   config: {
+    botChannel: {
+      id: 'GEL8D0QRG',
+      name: 'release-bot-test'
+    },
+    deployChannel: {
+      id: 'CEML3BEK0',
+      name: 'release-bot'
+    },
+    releaseManagers: [
+      {
+        id: 'UC29BCUN6'
+      }
+    ],
     reportSections: [
       {
         id: 'landing-page',
@@ -161,7 +159,9 @@ const mockState = {
         id: 'checkout',
         label: 'Checkout'
       }
-    ]
+    ],
+    stagingInfoUrl: 'http://staging.git.com/info',
+    productionInfoUrl: 'http://production.git.com/info'
   },
   dailyReport: mockDailyReport,
   requests: {},

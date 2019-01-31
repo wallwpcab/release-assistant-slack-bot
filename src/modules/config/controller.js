@@ -23,14 +23,15 @@ const handleIfReadConfig = async (args, res) => {
     return
   }
 
-  const config = await readState()
-  res.send(configReadView(config))
+  const state = await readState()
+  res.send(configReadView(state))
 }
 
 const handleIfUpdateConfig = async (args, res, req) => {
   if (!args.update) return
 
-  let config = await readState()
+  let state = await readState()
+  let { config = {} } = state
   const {
     botChannel: botCh,
     deployChannel: depCh
@@ -43,7 +44,11 @@ const handleIfUpdateConfig = async (args, res, req) => {
     deployChannel,
     botChannel
   }
-  const configValue = JSON.stringify(config, null, 2)
+  state = {
+    ...state,
+    config
+  }
+  const configValue = JSON.stringify(state, null, 2)
   const { trigger_id } = req.body
 
   await openDialog(trigger_id, configDialogView(configValue))

@@ -29,7 +29,8 @@ const handleIfBuildEvent = async ({ type, subtype, channel, attachments }) => {
   if (type !== 'message' || subtype !== 'bot_message') return
   if (!attachments) return
 
-  const { deployChannel } = await readState()
+  const { config } = await readState()
+  const { deployChannel } = config
   if (channel !== deployChannel.id) {
     log.log(`Build Event > channel miss-matched, current: ${channel}, interest: ${deployChannel}`)
     return
@@ -61,16 +62,21 @@ const handleIfChannelTopicEvent = async ({ type, subtype, text, topic, channel }
     return
   }
 
-  const { botChannel } = await readState()
+  let { config } = await readState()
+  const { botChannel } = config
   if (channel !== botChannel.id) {
+    log.info(`Channel topic event > Channel: ${channel} missmatched with botChannel: ${botChannel}`)
     return
   }
 
   const [author] = getSlackUserTags(text)
   const user = getSlackUser(author)
   const releaseManagers = getSlackUserTags(topic).map(u => getSlackUser(u))
+  config = {
+    releaseManagers
+  }
   await Promise.all([
-    updateState({ releaseManagers }),
+    updateState({ config }),
     sendMessageToChannel(botChannel, releaseManagerUpdatedView(user, releaseManagers))
   ])
 }

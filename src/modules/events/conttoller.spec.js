@@ -33,7 +33,7 @@ describe('Events controller', async () => {
   it('Can handle channel topic change event', async () => {
     const author = '<@USER1|Fred>'
     const managers = ['<@USER2|Kerl>']
-    const generateRequest = eventRequestGenerator('group_topic', mockState.botChannel.id)
+    const generateRequest = eventRequestGenerator('group_topic', mockState.config.botChannel.id)
     const req = generateRequest({
       text: `${author} set topic to: ${managers.join(', ')} are DevOps for this week`,
       topic: `${managers.join(', ')} are DevOps for this week`,
@@ -57,7 +57,7 @@ describe('Events controller', async () => {
     await waitForInternalPromises()
 
     expect(messageApi.isDone()).toEqual(true)
-    const { releaseManagers } = await readState();
-    expect(releaseManagers).toEqual(users)
+    const { config } = await readState();
+    expect(config.releaseManagers).toEqual(users)
   })
 })

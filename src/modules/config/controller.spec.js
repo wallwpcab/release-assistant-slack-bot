@@ -22,7 +22,7 @@ describe('Config controller', async () => {
     await configPost(req, res)
     await waitForInternalPromises()
 
-    const config = await readState()
+    const { config } = await readState()
     expect(res.send).toBeCalledWith(configReadView(config))
   })
 

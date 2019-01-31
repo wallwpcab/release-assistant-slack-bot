@@ -17,8 +17,8 @@ const getRequestData = (dialogData, user) => {
   }
 }
 
-const getConfigData = ({ config }) => {
-  return JSON.parse(config)
+const getConfigData = ({ state }) => {
+  return JSON.parse(state)
 }
 
 const getApprovalText = approval => {

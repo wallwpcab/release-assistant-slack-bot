@@ -11,9 +11,9 @@ const axios = _axios.create({
 })
 
 const getStagingInfo = async () => {
-  const { stagingInfoUrl } = await readState()
+  const { config } = await readState()
   try {
-    const { data } = await axios.get(stagingInfoUrl)
+    const { data } = await axios.get(config.stagingInfoUrl)
     return data
   } catch (err) {
     log.error('getStagingInfo()', err)
@@ -22,9 +22,9 @@ const getStagingInfo = async () => {
 }
 
 const getProductionInfo = async () => {
-  const { productionInfoUrl } = await readState()
+  const { config } = await readState()
   try {
-    const { data } = await axios.get(productionInfoUrl)
+    const { data } = await axios.get(config.productionInfoUrl)
     return data
   } catch (err) {
     log.error('getProductionInfo()', err)

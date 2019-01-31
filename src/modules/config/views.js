@@ -1,20 +1,20 @@
 const { Config } = require('./mappings')
 
-const configReadView = (config) => ({
+const configReadView = (state) => ({
   response_type: 'ephemeral',
-  text: `Config: \`\`\`${JSON.stringify(config, null, 2)}\`\`\``,
+  text: `State: \`\`\`${JSON.stringify(state, null, 2)}\`\`\``,
   mrkdwn: true,
   mrkdwn_in: ['text'],
 })
 
 const configDialogView = (value) => ({
-  title: 'Set config',
+  title: 'Set state',
   callback_id: Config.callback_id,
   submit_label: 'Submit',
   elements: [
     {
-      label: 'Config',
-      name: 'config',
+      label: 'State',
+      name: 'state',
       type: 'textarea',
       value
     }

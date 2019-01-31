@@ -10,8 +10,8 @@ const { getSection, getPendingSections, createReport } = require('./utils')
 const handleIfReportOkAction = async ({ callback_id, response_url, submission, user }) => {
   if (callback_id !== Report.callback_id) return
 
-  let { releaseManagers, config, dailyReport, deployments } = await readState()
-  const { reportSections } = config
+  let { config, dailyReport, deployments } = await readState()
+  const { releaseManagers, reportSections } = config
   const section = getSection(submission, reportSections)
   const report = createReport(submission, user)
 

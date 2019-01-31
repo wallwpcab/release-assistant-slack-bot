@@ -1,0 +1,32 @@
+{
+  "config": {
+    "botChannel": {
+      "id": "GEL8D0QRG",
+      "name": "release-bot-test"
+    },
+    "deployChannel": {
+      "id": "CEML3BEK0",
+      "name": "release-bot"
+    },
+    "releaseManagers": [
+      {
+        "id": "UC29BCUN6"
+      }
+    ],
+    "reportSections": [
+      {
+        "id": "landing-page",
+        "label": "Landing Page"
+      },
+      {
+        "id": "checkout",
+        "label": "Checkout"
+      }
+    ],
+    "stagingInfoUrl": "https://staging.stripes.net/git/info",
+    "productionInfoUrl": "https://production.stripes.net/git/info"
+  },
+  "deployments": {},
+  "dailyReport": {},
+  "requests": {}
+}

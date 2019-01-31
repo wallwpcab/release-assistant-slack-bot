@@ -21,8 +21,8 @@ const handleIfRequestProgressAction = async ({ callback_id, actions: [action], u
   const { name: requestId, value } = action || {}
   if (callback_id !== RequestProgress.callback_id || value !== RequestProgress.cancel) return
 
-  const config = await readState()
-  const { releaseManagers, requests, botChannel } = config
+  const { requests, config } = await readState()
+  const { releaseManagers, botChannel } = config
   const request = pathOr(null, [requestId], requests)
   if (!request) {
     await sendEphemeralMessage(user, requestInvalidIdView(requestId))

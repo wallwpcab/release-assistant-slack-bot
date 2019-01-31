@@ -17,7 +17,8 @@ const handleIfStagingBuildConfirmAction = async ({ callback_id, actions, user })
   if (value !== DeploymentEvent.staging.confirmed) return
 
   const { depId, reqId } = JSON.parse(name)
-  const { requests, deployments, releaseManagers } = await readState()
+  const { requests, deployments, config } = await readState()
+  const { releaseManagers } = config
   const deployment = deployments[depId]
 
   if (!deployment || deployment.status !== DeploymentStatus.staging) {
@@ -39,7 +40,8 @@ const handleIfStagingBuildIncorrectAction = async ({ callback_id, actions, user 
   if (value !== DeploymentEvent.staging.incorrect) return
 
   const { depId, reqId } = JSON.parse(name)
-  const { requests, deployments, releaseManagers } = await readState()
+  const { requests, deployments, config } = await readState()
+  const { releaseManagers } = config
   const deployment = deployments[depId]
 
   if (!deployment || deployment.status !== DeploymentStatus.staging) {

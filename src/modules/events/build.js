@@ -16,7 +16,8 @@ const handleIfBranchBuildEvent = async (build) => {
     return
   }
 
-  let { deployments, releaseManagers, requests } = await readState()
+  let { config, deployments, requests } = await readState()
+  const { releaseManagers } = config
   const deployment = findDeployment(deployments, build)
 
   if (!deployment) {
@@ -47,7 +48,8 @@ const handleIfStagingBuildEvent = async (build) => {
     return
   }
 
-  let { deployments, releaseManagers, botChannel, requests } = await readState()
+  let { deployments, config, requests } = await readState()
+  const { releaseManagers, botChannel } = config
   deployments = updateStagingBuild(deployments, build)
   const deployment = findDeployment(deployments, build)
 
@@ -85,7 +87,8 @@ const handleIfProductionBuildEvent = async (build) => {
     return
   }
 
-  let { deployments, requests, botChannel } = await readState()
+  let { deployments, requests, config } = await readState()
+  const { botChannel } = config
   const deployment = findDeployment(deployments, build)
 
   if (!deployment) {

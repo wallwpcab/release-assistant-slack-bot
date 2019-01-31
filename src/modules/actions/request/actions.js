@@ -43,7 +43,8 @@ const createRequest = async (submissionData, user, botChannel) => {
 const handleIfRequestDialogAction = async ({ callback_id, response_url, submission, user }) => {
   if (callback_id !== Request.callback_id) return
 
-  const { botChannel, releaseManagers, requests } = await readState()
+  const { config, requests } = await readState()
+  const { releaseManagers, botChannel } = config
   const request = await createRequest(submission, user, botChannel)
 
   await Promise.all([
@@ -57,7 +58,8 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   const { name: requestId, value } = action || {}
   if (callback_id !== RequestApproval.callback_id || value !== RequestApproval.approve) return
 
-  let { releaseManagers, requests, deployments, botChannel } = await readState()
+  let { config, requests, deployments } = await readState()
+  const { releaseManagers, botChannel } = config
   let request = pathOr(null, [requestId], requests)
   if (!request) {
     await sendEphemeralMessage(user, requestInvalidIdView(requestId))
@@ -93,7 +95,8 @@ const handleIfRejectRequestAction = async ({ callback_id, actions: [action], use
   const { name: requestId, value } = action || {}
   if (callback_id !== RequestApproval.callback_id || value !== RequestApproval.reject) return
 
-  const { releaseManagers, requests, botChannel } = await readState()
+  const { requests, config } = await readState()
+  const { releaseManagers, botChannel } = config
   const request = pathOr(null, [requestId], requests)
   if (!request) {
     await sendEphemeralMessage(user, requestInvalidIdView(requestId))

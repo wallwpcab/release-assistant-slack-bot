@@ -26,25 +26,25 @@ const dryrunPost = async (req, res) => {
 const handleIfTestBranchBuild = async ({ branchBuild, b: branch }, res) => {
   if (!branchBuild) return
 
-  const { botChannel } = await readState()
+  const { config } = await readState()
   res.send()
-  sendMessageToChannel(botChannel, branchBuildView(branch))
+  sendMessageToChannel(config.botChannel, branchBuildView(branch))
 }
 
 const handleIfTestStagingBuild = async ({ stagingBuild, b: branch }, res) => {
   if (!stagingBuild) return
 
-  const { botChannel } = await readState()
+  const { config } = await readState()
   res.send()
-  sendMessageToChannel(botChannel, stagingBuildView(branch))
+  sendMessageToChannel(config.botChannel, stagingBuildView(branch))
 }
 
 const handleIfTestProductionBuild = async ({ productionBuild, b: branch }, res) => {
   if (!productionBuild) return
 
-  const { botChannel } = await readState()
+  const { config } = await readState()
   res.send()
-  sendMessageToChannel(botChannel, productionBuildView(branch))
+  sendMessageToChannel(config.botChannel, productionBuildView(branch))
 }
 
 module.exports = {

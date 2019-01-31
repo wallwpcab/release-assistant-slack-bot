@@ -19,7 +19,7 @@ describe('Git Integration', () => {
   })
 
   it('Can handle exception on get git staging info', async () => {
-    const api = mockServer(mockState.stagingInfoUrl).get('')
+    const api = mockServer(mockState.config.stagingInfoUrl).get('')
       .reply(500, {
         message: 'Error'
       })
@@ -41,7 +41,7 @@ describe('Git Integration', () => {
   })
 
   it('Can handle exception on get git production info', async () => {
-    const api = mockServer(mockState.productionInfoUrl).get('')
+    const api = mockServer(mockState.config.productionInfoUrl).get('')
       .reply(500, {
         message: 'Error'
       })

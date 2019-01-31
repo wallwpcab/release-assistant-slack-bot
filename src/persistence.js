@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-const fileName = __dirname + '/store.json'
+const fileName = __dirname + '/state.json'
 
 const readStore = () => new Promise((resolve) => {
   fs.readFile(fileName, 'utf8', (err, content) => {

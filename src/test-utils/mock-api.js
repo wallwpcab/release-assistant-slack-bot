@@ -112,12 +112,12 @@ const mockFileApi = (payloadCallback) => {
     })
 }
 
-const mockGitStagingApi = () => mockServer(mockState.stagingInfoUrl).get('')
+const mockGitStagingApi = () => mockServer(mockState.config.stagingInfoUrl).get('')
   .reply(200, {
     info: mockGitCommit
   })
 
-const mockGitProductionApi = () => mockServer(mockState.productionInfoUrl).get('')
+const mockGitProductionApi = () => mockServer(mockState.config.productionInfoUrl).get('')
   .reply(200, {
     info: mockGitCommit
   })
