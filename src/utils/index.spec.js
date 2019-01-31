@@ -41,7 +41,7 @@ describe('Utils', () => {
       b: 'b'
     }
     const parent = {
-      '1': {
+      1: {
         id: '1',
         a: 'a'
       }
@@ -60,7 +60,7 @@ describe('Utils', () => {
     }
 
     const parent = {
-      '1': {
+      1: {
         id: '1',
         a: 'a'
       }

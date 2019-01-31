@@ -1,6 +1,5 @@
 require('../../../test-utils/mock-implementations')
-const { actionsPost } = require('../controller')
-const { generateActionRequest } = require('../test-utils')
+const { handleIfRequestProgressAction } = require('./actions')
 const { RequestProgress } = require('../../progress/mappings')
 const { readState, updateState } = require('../../../bot-state')
 const { waitForInternalPromises } = require('../../../test-utils')
@@ -16,18 +15,23 @@ const {
   mockInitialRequest,
   mockApprovedRequest,
   mockUser,
-  mockState,
-  mockChannel
+  mockState
 } = require('../../../test-utils/mock-data')
 const {
   mockMessageApi,
   mockEphemeralMessageApi
 } = require('../../../test-utils/mock-api')
 
-const actionRequest = generateActionRequest(
-  RequestProgress.callback_id,
-  mockUser
-)
+const actionPayload = (name, value) => ({
+  callback_id: RequestProgress.callback_id,
+  user: mockUser,
+  actions: [
+    {
+      name,
+      value
+    }
+  ]
+})
 
 describe('Cancel request actions', async () => {
   beforeEach(async () => {
@@ -39,23 +43,15 @@ describe('Cancel request actions', async () => {
 
   it('Can handle cancel request action with invalid request id', async () => {
     const requestId = 'invalid-id'
-    const req = actionRequest(
-      requestId,
-      RequestProgress.cancel
-    )
-    const res = {
-      send: jest.fn()
-    }
 
     /** mock api **/
-    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestInvalidIdView(requestId).text)
-      expect(channel).toBe(mockChannel.id)
       return true
     })
 
-    // simulate controller method call
-    await actionsPost(req, res)
+    // simulate
+    await handleIfRequestProgressAction(actionPayload(requestId, RequestProgress.cancel))
     await waitForInternalPromises()
 
     // should call following api
@@ -68,24 +64,14 @@ describe('Cancel request actions', async () => {
     }
     await updateState({ requests }, true)
 
-    const req = actionRequest(
-      mockApprovedRequest.id,
-      RequestProgress.cancel
-    )
-
-    const res = {
-      send: jest.fn()
-    }
-
     /** mock api **/
-    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestAlreadyInitiatedView(mockApprovedRequest).text)
-      expect(channel).toBe(mockChannel.id)
       return true
     })
 
-    // simulate controller method call
-    await actionsPost(req, res)
+    // simulate
+    await handleIfRequestProgressAction(actionPayload(mockApprovedRequest.id, RequestProgress.cancel))
     await waitForInternalPromises()
 
     // should call following api
@@ -93,15 +79,6 @@ describe('Cancel request actions', async () => {
   })
 
   it('Can handle cancel request action', async () => {
-    const req = actionRequest(
-      mockInitialRequest.id,
-      RequestProgress.cancel
-    )
-
-    const res = {
-      send: jest.fn()
-    }
-
     const messageApiCallback = ({ text }) => {
       expect([
         requestCanceledManagerView(mockInitialRequest, mockUser).text,
@@ -115,8 +92,8 @@ describe('Cancel request actions', async () => {
     const channelMessageApi = mockMessageApi(messageApiCallback)
     /** mock api **/
 
-    // simulate controller method call
-    await actionsPost(req, res)
+    // simulate
+    await handleIfRequestProgressAction(actionPayload(mockInitialRequest.id, RequestProgress.cancel))
     await waitForInternalPromises()
 
     const { requests } = await readState()

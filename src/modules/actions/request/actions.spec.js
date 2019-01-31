@@ -1,6 +1,4 @@
 const { setMockId, setMockDate } = require('../../../test-utils/mock-implementations')
-const { actionsPost } = require('../controller')
-const { generateDialogRequest, generateActionRequest } = require('../test-utils')
 const { Request, RequestApproval } = require('../../request/mappings')
 const { readState, updateState } = require('../../../bot-state')
 const { waitForInternalPromises } = require('../../../test-utils')
@@ -17,6 +15,11 @@ const {
   requestRejectedManagerView,
   requestRejectedChannelView,
 } = require('./views')
+const {
+  handleIfRequestDialogAction,
+  handleIfInitiateRequestAction,
+  handleIfRejectRequestAction
+} = require('./actions')
 const {
   mockApprovedRequest,
   mockUser,
@@ -37,11 +40,17 @@ const {
 } = require('../../../test-utils/mock-api')
 
 const responseUrl = 'http://response.slack.com/message'
-const dialogRequest = generateDialogRequest(responseUrl, mockUser)
-const actionRequest = generateActionRequest(
-  RequestApproval.callback_id,
-  mockUser
-)
+
+const actionPayload = (name, value) => ({
+  callback_id: RequestApproval.callback_id,
+  user: mockUser,
+  actions: [
+    {
+      name,
+      value
+    }
+  ]
+})
 
 describe('Request actions', async () => {
   beforeEach(async () => {
@@ -50,13 +59,11 @@ describe('Request actions', async () => {
   })
 
   it('Can handle a dialog action', async () => {
-    const req = dialogRequest(
-      Request.callback_id,
-      mockRequestFormData
-    )
-
-    const res = {
-      send: jest.fn()
+    const payload = {
+      callback_id: Request.callback_id,
+      response_url: responseUrl,
+      submission: mockRequestFormData,
+      user: mockUser
     }
 
     setMockId(mockInitialRequest.id)
@@ -71,17 +78,15 @@ describe('Request actions', async () => {
       return true
     })
 
-    const publicMessageApi = mockPublicMessageApi(
-      responseUrl,
-      ({ text }) => {
-        expect(text).toBe(requestReceivedAuthorView(mockInitialRequest).text)
-        return true
-      }
+    const publicMessageApi = mockPublicMessageApi(responseUrl, ({ text }) => {
+      expect(text).toBe(requestReceivedAuthorView(mockInitialRequest).text)
+      return true
+    }
     )
     /** mock api **/
 
-    // simulate controller method call
-    await actionsPost(req, res)
+    // simulate
+    await handleIfRequestDialogAction(payload)
     await waitForInternalPromises()
     const { requests } = await readState()
     const [request] = Object.values(requests)
@@ -107,24 +112,16 @@ describe('Request actions', async () => {
 
   it('Can handle initiate request action with invalid request id', async () => {
     const requestId = 'invalid-id'
-    const req = actionRequest(
-      requestId,
-      RequestApproval.approve
-    )
-
-    const res = {
-      send: jest.fn()
-    }
 
     /** mock api **/
-    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestInvalidIdView(requestId).text)
-      expect(channel).toBe(mockChannel.id)
       return true
     })
+    /** mock api **/
 
-    // simulate controller method call
-    await actionsPost(req, res)
+    // simulate
+    await handleIfInitiateRequestAction(actionPayload(requestId, RequestApproval.approve))
     await waitForInternalPromises()
 
     // should call following api
@@ -137,24 +134,15 @@ describe('Request actions', async () => {
     }
     await updateState({ requests }, true)
 
-    const req = actionRequest(
-      mockApprovedRequest.id,
-      RequestApproval.approve
-    )
-
-    const res = {
-      send: jest.fn()
-    }
-
     /** mock api **/
-    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestAlreadyInitiatedView(mockApprovedRequest).text)
-      expect(channel).toBe(mockChannel.id)
       return true
     })
+    /** mock api **/
 
-    // simulate controller method call
-    await actionsPost(req, res)
+    // simulate
+    await handleIfInitiateRequestAction(actionPayload(mockApprovedRequest.id, RequestApproval.approve))
     await waitForInternalPromises()
 
     // should call following api
@@ -162,20 +150,6 @@ describe('Request actions', async () => {
   })
 
   it('Can handle initiate request action', async () => {
-    const actionRequest = generateActionRequest(
-      RequestApproval.callback_id,
-      mockUser
-    )
-
-    const req = actionRequest(
-      mockInitialRequest.id,
-      RequestApproval.approve
-    )
-
-    const res = {
-      send: jest.fn()
-    }
-
     const messageApiCallback = ({ text }) => {
       expect([
         requestInitiatedManagerView(mockInitialDeployment, mockUser).text,
@@ -193,8 +167,8 @@ describe('Request actions', async () => {
     const channelMessageApi = mockMessageApi(messageApiCallback)
     /** mock api **/
 
-    // simulate controller method call
-    await actionsPost(req, res)
+    // simulate
+    await handleIfInitiateRequestAction(actionPayload(mockInitialRequest.id, RequestApproval.approve))
     await waitForInternalPromises()
 
     // should call following api
@@ -213,23 +187,15 @@ describe('Request actions', async () => {
 
   it('Can handle reject request action with invalid request id', async () => {
     const requestId = 'invalid-id'
-    const req = actionRequest(
-      requestId,
-      RequestApproval.reject
-    )
-    const res = {
-      send: jest.fn()
-    }
 
     /** mock api **/
-    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestInvalidIdView(requestId).text)
-      expect(channel).toBe(mockChannel.id)
       return true
     })
 
-    // simulate controller method call
-    await actionsPost(req, res)
+    // simulate
+    await handleIfRejectRequestAction(actionPayload(requestId, RequestApproval.reject))
     await waitForInternalPromises()
 
     // should call following api
@@ -242,23 +208,14 @@ describe('Request actions', async () => {
     }
     await updateState({ requests }, true)
 
-    const req = actionRequest(
-      mockApprovedRequest.id,
-      RequestApproval.reject
-    )
-    const res = {
-      send: jest.fn()
-    }
-
     /** mock api **/
-    const messageApi = mockEphemeralMessageApi(({ text, channel }) => {
+    const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestAlreadyInitiatedView(mockApprovedRequest).text)
-      expect(channel).toBe(mockChannel.id)
       return true
     })
 
-    // simulate controller method call
-    await actionsPost(req, res)
+    // simulate
+    await handleIfRejectRequestAction(actionPayload(mockApprovedRequest.id, RequestApproval.reject))
     await waitForInternalPromises()
 
     // should call following api
@@ -266,20 +223,6 @@ describe('Request actions', async () => {
   })
 
   it('Can handle reject request action', async () => {
-    const actionRequest = generateActionRequest(
-      RequestApproval.callback_id,
-      mockUser
-    )
-
-    const req = actionRequest(
-      mockInitialRequest.id,
-      RequestApproval.reject
-    )
-
-    const res = {
-      send: jest.fn()
-    }
-
     const messageApiCallback = ({ text }) => {
       expect([
         requestRejectedManagerView(mockInitialRequest, mockUser).text,
@@ -293,8 +236,8 @@ describe('Request actions', async () => {
     const channelMessageApi = mockMessageApi(messageApiCallback)
     /** mock api **/
 
-    // simulate controller method call
-    await actionsPost(req, res)
+    // simulate
+    await handleIfRejectRequestAction(actionPayload(mockInitialRequest.id, RequestApproval.reject))
     await waitForInternalPromises()
 
     const { requests } = await readState()

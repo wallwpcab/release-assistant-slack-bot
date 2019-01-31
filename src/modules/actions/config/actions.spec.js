@@ -1,15 +1,13 @@
 require('../../../test-utils/mock-implementations')
-const { actionsPost } = require('../controller')
+const { handleIfEditDialogAction } = require('./actions')
 const { Config } = require('../../config/mappings')
 const { configReadView } = require('../../config/views')
 const { mockUser, mockState } = require('../../../test-utils/mock-data')
 const { readState, updateState } = require('../../../bot-state')
 const { waitForInternalPromises } = require('../../../test-utils')
-const { generateDialogRequest } = require('../test-utils')
 const { mockPublicMessageApi } = require('../../../test-utils/mock-api')
 
 const responseUrl = 'http://response.slack.com/message'
-const dialogRequest = generateDialogRequest(responseUrl, mockUser)
 
 describe('Config actions', async () => {
   beforeAll(async () => {
@@ -17,31 +15,27 @@ describe('Config actions', async () => {
   })
 
   it('Can handle edit config dialog action', async () => {
-    const req = dialogRequest(
-      Config.callback_id,
-      {
+    const payload = {
+      response_url: responseUrl,
+      user: mockUser,
+      callback_id: Config.callback_id,
+      submission: {
         state: JSON.stringify(mockState)
       }
-    )
-
-    const res = {
-      send: jest.fn()
     }
 
     /** mock api **/
-    const messageApi = mockPublicMessageApi(
-      responseUrl,
-      ({ text }) => {
-        expect(text).toBe(configReadView(mockState).text)
-        return true
-      }
+    const messageApi = mockPublicMessageApi(responseUrl, ({ text }) => {
+      expect(text).toBe(configReadView(mockState).text)
+      return true
+    }
     )
 
     // reset config
     await updateState({}, true)
 
-    // simulate controller method call
-    await actionsPost(req, res)
+    // simulate
+    await handleIfEditDialogAction(payload)
     await waitForInternalPromises()
     const config = await readState()
 

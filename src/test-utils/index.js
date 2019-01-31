@@ -8,13 +8,11 @@ const waitForInternalPromises = async (times = 3) => {
   }
 }
 
-let showLog = true
-let logLevel = tracer.getLevel()
+const showLog = true
+const logLevel = tracer.getLevel()
 const toggleLogger = () => {
-  if(showLog)
-    tracer.close()
-  else
-    tracer.setLevel(logLevel)
+  if (showLog) tracer.close()
+  else tracer.setLevel(logLevel)
 }
 
 module.exports = {
