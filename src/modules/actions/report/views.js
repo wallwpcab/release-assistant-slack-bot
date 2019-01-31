@@ -2,11 +2,12 @@ const { isEmpty } = require('ramda')
 
 const { slackUserTag, makeTitleCase } = require('../../../utils')
 const { DeploymentStatus } = require('../../request/mappings')
+const { buildLabel } = require('../build/views')
 
 const statusLabel = report => report.ok ? '*Confirmed*. :white_check_mark:' : '*Incorrect*. :no_entry:'
 
 const confirmedReportAuthorView = (section, report) => {
-  
+
   return {
     text: `You've reported *${section.label}* section as ${statusLabel(report)}`
   }
@@ -30,7 +31,7 @@ Click <${triggerLink}|*here*> to promote to \`${makeTitleCase(DeploymentStatus.p
 
 
   return {
-    text: `Daily Build #${build.id}
+    text: `Daily Build ${buildLabel(build)}
 ${slackUserTag(user)} reported *${section.label}* section as ${statusLabel(report)}`,
     attachments: [
       getAttachment()
