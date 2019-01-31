@@ -1,5 +1,5 @@
-const { configReadView } = require('../../config/views')
-const { Config } = require('../../config/mappings')
+const { configReadView } = require('../../state/views')
+const { Config } = require('../../state/mappings')
 const { sendMessageOverUrl } = require('../../slack/integration')
 const { readState, updateState } = require('../../../bot-state')
 const { getConfigData } = require('../../../transformer')

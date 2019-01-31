@@ -1,7 +1,7 @@
 require('../../../test-utils/mock-implementations')
 const { handleIfEditDialogAction } = require('./actions')
-const { Config } = require('../../config/mappings')
-const { configReadView } = require('../../config/views')
+const { Config } = require('../../state/mappings')
+const { configReadView } = require('../../state/views')
 const { mockUser, mockState } = require('../../../test-utils/mock-data')
 const { readState, updateState } = require('../../../bot-state')
 const { waitForInternalPromises } = require('../../../test-utils')
@@ -9,12 +9,12 @@ const { mockPublicMessageApi } = require('../../../test-utils/mock-api')
 
 const responseUrl = 'http://response.slack.com/message'
 
-describe('Config actions', async () => {
+describe('State actions', async () => {
   beforeAll(async () => {
     await updateState(mockState, true)
   })
 
-  it('Can handle edit config dialog action', async () => {
+  it('Can handle edit state dialog action', async () => {
     const payload = {
       response_url: responseUrl,
       user: mockUser,

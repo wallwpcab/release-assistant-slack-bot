@@ -1,5 +1,5 @@
 require('../../test-utils/mock-implementations')
-const { configPost } = require('./controller')
+const { statePost } = require('./controller')
 const { getSlackChannel } = require('../../utils')
 const { waitForInternalPromises, toggleLogger } = require('../../test-utils')
 const { readState, updateState } = require('../../bot-state')
@@ -19,7 +19,7 @@ describe('Config controller', async () => {
     }
 
     await updateState({ test: 'test' }, true)
-    await configPost(req, res)
+    await statePost(req, res)
     await waitForInternalPromises()
 
     const state = await readState()
@@ -52,7 +52,7 @@ describe('Config controller', async () => {
     })
 
     await updateState({}, true)
-    await configPost(req, res)
+    await statePost(req, res)
     await waitForInternalPromises()
 
     expect(api.isDone()).toBe(true)
@@ -71,7 +71,7 @@ describe('Config controller', async () => {
     }
 
     toggleLogger()
-    await configPost(req, res)
+    await statePost(req, res)
     await waitForInternalPromises()
     toggleLogger()
 

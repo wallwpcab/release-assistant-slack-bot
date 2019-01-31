@@ -6,7 +6,7 @@ const { splitValues, getSlackChannel } = require('../../utils')
 const { configReadView, configDialogView } = require('./views')
 const log = require('../../utils/log')
 
-const configPost = async (req, res) => {
+const statePost = async (req, res) => {
   const { text } = req.body
   try {
     const args = minimist(splitValues(text))
@@ -56,5 +56,5 @@ const handleIfUpdateConfig = async (args, res, req) => {
 }
 
 module.exports = {
-  configPost
+  statePost
 }

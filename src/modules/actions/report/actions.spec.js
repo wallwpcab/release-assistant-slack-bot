@@ -4,7 +4,7 @@ const { mockMessageApi, mockPublicMessageApi } = require('../../../test-utils/mo
 const { waitForInternalPromises } = require('../../../test-utils')
 const { readState, updateState } = require('../../../bot-state')
 const { Report } = require('../../report/mappings')
-const { handleIfReportOkAction } = require('./actions')
+const { handleIfReportAction } = require('./actions')
 const { confirmedReportAuthorView, confirmedReportManagerView } = require('./views')
 const { getSection, getPendingSections, createReport } = require('./utils')
 
@@ -49,7 +49,7 @@ describe('Report actions', async () => {
         }
       }
     })
-    await handleIfReportOkAction(payload)
+    await handleIfReportAction(payload)
     await waitForInternalPromises()
 
     const { dailyReport } = await readState()

@@ -7,7 +7,7 @@ const { sendMessageToUsers, sendMessageOverUrl } = require('../../slack/integrat
 const { confirmedReportAuthorView, confirmedReportManagerView } = require('./views')
 const { getSection, getPendingSections, createReport } = require('./utils')
 
-const handleIfReportOkAction = async ({ callback_id, response_url, submission, user }) => {
+const handleIfReportAction = async ({ callback_id, response_url, submission, user }) => {
   if (callback_id !== Report.callback_id) return
 
   let { config, dailyReport, deployments } = await readState()
@@ -28,5 +28,5 @@ const handleIfReportOkAction = async ({ callback_id, response_url, submission, u
 }
 
 module.exports = {
-  handleIfReportOkAction
+  handleIfReportAction
 }

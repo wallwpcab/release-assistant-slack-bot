@@ -1,9 +1,9 @@
 const { path } = require('ramda')
 
 const log = require('../../utils/log')
-const { handleIfEditDialogAction } = require('./config/actions')
+const { handleIfEditDialogAction } = require('./state/actions')
 const { handleIfRequestProgressAction } = require('./progress/actions')
-const { handleIfReportOkAction } = require('./report/actions')
+const { handleIfReportAction } = require('./report/actions')
 const {
   handleIfStagingBuildConfirmAction,
   handleIfStagingBuildIncorrectAction
@@ -32,7 +32,7 @@ const handleIfDialog = (payload) => {
   }
   handleIfRequestDialogAction(payload)
   handleIfEditDialogAction(payload)
-  handleIfReportOkAction(payload)
+  handleIfReportAction(payload)
 }
 
 const handleIfInteractiveMessage = (payload) => {
