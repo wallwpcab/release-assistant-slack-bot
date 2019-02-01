@@ -1,26 +1,26 @@
-require('../../../test-utils/mock-implementations')
+require('../../test-utils/mock-implementations')
 const { handleIfRequestProgressAction } = require('./actions')
-const { RequestProgress } = require('../../progress/mappings')
-const { readState, updateState } = require('../../../bot-state')
-const { waitForInternalPromises } = require('../../../test-utils')
+const { RequestProgress } = require('./mappings')
+const { readState, updateState } = require('../../bot-state')
+const { waitForInternalPromises } = require('../../test-utils')
 const {
   requestInvalidIdView,
   requestAlreadyInitiatedView
-} = require('../../request/views')
+} = require('../request/views')
 const {
   requestCanceledManagerView,
   requestCanceledChannelView
-} = require('./views')
+} = require('./action-views')
 const {
   mockInitialRequest,
   mockApprovedRequest,
   mockUser,
   mockState
-} = require('../../../test-utils/mock-data')
+} = require('../../test-utils/mock-data')
 const {
   mockMessageApi,
   mockEphemeralMessageApi
-} = require('../../../test-utils/mock-api')
+} = require('../../test-utils/mock-api')
 
 const actionPayload = (name, value) => ({
   callback_id: RequestProgress.callback_id,

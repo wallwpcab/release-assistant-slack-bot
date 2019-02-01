@@ -1,5 +1,5 @@
-const { slackUserTag } = require('../../../utils')
-const { requestIdLabel } = require('../../request/views')
+const { slackUserTag } = require('../../utils')
+const { requestIdLabel } = require('../request/views')
 
 const buildLabel = build => `#<${build.infoLink}|*${build.id}*>`
 

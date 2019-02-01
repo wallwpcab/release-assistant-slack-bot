@@ -9,7 +9,7 @@ const {
   stagingBuildManagerView,
   stagingBuildChannelView,
   productionBuildChannelView
-} = require('./views')
+} = require('./event-views')
 
 const handleIfBranchBuildEvent = async (build) => {
   if (build.environment !== DeploymentStatus.branch) {

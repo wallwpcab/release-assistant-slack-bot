@@ -1,11 +1,11 @@
-require('../../../test-utils/mock-implementations')
+require('../../test-utils/mock-implementations')
 const { handleIfEditDialogAction } = require('./actions')
-const { Config } = require('../../state/mappings')
-const { stateReadView } = require('../../state/views')
-const { mockUser, mockState } = require('../../../test-utils/mock-data')
-const { readState, updateState } = require('../../../bot-state')
-const { waitForInternalPromises } = require('../../../test-utils')
-const { mockPublicMessageApi } = require('../../../test-utils/mock-api')
+const { Config } = require('./mappings')
+const { stateReadView } = require('./views')
+const { mockUser, mockState } = require('../../test-utils/mock-data')
+const { readState, updateState } = require('../../bot-state')
+const { waitForInternalPromises } = require('../../test-utils')
+const { mockPublicMessageApi } = require('../../test-utils/mock-api')
 
 const responseUrl = 'http://response.slack.com/message'
 

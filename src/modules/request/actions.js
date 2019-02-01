@@ -1,10 +1,10 @@
 const { pathOr } = require('ramda')
 
-const { updateById } = require('../../../utils')
+const { updateById } = require('../../utils')
 const { getOrCreateDeployment } = require('./utils')
-const { Request, RequestApproval, RequestStatus } = require('../../request/mappings')
-const { readState, updateState } = require('../../../bot-state')
-const { getRequestData } = require('../../../transformer')
+const { Request, RequestApproval, RequestStatus } = require('./mappings')
+const { readState, updateState } = require('../../bot-state')
+const { getRequestData } = require('../../transformer')
 const {
   sendEphemeralMessage,
   sendMessageToUsers,
@@ -12,7 +12,7 @@ const {
   sendMessageOverUrl,
   uploadRequestData,
   getPermalink
-} = require('../../slack/integration')
+} = require('../slack/integration')
 const {
   requestReceivedAuthorView,
   requestReceivedManagerView,
@@ -21,11 +21,11 @@ const {
   requestInitiatedChannelView,
   requestRejectedManagerView,
   requestRejectedChannelView
-} = require('./views')
+} = require('./action-views')
 const {
   requestInvalidIdView,
   requestAlreadyInitiatedView,
-} = require('../../request/views')
+} = require('./views')
 
 const createRequest = async (submissionData, user, botChannel) => {
   const requestData = getRequestData(submissionData, user)

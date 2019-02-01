@@ -1,4 +1,4 @@
-const DeploymentEvent = {
+const BuildEvent = {
   staging: {
     callback_id: 'staging-build-check',
     confirmed: 'confirmed',
@@ -7,5 +7,5 @@ const DeploymentEvent = {
 }
 
 module.exports = {
-  DeploymentEvent
+  BuildEvent
 }

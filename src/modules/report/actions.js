@@ -1,10 +1,10 @@
 const { pathOr } = require('ramda')
 
-const { Report } = require('../../report/mappings')
-const { readState, updateState } = require('../../../bot-state')
-const { updateById } = require('../../../utils')
-const { sendMessageToUsers, sendMessageOverUrl } = require('../../slack/integration')
-const { confirmedReportAuthorView, confirmedReportManagerView } = require('./views')
+const { Report } = require('./mappings')
+const { readState, updateState } = require('../../bot-state')
+const { updateById } = require('../../utils')
+const { sendMessageToUsers, sendMessageOverUrl } = require('../slack/integration')
+const { confirmedReportAuthorView, confirmedReportManagerView } = require('./action-views')
 const { getSection, getPendingSections, createReport } = require('./utils')
 
 const handleIfReportAction = async ({ callback_id, response_url, submission, user }) => {

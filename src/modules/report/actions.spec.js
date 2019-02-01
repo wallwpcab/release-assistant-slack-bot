@@ -1,11 +1,11 @@
-const { setMockDate } = require('../../../test-utils/mock-implementations')
-const { mockState, mockReportFormData, mockConfirmedReport, mockUser, mockStagingBuild } = require('../../../test-utils/mock-data')
-const { mockMessageApi, mockPublicMessageApi } = require('../../../test-utils/mock-api')
-const { waitForInternalPromises } = require('../../../test-utils')
-const { readState, updateState } = require('../../../bot-state')
-const { Report } = require('../../report/mappings')
+const { setMockDate } = require('../../test-utils/mock-implementations')
+const { mockState, mockReportFormData, mockConfirmedReport, mockUser, mockStagingBuild } = require('../../test-utils/mock-data')
+const { mockMessageApi, mockPublicMessageApi } = require('../../test-utils/mock-api')
+const { waitForInternalPromises } = require('../../test-utils')
+const { readState, updateState } = require('../../bot-state')
+const { Report } = require('./mappings')
 const { handleIfReportAction } = require('./actions')
-const { confirmedReportAuthorView, confirmedReportManagerView } = require('./views')
+const { confirmedReportAuthorView, confirmedReportManagerView } = require('./action-views')
 const { getSection, getPendingSections, createReport } = require('./utils')
 
 const responseUrl = 'http://response.slack.com/message'

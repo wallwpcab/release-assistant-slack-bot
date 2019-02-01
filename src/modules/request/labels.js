@@ -1,7 +1,7 @@
-const { requestIdLabel } = require('../../request/views')
-const { RequestType } = require('../../request/mappings')
-const { slackUserTag } = require('../../../utils')
-const { getApprovalText } = require('../../../transformer')
+const { requestIdLabel } = require('./views')
+const { RequestType } = require('./mappings')
+const { slackUserTag } = require('../../utils')
+const { getApprovalText } = require('../../transformer')
 
 const requestTypeLabel = (type) => {
   const { label, icon } = RequestType[type]

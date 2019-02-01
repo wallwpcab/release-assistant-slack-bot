@@ -1,21 +1,21 @@
 const { pathOr } = require('ramda')
 
-const { RequestProgress } = require('../../progress/mappings')
-const { readState, updateState } = require('../../../bot-state')
-const { RequestStatus } = require('../../request/mappings')
+const { RequestProgress } = require('./mappings')
+const { readState, updateState } = require('../../bot-state')
+const { RequestStatus } = require('../request/mappings')
 const {
   requestCanceledManagerView,
   requestCanceledChannelView
-} = require('./views')
+} = require('./action-views')
 const {
   requestInvalidIdView,
   requestAlreadyInitiatedView
-} = require('../../request/views')
+} = require('../request/views')
 const {
   sendEphemeralMessage,
   sendMessageToUsers,
   sendMessageToChannel
-} = require('../../slack/integration')
+} = require('../slack/integration')
 
 const handleIfRequestProgressAction = async ({ callback_id, actions: [action], user }) => {
   const { name: requestId, value } = action || {}

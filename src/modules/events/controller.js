@@ -1,6 +1,6 @@
 const { pathOr } = require('ramda')
 
-const { releaseManagerUpdatedView } = require('./views')
+const { releaseManagerUpdatedView } = require('../build/event-views')
 const { readState, updateState } = require('../../bot-state')
 const { sendMessageToChannel } = require('../slack/integration')
 const { getSlackUserTags, getSlackUser } = require('../../utils')
@@ -9,13 +9,13 @@ const {
   isDeploymentEvent,
   isSuccessfullDeployment,
   getBuildInfo
-} = require('./utils')
+} = require('../build/utils')
 
 const {
   handleIfBranchBuildEvent,
   handleIfStagingBuildEvent,
   handleIfProductionBuildEvent
-} = require('./build')
+} = require('../build/events')
 
 const eventsPost = async (req, res) => {
   const event = pathOr({}, ['body', 'event'], req)

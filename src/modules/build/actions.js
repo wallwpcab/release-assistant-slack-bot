@@ -1,20 +1,20 @@
-const { DeploymentEvent } = require('../../events/mappings')
-const { DeploymentStatus } = require('../../request/mappings')
-const { readState } = require('../../../bot-state')
-const { sendEphemeralMessage, sendMessageToUsers } = require('../../slack/integration')
+const { BuildEvent } = require('./mappings')
+const { DeploymentStatus } = require('../request/mappings')
+const { readState } = require('../../bot-state')
+const { sendEphemeralMessage, sendMessageToUsers } = require('../slack/integration')
 const {
   buildConfirmedAuthorView,
   buildConfirmedManagerView,
   buildIncorrectAuthorView,
   buildIncorrectManagerView
-} = require('./views')
-const log = require('../../../utils/log')
+} = require('./action-views')
+const log = require('../../utils/log')
 
 const handleIfStagingBuildConfirmAction = async ({ callback_id, actions, user }) => {
-  if (callback_id !== DeploymentEvent.staging.callback_id) return
+  if (callback_id !== BuildEvent.staging.callback_id) return
 
   const [{ name, value }] = actions
-  if (value !== DeploymentEvent.staging.confirmed) return
+  if (value !== BuildEvent.staging.confirmed) return
 
   const { depId, reqId } = JSON.parse(name)
   const { requests, deployments, config } = await readState()
@@ -34,10 +34,10 @@ const handleIfStagingBuildConfirmAction = async ({ callback_id, actions, user })
 }
 
 const handleIfStagingBuildIncorrectAction = async ({ callback_id, actions, user }) => {
-  if (callback_id !== DeploymentEvent.staging.callback_id) return
+  if (callback_id !== BuildEvent.staging.callback_id) return
 
   const [{ name, value }] = actions
-  if (value !== DeploymentEvent.staging.incorrect) return
+  if (value !== BuildEvent.staging.incorrect) return
 
   const { depId, reqId } = JSON.parse(name)
   const { requests, deployments, config } = await readState()

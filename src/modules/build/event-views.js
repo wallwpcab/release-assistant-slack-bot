@@ -1,8 +1,8 @@
 const { DeploymentStatus } = require('../request/mappings')
-const { DeploymentEvent } = require('./mappings')
+const { BuildEvent } = require('./mappings')
 const { slackUserTag, makeTitleCase } = require('../../utils')
 const { requestIdLabel } = require('../request/views')
-const { buildLabel } = require('../actions/build/views')
+const { buildLabel } = require('./action-views')
 
 const releaseManagerUpdatedView = (user, releaseManagers) => {
   const slackUsers = releaseManagers.map(m => slackUserTag(m)).join(', ')
@@ -48,7 +48,7 @@ const stagingBuildChannelView = ({ id, build, requests }) => {
     attachments: [
       ...requests.map(request => ({
         text: `${slackUserTag(request.user)} please confirm ${requestIdLabel(request)} is in staging.`,
-        callback_id: DeploymentEvent.staging.callback_id,
+        callback_id: BuildEvent.staging.callback_id,
         color: "#3AA3E3",
         actions: [
           {
@@ -56,7 +56,7 @@ const stagingBuildChannelView = ({ id, build, requests }) => {
             text: "Go! :rocket:",
             type: "button",
             style: "primary",
-            value: DeploymentEvent.staging.confirmed,
+            value: BuildEvent.staging.confirmed,
             confirm: {
               title: 'Are you sure?',
               text: 'Would you like to mark as Confirmed?',
@@ -69,7 +69,7 @@ const stagingBuildChannelView = ({ id, build, requests }) => {
             text: "Incorrect :no_entry:",
             type: "button",
             style: "danger",
-            value: DeploymentEvent.staging.incorrect,
+            value: BuildEvent.staging.incorrect,
             confirm: {
               title: 'Are you sure?',
               text: 'Would you like to mark as Incorrect?',

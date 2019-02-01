@@ -5,7 +5,7 @@ const { waitForInternalPromises } = require('../../test-utils')
 const { readState, updateState } = require('../../bot-state')
 const { mockMessageApi } = require('../../test-utils/mock-api')
 const { mockState } = require('../../test-utils/mock-data')
-const { releaseManagerUpdatedView } = require('./views')
+const { releaseManagerUpdatedView } = require('../build/event-views')
 const { eventRequestGenerator } = require('./test-utils')
 
 describe('Events controller', async () => {

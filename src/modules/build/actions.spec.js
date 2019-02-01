@@ -1,8 +1,8 @@
-require('../../../test-utils/mock-implementations')
-const { DeploymentEvent } = require('../../events/mappings')
-const { updateState } = require('../../../bot-state')
-const { waitForInternalPromises } = require('../../../test-utils')
-const { mockMessageApi, mockEphemeralMessageApi } = require('../../../test-utils/mock-api')
+require('../../test-utils/mock-implementations')
+const { BuildEvent } = require('./mappings')
+const { updateState } = require('../../bot-state')
+const { waitForInternalPromises } = require('../../test-utils')
+const { mockMessageApi, mockEphemeralMessageApi } = require('../../test-utils/mock-api')
 const {
   handleIfStagingBuildConfirmAction,
   handleIfStagingBuildIncorrectAction
@@ -12,14 +12,14 @@ const {
   buildConfirmedManagerView,
   buildIncorrectAuthorView,
   buildIncorrectManagerView
-} = require('./views')
+} = require('./action-views')
 const {
   mockUser,
   mockState,
   mockStagingBuild,
   mockStagingDeployment,
   mockApprovedRequest
-} = require('../../../test-utils/mock-data')
+} = require('../../test-utils/mock-data')
 
 
 describe('Build event actions', async () => {
@@ -42,11 +42,11 @@ describe('Build event actions', async () => {
     }
 
     const payload = {
-      callback_id: DeploymentEvent.staging.callback_id,
+      callback_id: BuildEvent.staging.callback_id,
       actions: [
         {
           name: JSON.stringify(name),
-          value: DeploymentEvent.staging.confirmed
+          value: BuildEvent.staging.confirmed
         }
       ],
       user: mockUser,
@@ -90,11 +90,11 @@ describe('Build event actions', async () => {
     }
 
     const payload = {
-      callback_id: DeploymentEvent.staging.callback_id,
+      callback_id: BuildEvent.staging.callback_id,
       actions: [
         {
           name: JSON.stringify(name),
-          value: DeploymentEvent.staging.incorrect
+          value: BuildEvent.staging.incorrect
         }
       ],
       user: mockUser,

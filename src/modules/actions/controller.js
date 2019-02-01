@@ -1,18 +1,18 @@
 const { path } = require('ramda')
 
 const log = require('../../utils/log')
-const { handleIfEditDialogAction } = require('./state/actions')
-const { handleIfRequestProgressAction } = require('./progress/actions')
-const { handleIfReportAction } = require('./report/actions')
+const { handleIfEditDialogAction } = require('../state/actions')
+const { handleIfRequestProgressAction } = require('../progress/actions')
+const { handleIfReportAction } = require('../report/actions')
 const {
   handleIfStagingBuildConfirmAction,
   handleIfStagingBuildIncorrectAction
-} = require('./build/actions')
+} = require('../build/actions')
 const {
   handleIfRequestDialogAction,
   handleIfInitiateRequestAction,
   handleIfRejectRequestAction
-} = require('./request/actions')
+} = require('../request/actions')
 
 const actionsPost = async (req, res) => {
   try {

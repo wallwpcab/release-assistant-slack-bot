@@ -20,12 +20,12 @@ const {
   stagingBuildManagerView,
   stagingBuildChannelView,
   productionBuildChannelView
-} = require('./views')
+} = require('./event-views')
 const {
   handleIfBranchBuildEvent,
   handleIfStagingBuildEvent,
   handleIfProductionBuildEvent
-} = require('./build')
+} = require('./events')
 
 describe('Events controller', async () => {
   beforeEach(async () => {

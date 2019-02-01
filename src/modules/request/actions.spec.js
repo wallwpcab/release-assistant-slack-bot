@@ -1,12 +1,12 @@
-const { setMockId, setMockDate } = require('../../../test-utils/mock-implementations')
-const { Request, RequestApproval } = require('../../request/mappings')
-const { readState, updateState } = require('../../../bot-state')
-const { waitForInternalPromises } = require('../../../test-utils')
-const { updateById } = require('../../../utils')
+const { setMockId, setMockDate } = require('../../test-utils/mock-implementations')
+const { Request, RequestApproval } = require('./mappings')
+const { readState, updateState } = require('../../bot-state')
+const { waitForInternalPromises } = require('../../test-utils')
+const { updateById } = require('../../utils')
 const {
   requestInvalidIdView,
   requestAlreadyInitiatedView
-} = require('../../request/views')
+} = require('./views')
 const {
   requestReceivedAuthorView,
   requestReceivedManagerView,
@@ -14,7 +14,7 @@ const {
   requestInitiatedChannelView,
   requestRejectedManagerView,
   requestRejectedChannelView,
-} = require('./views')
+} = require('./action-views')
 const {
   handleIfRequestDialogAction,
   handleIfInitiateRequestAction,
@@ -29,7 +29,7 @@ const {
   mockInitialDeployment,
   mockInitialRequest,
   mockRequestFormData
-} = require('../../../test-utils/mock-data')
+} = require('../../test-utils/mock-data')
 const {
   mockMessageApi,
   mockEphemeralMessageApi,
@@ -37,7 +37,7 @@ const {
   mockGitProductionApi,
   mockFileApi,
   mockPermalinkApi
-} = require('../../../test-utils/mock-api')
+} = require('../../test-utils/mock-api')
 
 const responseUrl = 'http://response.slack.com/message'
 

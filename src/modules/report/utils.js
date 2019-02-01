@@ -1,6 +1,6 @@
 const { isSameDay } = require('date-fns')
-const { Report } = require('../../report/mappings')
-const { getDate } = require('../../../utils/generator')
+const { Report } = require('./mappings')
+const { getDate } = require('../../utils/generator')
 
 const getSection = (reportFormData, reportSections) =>
   reportSections.find(({ id }) => id === reportFormData.section)

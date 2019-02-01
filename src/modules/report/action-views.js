@@ -1,8 +1,8 @@
 const { isEmpty } = require('ramda')
 
-const { slackUserTag, makeTitleCase } = require('../../../utils')
-const { DeploymentStatus } = require('../../request/mappings')
-const { buildLabel } = require('../build/views')
+const { slackUserTag, makeTitleCase } = require('../../utils')
+const { DeploymentStatus } = require('../request/mappings')
+const { buildLabel } = require('../build/action-views')
 
 const statusLabel = report => report.ok ? '*Confirmed*. :white_check_mark:' : '*Incorrect*. :no_entry:'
 

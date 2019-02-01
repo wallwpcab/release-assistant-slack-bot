@@ -1,8 +1,8 @@
-const { stateReadView } = require('../../state/views')
-const { Config } = require('../../state/mappings')
-const { sendMessageOverUrl } = require('../../slack/integration')
-const { readState, updateState } = require('../../../bot-state')
-const { getConfigData } = require('../../../transformer')
+const { stateReadView } = require('./views')
+const { Config } = require('./mappings')
+const { sendMessageOverUrl } = require('../slack/integration')
+const { readState, updateState } = require('../../bot-state')
+const { getConfigData } = require('../../transformer')
 
 const handleIfEditDialogAction = async ({ callback_id, response_url, submission }) => {
   if (callback_id !== Config.callback_id) return
