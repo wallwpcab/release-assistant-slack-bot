@@ -63,6 +63,7 @@ const updateByKeys = (obj, keys, callback) => {
 }
 
 const hasAny = (obj, ...props) => !!props.find(prop => has(prop, obj))
+
 const argsChecker = (args) => ({
   hasAny: (...params) => hasAny(args, ...params),
   isEmpty: () => Object.keys(args).length === 1,

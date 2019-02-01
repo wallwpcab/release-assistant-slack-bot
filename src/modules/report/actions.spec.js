@@ -22,6 +22,13 @@ describe('Report actions', async () => {
       .filter(s => s.id !== section.id)
     const report = createReport(mockReportFormData, mockUser)
 
+    const payload = {
+      callback_id: Report.callback_id,
+      response_url: responseUrl,
+      submission: mockReportFormData,
+      user: mockUser
+    }
+
     /** mock api **/
     const publicMessageApi = mockPublicMessageApi(responseUrl, ({ text }) => {
       expect(text).toBe(confirmedReportAuthorView(section, report).text)
@@ -32,15 +39,9 @@ describe('Report actions', async () => {
       expect(text).toBe(confirmedReportManagerView(mockStagingBuild, section, report, pendingSections, mockUser).text)
       return true
     })
+    /** mock api **/
 
     setMockDate('2019-01-27T18:13:15.249Z')
-
-    const payload = {
-      callback_id: Report.callback_id,
-      response_url: responseUrl,
-      submission: mockReportFormData,
-      user: mockUser
-    }
 
     await updateState({
       deployments: {
@@ -49,6 +50,8 @@ describe('Report actions', async () => {
         }
       }
     })
+
+    // simulate
     await handleIfReportAction(payload)
     await waitForInternalPromises()
 

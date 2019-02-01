@@ -1,23 +1,17 @@
 const { actionsPost } = require('./controller')
-const { waitForInternalPromises, toggleLogger } = require('../../test-utils')
+const { waitForInternalPromises, toggleLogger, expressHelper } = require('../../test-utils')
 
 describe('Actions controller', async () => {
   it('Can handle invalid payload', async () => {
-    const req = {
-      body: {
-        payload: 'invalid-payload'
-      }
-    }
-
-    const res = {
-      send: jest.fn()
-    }
+    const http = expressHelper({
+      payload: 'invalid-payload'
+    })
 
     toggleLogger()
-    await actionsPost(req, res)
+    await actionsPost(...http.args)
     await waitForInternalPromises()
     toggleLogger()
 
-    expect(res.send).toBeCalled()
+    expect(http.res.send).toBeCalled()
   })
 })

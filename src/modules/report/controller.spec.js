@@ -19,6 +19,7 @@ describe('Report controller', async () => {
       expect(dialog).toBe(JSON.stringify(reportFormView(config.reportSections)))
       return true
     })
+    /* mock api */
 
     await updateState(mockState, true)
     await reportPost(...http.args)

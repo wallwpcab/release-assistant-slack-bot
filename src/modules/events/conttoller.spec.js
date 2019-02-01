@@ -1,7 +1,7 @@
 require('../../test-utils/mock-implementations')
 const { eventsPost } = require('./controller')
 const { getSlackUser } = require('../../utils')
-const { waitForInternalPromises } = require('../../test-utils')
+const { waitForInternalPromises, expressHelper } = require('../../test-utils')
 const { readState, updateState } = require('../../bot-state')
 const { mockMessageApi } = require('../../test-utils/mock-api')
 const { mockState } = require('../../test-utils/mock-data')
@@ -26,20 +26,14 @@ describe('Events controller', async () => {
   })
 
   it('Can send-back slack challenge', async () => {
-    const req = {
-      body: {
-        challenge: 'challenge-1'
-      }
-    }
+    const http = expressHelper({
+      challenge: 'challenge-1'
+    })
 
-    const res = {
-      send: jest.fn()
-    }
-
-    await eventsPost(req, res)
+    await eventsPost(...http.args)
     await waitForInternalPromises()
 
-    expect(res.send).toBeCalledWith('challenge-1')
+    expect(http.res.send).toBeCalledWith('challenge-1')
   })
 
   it('Can handle channel topic change event', async () => {
