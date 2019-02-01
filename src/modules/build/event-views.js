@@ -1,7 +1,7 @@
 const { DeploymentStatus } = require('../request/mappings')
 const { BuildEvent } = require('./mappings')
 const { slackUserTag, makeTitleCase } = require('../../utils')
-const { requestIdLabel } = require('../request/views')
+const { requestIdLabel } = require('../request/labels')
 const { buildLabel } = require('./action-views')
 
 const releaseManagerUpdatedView = (user, releaseManagers) => {

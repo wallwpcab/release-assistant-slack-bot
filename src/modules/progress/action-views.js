@@ -1,4 +1,4 @@
-const { requestIdLabel } = require('../request/views')
+const { requestIdLabel } = require('../request/labels')
 const { slackUserTag } = require('../../utils')
 
 const requestCanceledManagerView = (request, user) => {

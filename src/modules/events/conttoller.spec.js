@@ -6,7 +6,19 @@ const { readState, updateState } = require('../../bot-state')
 const { mockMessageApi } = require('../../test-utils/mock-api')
 const { mockState } = require('../../test-utils/mock-data')
 const { releaseManagerUpdatedView } = require('../build/event-views')
-const { eventRequestGenerator } = require('./test-utils')
+
+const eventRequestGenerator = (subtype, channel) => props => {
+  return {
+    body: {
+      event: {
+        type: 'message',
+        subtype,
+        channel,
+        ...props
+      }
+    }
+  }
+}
 
 describe('Events controller', async () => {
   beforeEach(async () => {

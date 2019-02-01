@@ -1,5 +1,5 @@
 const { RequestApproval } = require('./mappings')
-const { requestIdLabel } = require('./views')
+const { requestIdLabel } = require('./labels')
 const { slackUserTag } = require('../../utils')
 const {
   requestDetailsLabel,

@@ -1,7 +1,6 @@
 const { Request, RequestType } = require('./mappings')
+const { requestIdLabel } = require('./labels')
 const { slackUserTag } = require('../../utils')
-
-const requestIdLabel = ({id, permalink}) => `*<${permalink}|\`${id}\`>*`
 
 const requestFormView = () => ({
   title: 'Request a relesase',
@@ -69,7 +68,6 @@ const requestAlreadyInitiatedView = (request) => {
 }
 
 module.exports = {
-  requestIdLabel,
   requestFormView,
   requestInvalidIdView,
   requestAlreadyInitiatedView

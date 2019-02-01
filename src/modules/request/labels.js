@@ -1,7 +1,8 @@
-const { requestIdLabel } = require('./views')
 const { RequestType } = require('./mappings')
 const { slackUserTag } = require('../../utils')
 const { getApprovalText } = require('../../transformer')
+
+const requestIdLabel = ({id, permalink}) => `*<${permalink}|\`${id}\`>*`
 
 const requestTypeLabel = (type) => {
   const { label, icon } = RequestType[type]
@@ -52,6 +53,7 @@ const gitCherryPickLabel = requests => {
 }
 
 module.exports = {
+  requestIdLabel,
   requestTypeLabel,
   requestCommitsLabel,
   requestDetailsLabel,

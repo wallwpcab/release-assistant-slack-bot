@@ -15,7 +15,25 @@ const toggleLogger = () => {
   else tracer.setLevel(logLevel)
 }
 
+const expressHelper = (body) => {
+  const req = {
+    body
+  }
+
+  const res = {
+    send: jest.fn(),
+    sendStatus: jest.fn()
+  }
+
+  return {
+    req,
+    res,
+    args: [req, res]
+  }
+}
+
 module.exports = {
   waitForInternalPromises,
-  toggleLogger
+  toggleLogger,
+  expressHelper
 }

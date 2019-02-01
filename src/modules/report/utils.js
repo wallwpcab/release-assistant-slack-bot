@@ -12,6 +12,18 @@ const getPendingSections = (reportSections, dailyReport) => {
   })
 }
 
+const getReportStatus = (reportSections, dailyReport) => reportSections.map(section => {
+  let report = dailyReport[section.id]
+  if (!report || !isSameDay(report.date, getDate())) {
+    report = null
+  }
+
+  return {
+    section,
+    report
+  }
+})
+
 const createReport = (reportFormData, user) => {
   return {
     id: reportFormData.section,
@@ -24,6 +36,7 @@ const createReport = (reportFormData, user) => {
 
 module.exports = {
   getSection,
+  createReport,
   getPendingSections,
-  createReport
+  getReportStatus
 }
