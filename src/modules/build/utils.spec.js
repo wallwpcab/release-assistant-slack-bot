@@ -1,13 +1,26 @@
 require('../../test-utils/mock-implementations')
-const { mockState } = require('../../test-utils/mock-data')
-const { updateState } = require('../../bot-state')
-const { branchBuildView, stagingBuildView, productionBuildView } = require('../dryrun/views')
+const {
+  mockState
+} = require('../../test-utils/mock-data')
+const {
+  updateState
+} = require('../../bot-state')
+const {
+  branchBuildView,
+  stagingBuildView,
+  productionBuildView
+} = require('../dryrun/views')
 const {
   isDeploymentEvent,
-  getBuildInfo } = require('./utils')
+  getBuildInfo
+} = require('./utils')
 
-const buildMessage = ({ attachments }) => attachments
-  .reduce((acc, { text }) => acc + text + '\n', '')
+const buildMessage = ({
+  attachments
+}) => attachments
+  .reduce((acc, {
+    text
+  }) => `${acc + text}\n`, '')
 
 describe('Events Utils', async () => {
   beforeEach(async () => {

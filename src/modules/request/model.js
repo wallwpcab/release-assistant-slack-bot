@@ -1,12 +1,33 @@
-const { is, mergeRight, isEmpty } = require('ramda')
+const {
+  is,
+  mergeRight
+} = require('ramda')
 
 class Deployment {
-  constructor({ id, status, baseCommit, build, requests }) {
-    this.update({ id, status, baseCommit, build, requests })
+  constructor({
+    id,
+    status,
+    baseCommit,
+    build,
+    requests
+  }) {
+    this.update({
+      id,
+      status,
+      baseCommit,
+      build,
+      requests
+    })
   }
 
   update(props) {
-    const { id, status, baseCommit, build, requests } = mergeRight(this, props)
+    const {
+      id,
+      status,
+      baseCommit,
+      build,
+      requests
+    } = mergeRight(this, props)
     this.id = id
     this.status = status
     this.baseCommit = baseCommit
@@ -20,7 +41,9 @@ class Deployment {
   }
 
   export() {
-    const requests = this.isExpanded() ? this.requests.map(({ id }) => id) : this.requests
+    const requests = this.isExpanded() ? this.requests.map(({
+      id
+    }) => id) : this.requests
     return {
       id: this.id,
       status: this.status,
@@ -32,7 +55,7 @@ class Deployment {
 
   mapRequests(requests) {
     if (this.isExpanded()) return
-    this.requests = this.requests.map((id) => requests[id])
+    this.requests = this.requests.map(id => requests[id])
   }
 
   getRequestThread() {

@@ -44,7 +44,7 @@ describe('Cancel request actions', async () => {
   it('Can handle cancel request action with invalid request id', async () => {
     const requestId = 'invalid-id'
 
-    /** mock api **/
+    /* mock api */
     const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestInvalidIdView(requestId).text)
       return true
@@ -64,14 +64,16 @@ describe('Cancel request actions', async () => {
     }
     await updateState({ requests }, true)
 
-    /** mock api **/
+    /* mock api */
     const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestAlreadyInitiatedView(mockApprovedRequest).text)
       return true
     })
 
     // simulate
-    await handleIfRequestProgressAction(actionPayload(mockApprovedRequest.id, RequestProgress.cancel))
+    await handleIfRequestProgressAction(
+      actionPayload(mockApprovedRequest.id, RequestProgress.cancel)
+    )
     await waitForInternalPromises()
 
     // should call following api
@@ -87,13 +89,15 @@ describe('Cancel request actions', async () => {
       return true
     }
 
-    /** mock api **/
+    /* mock api */
     const userMessageApi = mockMessageApi(messageApiCallback)
     const channelMessageApi = mockMessageApi(messageApiCallback)
-    /** mock api **/
+    /* mock api */
 
     // simulate
-    await handleIfRequestProgressAction(actionPayload(mockInitialRequest.id, RequestProgress.cancel))
+    await handleIfRequestProgressAction(
+      actionPayload(mockInitialRequest.id, RequestProgress.cancel)
+    )
     await waitForInternalPromises()
 
     const { requests } = await readState()

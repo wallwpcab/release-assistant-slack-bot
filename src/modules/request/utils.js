@@ -1,31 +1,43 @@
-const { format } = require('date-fns')
+const {
+  format
+} = require('date-fns')
 
-const { RequestType, RequestStatus, DeploymentStatus } = require('./mappings')
-const { generateId, getDate } = require('../../utils/generator')
-const { getGitInfo } = require('../../git-integration')
-const { Deployment } = require('./model')
+const {
+  RequestType,
+  RequestStatus,
+  DeploymentStatus
+} = require('./mappings')
+const {
+  generateId,
+  getDate
+} = require('../../utils/generator')
+const {
+  getGitInfo
+} = require('../../git-integration')
+const {
+  Deployment
+} = require('./model')
 
-const getInitialRequests = (requests) => {
-  return Object.values(requests).filter(r => r.status === RequestStatus.initial)
-}
+const getInitialRequests = requests => Object.values(requests)
+  .filter(r => r.status === RequestStatus.initial)
 
-const getGroupType = (requests) => {
-  const hasType = (requests, type) => requests.find(r => r && r.type === type)
+const hasType = (requests, type) => requests.find(r => r && r.type === type)
 
-  return [
-    RequestType.hotfix.value,
-    RequestType.activation.value
-  ].map(type => hasType(requests, type) && type)
-    .filter(Boolean)
-    .join('-')
-}
+const getGroupType = requests => [
+  RequestType.hotfix.value,
+  RequestType.activation.value
+].map(type => hasType(requests, type) && type)
+  .filter(Boolean)
+  .join('-')
 
 const createBuild = (requests, deploymentId) => ({
   branch: `release/${format(getDate(), 'YYYY-MM-DD')}/${getGroupType(requests)}/${deploymentId}`
 })
 
 const createDeployment = async (requests) => {
-  const { info } = await getGitInfo(true)
+  const {
+    info
+  } = await getGitInfo(true)
   const id = generateId()
 
   const deployment = new Deployment({
@@ -46,7 +58,9 @@ const getOrCreateDeployment = async (deployments, requests) => {
     return createDeployment(pendingRequests)
   }
 
-  const { info } = await getGitInfo(true)
+  const {
+    info
+  } = await getGitInfo(true)
   const combinedRequests = deployment.requests.map(r => requests[r.id])
     .concat(pendingRequests)
 

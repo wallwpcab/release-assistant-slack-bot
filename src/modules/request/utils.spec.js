@@ -4,11 +4,12 @@ const { getInitialRequests, getGroupType } = require('./utils')
 const { updateState } = require('../../bot-state')
 const { createDeployment, getOrCreateDeployment } = require('./utils')
 const { mockGitProductionApi } = require('../../test-utils/mock-api')
-const { mockState,
+const {
+  mockState,
   mockInitialRequest,
   mockApprovedRequest,
   mockInitialDeployment,
-  mockBranchDeployment,
+  mockBranchDeployment
 } = require('../../test-utils/mock-data')
 
 describe('Request utils', async () => {
@@ -57,7 +58,8 @@ describe('Request utils', async () => {
 
   it('Can create an initial deployment', async () => {
     const gitApi = mockGitProductionApi()
-    const id = setMockId('dep-1')
+    const id = 'dep-1'
+    setMockId(id)
     setMockDate(new Date('2018-10-14').toISOString())
 
     const mockDeployment = {
@@ -75,7 +77,8 @@ describe('Request utils', async () => {
 
   it('Should create a new deployment', async () => {
     const gitApi = mockGitProductionApi()
-    const id = setMockId('dep-1')
+    const id = 'dep-1'
+    setMockId(id)
     setMockDate(new Date('2018-10-14').toISOString())
 
     const mockDeployment = {
@@ -99,7 +102,8 @@ describe('Request utils', async () => {
 
   it('Should get an existing deployment', async () => {
     const gitApi = mockGitProductionApi()
-    const id = setMockId('id-32')
+    const id = 'id-32'
+    setMockId(id)
     setMockDate(new Date('2018-10-14').toISOString())
 
     const requests = {

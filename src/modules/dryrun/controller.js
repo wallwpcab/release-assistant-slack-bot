@@ -10,19 +10,6 @@ const {
   productionBuildView
 } = require('./views')
 
-const dryrunPost = async (req, res) => {
-  const { text } = req.body
-  try {
-    const args = minimist(splitValues(text))
-    handleIfTestBranchBuild(args, res)
-    handleIfTestStagingBuild(args, res)
-    handleIfTestProductionBuild(args, res)
-  } catch (err) {
-    log.error('handleIfUpdateConfig() > openDialog failed', err)
-    res.sendStatus(500)
-  }
-}
-
 const handleIfTestBranchBuild = async ({ branchBuild, b: branch }, res) => {
   if (!branchBuild) return
 
@@ -45,6 +32,19 @@ const handleIfTestProductionBuild = async ({ productionBuild, b: branch }, res) 
   const { config } = await readState()
   res.send()
   sendMessageToChannel(config.botChannel, productionBuildView(branch))
+}
+
+const dryrunPost = async (req, res) => {
+  const { text } = req.body
+  try {
+    const args = minimist(splitValues(text))
+    handleIfTestBranchBuild(args, res)
+    handleIfTestStagingBuild(args, res)
+    handleIfTestProductionBuild(args, res)
+  } catch (err) {
+    log.error('handleIfUpdateConfig() > openDialog failed', err)
+    res.sendStatus(500)
+  }
 }
 
 module.exports = {

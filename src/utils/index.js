@@ -1,5 +1,9 @@
 const {
-  split, reject, map, mergeRight, has
+  split,
+  reject,
+  map,
+  mergeRight,
+  has
 } = require('ramda')
 
 const splitValues = (str, sep = /[\s+,]/) => reject(
@@ -27,7 +31,10 @@ const getSlackChannel = (text) => {
   const nameExpr = /<#.+\|([^>]+)/
   const id = findGroup([idExpr], text)
   const name = findGroup([nameExpr], text)
-  const channel = { id, name }
+  const channel = {
+    id,
+    name
+  }
   return id && channel
 }
 
@@ -41,7 +48,10 @@ const getSlackUser = (text) => {
   const nameExpr = /<@.+\|([^>]+)/
   const id = findGroup([idExpr], text)
   const name = findGroup([nameExpr], text)
-  const user = { id, name }
+  const user = {
+    id,
+    name
+  }
   return id && user
 }
 
@@ -51,20 +61,22 @@ const makeTitleCase = (message = '') => message.replace(
   /\w\S*/g, word => word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
 )
 
-const updateById = (parent, child) => mergeRight(parent, { [child.id]: child })
+const updateById = (parent, child) => mergeRight(parent, {
+  [child.id]: child
+})
 
 const updateByKeys = (obj, keys, callback) => {
-  const subset = keys.reduce((map, key) => {
+  const subset = keys.reduce((acc, key) => {
     const value = obj[key]
-    map[key] = mergeRight(value, callback(value))
-    return map
+    acc[key] = mergeRight(value, callback(value))
+    return acc
   }, {})
   return mergeRight(obj, subset)
 }
 
 const hasAny = (obj, ...props) => !!props.find(prop => has(prop, obj))
 
-const argsChecker = (args) => ({
+const argsChecker = args => ({
   hasAny: (...params) => hasAny(args, ...params),
   isEmpty: () => Object.keys(args).length === 1,
   getValue: (...params) => params.find(p => args[p] !== undefined)

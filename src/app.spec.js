@@ -9,7 +9,7 @@ const { reportFormView } = require('./modules/report/views')
 
 describe('App tests', async () => {
   it('Can post to /slack/command/report', async () => {
-    const config = mockState.config
+    const { config } = mockState
     const api = mockDialogOpenApi(({ dialog }) => {
       expect(dialog).toBe(JSON.stringify(reportFormView(config.reportSections)))
       return true

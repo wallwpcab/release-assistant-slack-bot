@@ -49,10 +49,10 @@ describe('Build event actions', async () => {
           value: BuildEvent.staging.confirmed
         }
       ],
-      user: mockUser,
+      user: mockUser
     }
 
-    /** mock api **/
+    /* mock api */
     const ephemeralMessageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(
         buildConfirmedAuthorView(mockStagingBuild, mockApprovedRequest).text
@@ -72,7 +72,7 @@ describe('Build event actions', async () => {
         return true
       }
     )
-    /** mock api **/
+    /* mock api */
 
     // simulate controller method call
     await handleIfStagingBuildConfirmAction(payload)
@@ -97,10 +97,10 @@ describe('Build event actions', async () => {
           value: BuildEvent.staging.incorrect
         }
       ],
-      user: mockUser,
+      user: mockUser
     }
 
-    /** mock api **/
+    /* mock api */
     const ephemeralMessageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(
         buildIncorrectAuthorView(mockStagingBuild, mockApprovedRequest).text
@@ -116,7 +116,7 @@ describe('Build event actions', async () => {
         return true
       }
     )
-    /** mock api **/
+    /* mock api */
 
     // simulate controller method call
     await handleIfStagingBuildIncorrectAction(payload)

@@ -1,5 +1,11 @@
 require('../../test-utils/mock-implementations')
-const { mockUser, mockMessage, mockChannel, mockFile, mockInitialRequest } = require('../../test-utils/mock-data')
+const {
+  mockUser,
+  mockMessage,
+  mockChannel,
+  mockFile,
+  mockInitialRequest
+} = require('../../test-utils/mock-data')
 const {
   openDialog,
   sendEphemeralMessage,
@@ -15,7 +21,7 @@ const {
   mockEphemeralMessageApi,
   mockFileApi,
   mockMessageApi,
-  mockPublicMessageApi,
+  mockPublicMessageApi
 } = require('../../test-utils/mock-api')
 
 describe('Slack integration', async () => {
@@ -25,16 +31,17 @@ describe('Slack integration', async () => {
       title: 'Request a relesase',
       callback_id: '',
       submit_label: 'Submit',
-      elements: [
-        {
-          label: 'Type',
-          name: 'requestType',
-          type: 'select',
-          hint: 'Choose release type',
-          options: { label: 'Option 1', value: 'option-1' },
+      elements: [{
+        label: 'Type',
+        name: 'requestType',
+        type: 'select',
+        hint: 'Choose release type',
+        options: {
+          label: 'Option 1',
           value: 'option-1'
-        }
-      ]
+        },
+        value: 'option-1'
+      }]
     }
     await openDialog('http://dialog.slack.com', dialog)
     expect(api.isDone()).toBe(true)
@@ -73,7 +80,9 @@ describe('Slack integration', async () => {
 
   it('Can upload a file', async () => {
     const api = mockFileApi()
-    const { file } = await uploadFile('test-file.txt', 'Some message', mockChannel.id, 'Test File', 'some comments', 'json')
+    const {
+      file
+    } = await uploadFile('test-file.txt', 'Some message', mockChannel.id, 'Test File', 'some comments', 'json')
     expect(api.isDone()).toBe(true)
     expect(file).toMatchObject({
       permalink: mockFile.permalink

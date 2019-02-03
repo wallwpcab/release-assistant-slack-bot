@@ -7,7 +7,7 @@ const httpClient = once(() => {
   const agent = axios.create({
     baseURL: apiUrl
   })
-  agent.defaults.headers.common['Authorization'] = 'Bearer ' + bot.token
+  agent.defaults.headers.common.Authorization = `Bearer ${bot.token}`
   return agent
 })
 

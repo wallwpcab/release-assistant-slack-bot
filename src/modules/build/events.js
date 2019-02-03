@@ -16,6 +16,7 @@ const handleIfBranchBuildEvent = async (build) => {
     return
   }
 
+  // eslint-disable-next-line prefer-const
   let { config, deployments, requests } = await readState()
   const { releaseManagers } = config
   const deployment = findDeployment(deployments, build)
@@ -48,6 +49,7 @@ const handleIfStagingBuildEvent = async (build) => {
     return
   }
 
+  // eslint-disable-next-line prefer-const
   let { deployments, config, requests } = await readState()
   const { releaseManagers, botChannel } = config
   deployments = updateStagingBuild(deployments, build)
@@ -87,6 +89,7 @@ const handleIfProductionBuildEvent = async (build) => {
     return
   }
 
+  // eslint-disable-next-line prefer-const
   let { deployments, requests, config } = await readState()
   const { botChannel } = config
   const deployment = findDeployment(deployments, build)

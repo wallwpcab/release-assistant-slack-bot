@@ -24,12 +24,14 @@ const {
 } = require('./action-views')
 const {
   requestInvalidIdView,
-  requestAlreadyInitiatedView,
+  requestAlreadyInitiatedView
 } = require('./views')
 
 const createRequest = async (submissionData, user, botChannel) => {
   const requestData = getRequestData(submissionData, user)
-  const file = await uploadRequestData(requestData, botChannel.id, requestReceivedChannelView(requestData))
+  const file = await uploadRequestData(
+    requestData, botChannel.id, requestReceivedChannelView(requestData)
+  )
   const permalink = await getPermalink(botChannel.id, file.thread_ts)
   const request = {
     ...requestData,
@@ -40,8 +42,10 @@ const createRequest = async (submissionData, user, botChannel) => {
   return request
 }
 
-const handleIfRequestDialogAction = async ({ callback_id, response_url, submission, user }) => {
-  if (callback_id !== Request.callback_id) return
+const handleIfRequestDialogAction = async ({
+  callback_id: callbackId, response_url: responseUrl, submission, user
+}) => {
+  if (callbackId !== Request.callback_id) return
 
   const { config, requests } = await readState()
   const { releaseManagers, botChannel } = config
@@ -49,17 +53,21 @@ const handleIfRequestDialogAction = async ({ callback_id, response_url, submissi
 
   await Promise.all([
     updateState({ requests: updateById(requests, request) }),
-    sendMessageOverUrl(response_url, requestReceivedAuthorView(request)),
+    sendMessageOverUrl(responseUrl, requestReceivedAuthorView(request)),
     sendMessageToUsers(releaseManagers, requestReceivedManagerView(request))
   ])
 }
 
-const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], user }) => {
+const handleIfInitiateRequestAction = async ({
+  callback_id: callbackId, actions: [action], user
+}) => {
   const { name: requestId, value } = action || {}
-  if (callback_id !== RequestApproval.callback_id || value !== RequestApproval.approve) return
+  if (callbackId !== RequestApproval.callback_id || value !== RequestApproval.approve) return
 
+  // eslint-disable-next-line prefer-const
   let { config, requests, deployments } = await readState()
   const { releaseManagers, botChannel } = config
+  // eslint-disable-next-line prefer-const
   let request = pathOr(null, [requestId], requests)
   if (!request) {
     await sendEphemeralMessage(user, requestInvalidIdView(requestId))
@@ -91,9 +99,11 @@ const handleIfInitiateRequestAction = async ({ callback_id, actions: [action], u
   ])
 }
 
-const handleIfRejectRequestAction = async ({ callback_id, actions: [action], user }) => {
+const handleIfRejectRequestAction = async ({
+  callback_id: callbackId, actions: [action], user
+}) => {
   const { name: requestId, value } = action || {}
-  if (callback_id !== RequestApproval.callback_id || value !== RequestApproval.reject) return
+  if (callbackId !== RequestApproval.callback_id || value !== RequestApproval.reject) return
 
   const { requests, config } = await readState()
   const { releaseManagers, botChannel } = config
@@ -108,12 +118,12 @@ const handleIfRejectRequestAction = async ({ callback_id, actions: [action], use
     return
   }
 
-  const { file: { thread_ts } } = request
+  const { file: { thread_ts: threadTs } } = request
   delete requests[requestId]
   await Promise.all([
     updateState({ requests }, true),
     sendMessageToUsers(releaseManagers, requestRejectedManagerView(request, user)),
-    sendMessageToChannel(botChannel, requestRejectedChannelView(request, user), thread_ts)
+    sendMessageToChannel(botChannel, requestRejectedChannelView(request, user), threadTs)
   ])
 }
 

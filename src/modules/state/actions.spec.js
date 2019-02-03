@@ -24,7 +24,7 @@ describe('State actions', async () => {
       }
     }
 
-    /** mock api **/
+    /* mock api */
     const messageApi = mockPublicMessageApi(responseUrl, ({ text }) => {
       expect(text).toBe(stateReadView(mockState).text)
       return true

@@ -13,7 +13,7 @@ const {
   requestInitiatedManagerView,
   requestInitiatedChannelView,
   requestRejectedManagerView,
-  requestRejectedChannelView,
+  requestRejectedChannelView
 } = require('./action-views')
 const {
   handleIfRequestDialogAction,
@@ -69,7 +69,7 @@ describe('Request actions', async () => {
     setMockId(mockInitialRequest.id)
     setMockDate(new Date('2019-01-27T18:13:15.249Z').toISOString())
 
-    /** mock api **/
+    /* mock api */
     const fileApi = mockFileApi()
     const permalinkApi = mockPermalinkApi()
     const messageApi = mockMessageApi(({ text, channel }) => {
@@ -81,9 +81,8 @@ describe('Request actions', async () => {
     const publicMessageApi = mockPublicMessageApi(responseUrl, ({ text }) => {
       expect(text).toBe(requestReceivedAuthorView(mockInitialRequest).text)
       return true
-    }
-    )
-    /** mock api **/
+    })
+    /* mock api */
 
     // simulate
     await handleIfRequestDialogAction(payload)
@@ -113,12 +112,12 @@ describe('Request actions', async () => {
   it('Can handle initiate request action with invalid request id', async () => {
     const requestId = 'invalid-id'
 
-    /** mock api **/
+    /* mock api */
     const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestInvalidIdView(requestId).text)
       return true
     })
-    /** mock api **/
+    /* mock api */
 
     // simulate
     await handleIfInitiateRequestAction(actionPayload(requestId, RequestApproval.approve))
@@ -134,15 +133,17 @@ describe('Request actions', async () => {
     }
     await updateState({ requests }, true)
 
-    /** mock api **/
+    /* mock api */
     const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestAlreadyInitiatedView(mockApprovedRequest).text)
       return true
     })
-    /** mock api **/
+    /* mock api */
 
     // simulate
-    await handleIfInitiateRequestAction(actionPayload(mockApprovedRequest.id, RequestApproval.approve))
+    await handleIfInitiateRequestAction(
+      actionPayload(mockApprovedRequest.id, RequestApproval.approve)
+    )
     await waitForInternalPromises()
 
     // should call following api
@@ -161,14 +162,16 @@ describe('Request actions', async () => {
     setMockId('dep-1')
     setMockDate(new Date('2018-10-14').toISOString())
 
-    /** mock api **/
+    /* mock api */
     const gitApi = mockGitProductionApi()
     const userMessageApi = mockMessageApi(messageApiCallback)
     const channelMessageApi = mockMessageApi(messageApiCallback)
-    /** mock api **/
+    /* mock api */
 
     // simulate
-    await handleIfInitiateRequestAction(actionPayload(mockInitialRequest.id, RequestApproval.approve))
+    await handleIfInitiateRequestAction(
+      actionPayload(mockInitialRequest.id, RequestApproval.approve)
+    )
     await waitForInternalPromises()
 
     // should call following api
@@ -188,7 +191,7 @@ describe('Request actions', async () => {
   it('Can handle reject request action with invalid request id', async () => {
     const requestId = 'invalid-id'
 
-    /** mock api **/
+    /* mock api */
     const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestInvalidIdView(requestId).text)
       return true
@@ -208,7 +211,7 @@ describe('Request actions', async () => {
     }
     await updateState({ requests }, true)
 
-    /** mock api **/
+    /* mock api */
     const messageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(requestAlreadyInitiatedView(mockApprovedRequest).text)
       return true
@@ -231,10 +234,10 @@ describe('Request actions', async () => {
       return true
     }
 
-    /** mock api **/
+    /* mock api */
     const userMessageApi = mockMessageApi(messageApiCallback)
     const channelMessageApi = mockMessageApi(messageApiCallback)
-    /** mock api **/
+    /* mock api */
 
     // simulate
     await handleIfRejectRequestAction(actionPayload(mockInitialRequest.id, RequestApproval.reject))

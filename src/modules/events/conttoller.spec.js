@@ -7,18 +7,16 @@ const { mockMessageApi } = require('../../test-utils/mock-api')
 const { mockState } = require('../../test-utils/mock-data')
 const { releaseManagerUpdatedView } = require('../build/event-views')
 
-const eventRequestGenerator = (subtype, channel) => props => {
-  return {
-    body: {
-      event: {
-        type: 'message',
-        subtype,
-        channel,
-        ...props
-      }
+const eventRequestGenerator = (subtype, channel) => props => ({
+  body: {
+    event: {
+      type: 'message',
+      subtype,
+      channel,
+      ...props
     }
   }
-}
+})
 
 describe('Events controller', async () => {
   beforeEach(async () => {
@@ -42,7 +40,7 @@ describe('Events controller', async () => {
     const generateRequest = eventRequestGenerator('group_topic', mockState.config.botChannel.id)
     const req = generateRequest({
       text: `${author} set topic to: ${managers.join(', ')} are DevOps for this week`,
-      topic: `${managers.join(', ')} are DevOps for this week`,
+      topic: `${managers.join(', ')} are DevOps for this week`
     })
 
     const res = {
@@ -63,7 +61,7 @@ describe('Events controller', async () => {
     await waitForInternalPromises()
 
     expect(messageApi.isDone()).toEqual(true)
-    const { config } = await readState();
+    const { config } = await readState()
     expect(config.releaseManagers).toEqual(users)
   })
 })

@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 const nock = require('nock')
 const config = require('config')
 

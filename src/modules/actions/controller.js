@@ -14,18 +14,6 @@ const {
   handleIfRejectRequestAction
 } = require('../request/actions')
 
-const actionsPost = async (req, res) => {
-  try {
-    const payload = JSON.parse(path(['body', 'payload'], req))
-    handleIfDialog(payload)
-    handleIfInteractiveMessage(payload)
-  } catch (err) {
-    log.error('actions > actionsPost() failed', err)
-  }
-
-  res.send()
-}
-
 const handleIfDialog = (payload) => {
   if (payload.type !== 'dialog_submission') {
     return
@@ -44,6 +32,18 @@ const handleIfInteractiveMessage = (payload) => {
   handleIfRequestProgressAction(payload)
   handleIfStagingBuildConfirmAction(payload)
   handleIfStagingBuildIncorrectAction(payload)
+}
+
+const actionsPost = async (req, res) => {
+  try {
+    const payload = JSON.parse(path(['body', 'payload'], req))
+    handleIfDialog(payload)
+    handleIfInteractiveMessage(payload)
+  } catch (err) {
+    log.error('actions > actionsPost() failed', err)
+  }
+
+  res.send()
 }
 
 module.exports = {

@@ -1,3 +1,4 @@
+/* eslint-disable */
 const crypto = require('crypto')
 const timingSafeCompare = require('tsscmp')
 const config = require('config')

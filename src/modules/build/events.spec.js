@@ -39,8 +39,8 @@ describe('Events controller', async () => {
   })
 
   it('Can handle branch build event', async () => {
-    /** mock api **/
-    const chatApi = mockMessageApi(message => {
+    /** mock api * */
+    const chatApi = mockMessageApi((message) => {
       expect(message).toMatchObject(branchBuildManagerView(mockBranchDeployment))
       return true
     })
@@ -61,7 +61,7 @@ describe('Events controller', async () => {
   })
 
   it('Can handle staging build event', async () => {
-    const payloadCallback = message => {
+    const payloadCallback = (message) => {
       expect([
         stagingBuildManagerView(mockStagingDeployment).text,
         stagingBuildChannelView(mockStagingDeployment).text
@@ -69,7 +69,7 @@ describe('Events controller', async () => {
       return true
     }
 
-    /** mock api **/
+    /* mock api */
     const userMessageApi = mockMessageApi(payloadCallback)
     const channelMessageApi = mockMessageApi(payloadCallback)
 
@@ -91,8 +91,8 @@ describe('Events controller', async () => {
   })
 
   it('Can handle production build event', async () => {
-    /** mock api **/
-    const chatApi = mockMessageApi(message => {
+    /** mock api * */
+    const chatApi = mockMessageApi((message) => {
       expect(message).toMatchObject(productionBuildChannelView(mockProductionDeployment))
       return true
     })

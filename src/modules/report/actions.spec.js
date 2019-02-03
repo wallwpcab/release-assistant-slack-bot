@@ -29,7 +29,7 @@ describe('Report actions', async () => {
       user: mockUser
     }
 
-    /** mock api **/
+    /* mock api */
     const publicMessageApi = mockPublicMessageApi(responseUrl, ({ text }) => {
       expect(text).toBe(confirmedReportAuthorView(section, report).text)
       return true
@@ -39,7 +39,7 @@ describe('Report actions', async () => {
       expect(text).toBe(confirmedReportManagerView(mockStagingBuild, section, report, pendingSections, mockUser).text)
       return true
     })
-    /** mock api **/
+    /* mock api */
 
     setMockDate('2019-01-27T18:13:15.249Z')
 

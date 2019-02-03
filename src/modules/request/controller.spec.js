@@ -1,4 +1,3 @@
-const tracer = require('tracer')
 require('../../test-utils/mock-implementations')
 const { requestPost } = require('./controller')
 const { waitForInternalPromises, toggleLogger, expressHelper } = require('../../test-utils')

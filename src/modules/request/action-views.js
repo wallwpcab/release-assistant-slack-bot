@@ -9,22 +9,24 @@ const {
   requestCommitsLabel
 } = require('./labels')
 
-const requestReceivedAuthorView = ({ id, type, commits, permalink }) => ({
+const requestReceivedAuthorView = ({
+  id, type, commits, permalink
+}) => ({
   response_type: 'ephemeral',
   text: `We've got your ${requestTypeLabel(type)} request with following commits: ${requestCommitsLabel(commits)}\nYour request id is: ${requestIdLabel({ id, permalink })}.`,
   mrkdwn: true,
-  mrkdwn_in: ['text'],
+  mrkdwn_in: ['text']
 })
 
 const requestReceivedManagerView = (request) => {
-  const { callback_id, approve, reject } = RequestApproval
+  const { callback_id: callbackId, approve, reject } = RequestApproval
   return {
     text: `You've got following release request.\n ${requestDetailsLabel(request)}`,
     attachments: [
       {
         text: 'Do you like to proceed?',
         fallback: 'You\'ve got a release request. Please check.',
-        callback_id,
+        callback_id: callbackId,
         color: '#3AA3E3',
         attachment_type: 'default',
         actions: [

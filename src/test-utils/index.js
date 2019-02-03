@@ -3,7 +3,9 @@ const tracer = require('tracer')
 const waitForInternalPromise = () => new Promise(resolve => setTimeout(resolve, 50))
 
 const waitForInternalPromises = async (times = 3) => {
+  // eslint-disable-next-line no-plusplus
   for (let i = 0; i < times; i++) {
+    // eslint-disable-next-line no-await-in-loop
     await waitForInternalPromise()
   }
 }

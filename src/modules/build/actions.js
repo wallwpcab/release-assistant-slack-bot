@@ -10,8 +10,8 @@ const {
 } = require('./action-views')
 const log = require('../../utils/log')
 
-const handleIfStagingBuildConfirmAction = async ({ callback_id, actions, user }) => {
-  if (callback_id !== BuildEvent.staging.callback_id) return
+const handleIfStagingBuildConfirmAction = async ({ callback_id: callbackId, actions, user }) => {
+  if (callbackId !== BuildEvent.staging.callback_id) return
 
   const [{ name, value }] = actions
   if (value !== BuildEvent.staging.confirmed) return
@@ -33,8 +33,8 @@ const handleIfStagingBuildConfirmAction = async ({ callback_id, actions, user })
   ])
 }
 
-const handleIfStagingBuildIncorrectAction = async ({ callback_id, actions, user }) => {
-  if (callback_id !== BuildEvent.staging.callback_id) return
+const handleIfStagingBuildIncorrectAction = async ({ callback_id: callbackId, actions, user }) => {
+  if (callbackId !== BuildEvent.staging.callback_id) return
 
   const [{ name, value }] = actions
   if (value !== BuildEvent.staging.incorrect) return

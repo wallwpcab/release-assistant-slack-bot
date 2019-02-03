@@ -1,19 +1,25 @@
-const _axios = require('axios')
+const axios = require('axios')
 const https = require('https')
 
-const { readState } = require('./bot-state')
+const {
+  readState
+} = require('./bot-state')
 const log = require('./utils/log')
 
-const axios = _axios.create({
+const axiosHttp = axios.create({
   httpsAgent: new https.Agent({
     rejectUnauthorized: false
   })
 })
 
 const getStagingInfo = async () => {
-  const { config } = await readState()
+  const {
+    config
+  } = await readState()
   try {
-    const { data } = await axios.get(config.stagingInfoUrl)
+    const {
+      data
+    } = await axiosHttp.get(config.stagingInfoUrl)
     return data
   } catch (err) {
     log.error('getStagingInfo()', err)
@@ -22,9 +28,13 @@ const getStagingInfo = async () => {
 }
 
 const getProductionInfo = async () => {
-  const { config } = await readState()
+  const {
+    config
+  } = await readState()
   try {
-    const { data } = await axios.get(config.productionInfoUrl)
+    const {
+      data
+    } = await axiosHttp.get(config.productionInfoUrl)
     return data
   } catch (err) {
     log.error('getProductionInfo()', err)
@@ -33,11 +43,10 @@ const getProductionInfo = async () => {
 }
 
 const getGitInfo = (production) => {
-  if(production) {
+  if (production) {
     return getProductionInfo()
-  } else {
-    return getStagingInfo()
   }
+  return getStagingInfo()
 }
 
 module.exports = {
