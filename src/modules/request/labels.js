@@ -35,13 +35,13 @@ const requestDetailsLabel = ({
   approval,
   permalink,
   user
-}) => `Id           : ${requestIdLabel({ id, permalink })}
-Author      : ${slackUserTag(user)}
-Type        : ${requestTypeLabel(type)}
-Approval     : ${approvalLabel(approval)}
-Description  :
+}) => `Id                   : ${requestIdLabel({ id, permalink })}
+Author          : ${slackUserTag(user)}
+Type              : ${requestTypeLabel(type)}
+Approval       : ${approvalLabel(approval)}
+Description   :
 ${descriptionLabel(description)}
-Commits     :
+Commits        :
 ${requestCommitsLabel(commits)}`
 
 const gitCheckoutLabel = ({

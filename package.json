@@ -6,7 +6,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "nodemon src/index.js --ignore 'store.json'",
+    "start": "nodemon src/index.js --ignore 'state.json'",
     "tsc": "tsc",
     "lint": "eslint src/**/*.js --fix",
     "test": "jest"

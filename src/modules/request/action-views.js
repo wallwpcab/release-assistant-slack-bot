@@ -21,7 +21,11 @@ const requestReceivedAuthorView = ({
 const requestReceivedManagerView = (request) => {
   const { callback_id: callbackId, approve, reject } = RequestApproval
   return {
-    text: `You've got following release request.\n ${requestDetailsLabel(request)}`,
+    text: `Dear *Release Manager*,
+
+You've got following release request.
+
+${requestDetailsLabel(request)}`,
     attachments: [
       {
         text: 'Do you like to proceed?',
@@ -61,7 +65,10 @@ const requestReceivedChannelView = ({ user, type }) => `${slackUserTag(user)} re
 const requestLabels = requests => requests.map(request => requestIdLabel(request)).join(', ')
 
 const requestInitiatedManagerView = (deployment, approver) => ({
-  text: `${slackUserTag(approver)} initiated ${requestLabels(deployment.requests)} requests.
+  text: `Dear *Release Manager*,
+
+${slackUserTag(approver)} initiated ${requestLabels(deployment.requests)} requests.
+
 Please follow these steps:
 \`\`\`
 # Checkout the new brance from 'Production'
@@ -77,7 +84,7 @@ git push origin HEAD
 
 const requestInitiatedChannelView = ({ requests }, approver) => {
   if (requests.length > 1) {
-    const userTags = requests.map(user => slackUserTag(user)).join(', ')
+    const userTags = requests.map(({ user }) => slackUserTag(user)).join(', ')
     return {
       text: `${slackUserTag(approver)} initiated ${requestLabels(requests)} requests.\n//cc ${userTags}`
     }

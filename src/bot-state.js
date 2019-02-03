@@ -4,14 +4,14 @@ const { readStore, writeStore } = require('./persistence')
 
 const readState = async () => readStore()
 
-const updateState = async (config, overwrite = false) => {
+const updateState = async (state, overwrite = false) => {
   const currentValue = await readState()
 
   let updatedValue
   if (overwrite) {
-    updatedValue = isEmpty(config) ? {} : mergeRight(currentValue, config)
+    updatedValue = isEmpty(state) ? {} : mergeRight(currentValue, state)
   } else {
-    updatedValue = mergeDeepRight(currentValue, config)
+    updatedValue = mergeDeepRight(currentValue, state)
   }
 
   await writeStore(updatedValue)

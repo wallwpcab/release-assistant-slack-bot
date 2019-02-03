@@ -52,12 +52,12 @@ const getFileContent = (request) => {
     date
   } = request
 
-  return `Id      : ${id}
-Type    : ${makeTitleCase(type)}
-Commits    : [${commits.join(', ')}]
+  return `Id           : ${id}
+Type         : ${makeTitleCase(type)}
+Commits      : [${commits.join(', ')}]
 Description  : ${description}
-Approval  : ${getApprovalText(approval)}
-Date    : ${format(date, 'MM.DD.YY / HH:mm')}`
+Approval     : ${getApprovalText(approval)}
+Date         : ${format(date, 'MM.DD.YY / HH:mm')}`
 }
 
 module.exports = {

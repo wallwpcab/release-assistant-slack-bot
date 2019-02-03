@@ -102,10 +102,9 @@ const handleIfChannelTopicEvent = async ({
   config = {
     releaseManagers
   }
+
   await Promise.all([
-    updateState({
-      config
-    }),
+    updateState({ config }),
     sendMessageToChannel(botChannel, releaseManagerUpdatedView(user, releaseManagers))
   ])
 }
