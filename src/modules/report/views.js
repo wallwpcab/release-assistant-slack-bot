@@ -1,7 +1,7 @@
 const { Report } = require('./mappings')
 const { getReportStatus } = require('./utils')
 
-const reportFormView = (sections) => ({
+const reportFormView = sections => ({
   title: 'Request a relesase',
   callback_id: Report.callback_id,
   submit_label: 'Submit',
@@ -40,7 +40,7 @@ const reportFormView = (sections) => ({
 })
 
 const reportStatusView = (reportSections, dailyReport) => {
-  const reportLabel = report => report.ok ? '*Ok* :white_check_mark:' : '*`Problemetic`* :no_entry:'
+  const reportLabel = report => (report.ok ? '*Ok* :white_check_mark:' : '*`Problemetic`* :no_entry:')
   const reported = getReportStatus(reportSections, dailyReport)
     .filter(status => !!status.report)
     .map(status => `# ${status.section.label}    : ${reportLabel(status.report)}`)

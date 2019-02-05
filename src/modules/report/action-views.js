@@ -1,20 +1,28 @@
-const { isEmpty } = require('ramda')
+const {
+  isEmpty
+} = require('ramda')
 
-const { slackUserTag, makeTitleCase } = require('../../utils')
-const { DeploymentStatus } = require('../request/mappings')
-const { buildLabel } = require('../build/action-views')
+const {
+  slackUserTag,
+  makeTitleCase
+} = require('../../utils')
+const {
+  DeploymentStatus
+} = require('../request/mappings')
+const {
+  buildLabel
+} = require('../build/action-views')
 
-const statusLabel = report => report.ok ? '*Confirmed*. :white_check_mark:' : '*Incorrect*. :no_entry:'
+const statusLabel = report => (report.ok ? '*Confirmed*. :white_check_mark:' : '*Incorrect*. :no_entry:')
 
-const confirmedReportAuthorView = (section, report) => {
-
-  return {
-    text: `You've reported *${section.label}* section as ${statusLabel(report)}`
-  }
-}
+const confirmedReportAuthorView = (section, report) => ({
+  text: `You've reported *${section.label}* section as ${statusLabel(report)}`
+})
 
 const confirmedReportManagerView = (build, section, report, pendinSections, user) => {
-  const { triggerLink } = build
+  const {
+    triggerLink
+  } = build
   const getAttachment = () => {
     if (isEmpty(pendinSections)) {
       return {
@@ -25,14 +33,42 @@ Click <${triggerLink}|*here*> to promote to \`${makeTitleCase(DeploymentStatus.p
 
     return {
       text: `Pending sections:
-      ${pendinSections.map(section => `# *${section.label}*`).join('\n')}`
+      ${pendinSections.map(sec => `# *${sec.label}*`).join('\n')}`
     }
   }
 
 
   return {
-    text: `Daily Build ${buildLabel(build)}
-${slackUserTag(user)} reported *${section.label}* section as ${statusLabel(report)}`,
+    text: `
+Dear *Release Manager*
+
+${slackUserTag(user)} reported *${section.label}* section as ${statusLabel(report)} in Build: ${buildLabel(build)}`,
+    attachments: [
+      getAttachment()
+    ]
+  }
+}
+
+const confirmedReportChannelView = (build, section, report, pendinSections, user) => {
+  const getAttachment = () => {
+    if (isEmpty(pendinSections)) {
+      return {
+        text: 'All sections are reported.'
+      }
+    }
+
+    return {
+      text: `Pending sections:
+      ${pendinSections.map(sec => `# *${sec.label}*`).join('\n')}`
+    }
+  }
+
+
+  return {
+    text: `
+Dear *Release Manager*
+
+${slackUserTag(user)} reported *${section.label}* section as ${statusLabel(report)} in Build: ${buildLabel(build)}`,
     attachments: [
       getAttachment()
     ]
@@ -41,5 +77,6 @@ ${slackUserTag(user)} reported *${section.label}* section as ${statusLabel(repor
 
 module.exports = {
   confirmedReportAuthorView,
-  confirmedReportManagerView
+  confirmedReportManagerView,
+  confirmedReportChannelView
 }

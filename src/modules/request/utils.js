@@ -31,7 +31,7 @@ const getGroupType = requests => [
   .join('-')
 
 const createBuild = (requests, deploymentId) => ({
-  branch: `release/${format(getDate(), 'YYYY-MM-DD')}/${getGroupType(requests)}/${deploymentId}`
+  branch: `release/${getGroupType(requests)}/${format(getDate(), 'YYYYMMDD')}/${deploymentId}`
 })
 
 const createDeployment = async (requests) => {

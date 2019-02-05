@@ -2,11 +2,11 @@
   "config": {
     "releaseChannel": {
       "id": "GEL8D0QRG",
-      "name": "release-bot"
+      "name": "ra-release"
     },
     "deployChannel": {
-      "id": "CEML3BEK0",
-      "name": "release-bot-deploy"
+      "id": "GFY9XRY1Z",
+      "name": "ra-deploy"
     },
     "releaseManagers": [
       {

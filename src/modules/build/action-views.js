@@ -12,6 +12,11 @@ const buildConfirmedAuthorView = (build, request) => ({
 })
 
 const buildConfirmedManagerView = (build, request, user) => ({
+  text: `Dear *Release Manager*
+${slackUserTag(user)} confirmed :white_check_mark: ${requestIdLabel(request)} in Staging #${buildLabel(build)}`
+})
+
+const buildConfirmedChannelView = (build, request, user) => ({
   text: `${slackUserTag(user)} confirmed :white_check_mark: ${requestIdLabel(request)} in Staging #${buildLabel(build)}`
 })
 
@@ -20,6 +25,11 @@ const buildIncorrectAuthorView = (build, request) => ({
 })
 
 const buildIncorrectManagerView = (build, request, user) => ({
+  text: `Dear *Release Manager*
+${slackUserTag(user)} marked ${requestIdLabel(request)} as incorrect :no_entry: in Staging ${buildLabel(build)}`
+})
+
+const buildIncorrectChannelView = (build, request, user) => ({
   text: `${slackUserTag(user)} marked ${requestIdLabel(request)} as incorrect :no_entry: in Staging ${buildLabel(build)}`
 })
 
@@ -27,6 +37,8 @@ module.exports = {
   buildLabel,
   buildConfirmedAuthorView,
   buildConfirmedManagerView,
+  buildConfirmedChannelView,
   buildIncorrectAuthorView,
-  buildIncorrectManagerView
+  buildIncorrectManagerView,
+  buildIncorrectChannelView
 }

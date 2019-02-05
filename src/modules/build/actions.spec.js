@@ -10,8 +10,10 @@ const {
 const {
   buildConfirmedAuthorView,
   buildConfirmedManagerView,
+  buildConfirmedChannelView,
   buildIncorrectAuthorView,
-  buildIncorrectManagerView
+  buildIncorrectManagerView,
+  buildIncorrectChannelView
 } = require('./action-views')
 const {
   mockUser,
@@ -52,6 +54,14 @@ describe('Build event actions', async () => {
       user: mockUser
     }
 
+    const messageApiCallback = ({ text }) => {
+      expect([
+        buildConfirmedManagerView(mockStagingBuild, mockApprovedRequest, mockUser).text,
+        buildConfirmedChannelView(mockStagingBuild, mockApprovedRequest, mockUser).text
+      ]).toContain(text)
+      return true
+    }
+
     /* mock api */
     const ephemeralMessageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(
@@ -60,18 +70,8 @@ describe('Build event actions', async () => {
       return true
     })
 
-    const messageApi = mockMessageApi(
-      ({ text }) => {
-        expect(text).toBe(
-          buildConfirmedManagerView(
-            mockStagingBuild,
-            mockApprovedRequest,
-            mockUser
-          ).text
-        )
-        return true
-      }
-    )
+    const userMessageApi = mockMessageApi(messageApiCallback)
+    const channelMessageApi = mockMessageApi(messageApiCallback)
     /* mock api */
 
     // simulate controller method call
@@ -80,7 +80,8 @@ describe('Build event actions', async () => {
 
     // should call following api
     expect(ephemeralMessageApi.isDone()).toBe(true)
-    expect(messageApi.isDone()).toBe(true)
+    expect(userMessageApi.isDone()).toBe(true)
+    expect(channelMessageApi.isDone()).toBe(true)
   })
 
   it('Can handle staging build incorrect action', async () => {
@@ -100,6 +101,14 @@ describe('Build event actions', async () => {
       user: mockUser
     }
 
+    const messageApiCallback = ({ text }) => {
+      expect([
+        buildIncorrectManagerView(mockStagingBuild, mockApprovedRequest, mockUser).text,
+        buildIncorrectChannelView(mockStagingBuild, mockApprovedRequest, mockUser).text
+      ]).toContain(text)
+      return true
+    }
+
     /* mock api */
     const ephemeralMessageApi = mockEphemeralMessageApi(({ text }) => {
       expect(text).toBe(
@@ -108,14 +117,8 @@ describe('Build event actions', async () => {
       return true
     })
 
-    const messageApi = mockMessageApi(
-      ({ text }) => {
-        expect(text).toBe(
-          buildIncorrectManagerView(mockStagingBuild, mockApprovedRequest, mockUser).text
-        )
-        return true
-      }
-    )
+    const userMessageApi = mockMessageApi(messageApiCallback)
+    const channelMessageApi = mockMessageApi(messageApiCallback)
     /* mock api */
 
     // simulate controller method call
@@ -123,7 +126,8 @@ describe('Build event actions', async () => {
     await waitForInternalPromises()
 
     // should call following api
-    expect(messageApi.isDone()).toBe(true)
     expect(ephemeralMessageApi.isDone()).toBe(true)
+    expect(userMessageApi.isDone()).toBe(true)
+    expect(channelMessageApi.isDone()).toBe(true)
   })
 })

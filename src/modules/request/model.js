@@ -59,7 +59,7 @@ class Deployment {
   }
 
   getRequestThread() {
-    if (!this.requests.length === 1) {
+    if (this.requests.length !== 1) {
       return undefined
     }
     const [request] = this.requests

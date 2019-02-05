@@ -52,7 +52,7 @@ const mockApprovedRequest = {
 }
 
 const mockInitialBuild = {
-  branch: 'release/2018-10-14/hotfix/dep-1'
+  branch: 'release/hotfix/20181014/dep-1'
 }
 
 const mockBranchBuild = {
@@ -139,11 +139,11 @@ const mockState = {
   config: {
     releaseChannel: {
       id: 'GEL8D0QRG',
-      name: 'release-bot-test'
+      name: 'ra-release'
     },
     deployChannel: {
-      id: 'CEML3BEK0',
-      name: 'release-bot'
+      id: 'GFY9XRY1Z',
+      name: 'ra-deploy'
     },
     releaseManagers: [
       {
