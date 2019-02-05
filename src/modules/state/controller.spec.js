@@ -21,10 +21,10 @@ describe('Config controller', async () => {
   })
 
   it('Can handle update config', async () => {
-    const botChannel = '<#GEL8D0QRG|release-bot-test>'
+    const releaseChannel = '<#GEL8D0QRG|release-bot-test>'
     const deployChannel = '<#CEML3BEK0|release-bot>'
     const http = expressHelper({
-      text: `--update --botChannel ${botChannel} --deployChannel ${deployChannel}`
+      text: `--update --releaseChannel ${releaseChannel} --deployChannel ${deployChannel}`
     })
 
     const api = mockDialogOpenApi(({ dialog }) => {
@@ -32,7 +32,7 @@ describe('Config controller', async () => {
       const config = JSON.parse(value)
       expect(config).toEqual({
         config: {
-          botChannel: getSlackChannel(botChannel),
+          releaseChannel: getSlackChannel(releaseChannel),
           deployChannel: getSlackChannel(deployChannel)
         }
       })

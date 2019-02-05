@@ -17,12 +17,14 @@ const {
   sendMessageToChannel
 } = require('../slack/integration')
 
-const handleIfRequestProgressAction = async ({ callback_id, actions: [action], user }) => {
+const handleIfRequestProgressAction = async ({
+  callback_id: callbackId, actions: [action], user
+}) => {
   const { name: requestId, value } = action || {}
-  if (callback_id !== RequestProgress.callback_id || value !== RequestProgress.cancel) return
+  if (callbackId !== RequestProgress.callback_id || value !== RequestProgress.cancel) return
 
   const { requests, config } = await readState()
-  const { releaseManagers, botChannel } = config
+  const { releaseManagers, releaseChannel } = config
   const request = pathOr(null, [requestId], requests)
   if (!request) {
     await sendEphemeralMessage(user, requestInvalidIdView(requestId))
@@ -34,13 +36,13 @@ const handleIfRequestProgressAction = async ({ callback_id, actions: [action], u
     return
   }
 
-  const { file: { thread_ts } } = request
+  const { file: { thread_ts: threadTs } } = request
   delete requests[requestId]
 
   await Promise.all([
     updateState({ requests }, true),
     sendMessageToUsers(releaseManagers, requestCanceledManagerView(request, user)),
-    sendMessageToChannel(botChannel, requestCanceledChannelView(user), thread_ts)
+    sendMessageToChannel(releaseChannel, requestCanceledChannelView(user), threadTs)
   ])
 }
 

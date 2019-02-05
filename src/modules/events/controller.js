@@ -89,10 +89,10 @@ const handleIfChannelTopicEvent = async ({
     config
   } = await readState()
   const {
-    botChannel
+    releaseChannel
   } = config
-  if (channel !== botChannel.id) {
-    log.info(`Channel topic event > Channel: ${channel} missmatched with botChannel: ${botChannel}`)
+  if (channel !== releaseChannel.id) {
+    log.info(`Channel topic event > Channel: ${channel} missmatched with releaseChannel: ${releaseChannel}`)
     return
   }
 
@@ -105,7 +105,7 @@ const handleIfChannelTopicEvent = async ({
 
   await Promise.all([
     updateState({ config }),
-    sendMessageToChannel(botChannel, releaseManagerUpdatedView(user, releaseManagers))
+    sendMessageToChannel(releaseChannel, releaseManagerUpdatedView(user, releaseManagers))
   ])
 }
 

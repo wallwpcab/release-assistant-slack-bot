@@ -137,7 +137,7 @@ const mockDailyReport = {
 
 const mockState = {
   config: {
-    botChannel: {
+    releaseChannel: {
       id: 'GEL8D0QRG',
       name: 'release-bot-test'
     },

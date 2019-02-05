@@ -6,18 +6,6 @@ const { splitValues, getSlackChannel } = require('../../utils')
 const { stateReadView, stateDialogView } = require('./views')
 const log = require('../../utils/log')
 
-const statePost = async (req, res) => {
-  const { text } = req.body
-  try {
-    const args = minimist(splitValues(text))
-    handleIfReadConfig(args, res)
-    handleIfUpdateConfig(args, res, req)
-  } catch (err) {
-    log.error('configPost > failed', err)
-    res.sendStatus(500)
-  }
-}
-
 const handleIfReadConfig = async (args, res) => {
   if (args.update) {
     return
@@ -33,26 +21,38 @@ const handleIfUpdateConfig = async (args, res, req) => {
   let state = await readState()
   let { config = {} } = state
   const {
-    botChannel: botCh,
+    releaseChannel: botCh,
     deployChannel: depCh
   } = args
-  const botChannel = botCh ? getSlackChannel(botCh) : config.botChannel
+  const releaseChannel = botCh ? getSlackChannel(botCh) : config.releaseChannel
   const deployChannel = depCh ? getSlackChannel(depCh) : config.deployChannel
 
   config = {
     ...config,
     deployChannel,
-    botChannel
+    releaseChannel
   }
   state = {
     ...state,
     config
   }
   const configValue = JSON.stringify(state, null, 2)
-  const { trigger_id } = req.body
+  const { trigger_id: triggerId } = req.body
 
-  await openDialog(trigger_id, stateDialogView(configValue))
+  await openDialog(triggerId, stateDialogView(configValue))
   res.send()
+}
+
+const statePost = async (req, res) => {
+  const { text } = req.body
+  try {
+    const args = minimist(splitValues(text))
+    handleIfReadConfig(args, res)
+    handleIfUpdateConfig(args, res, req)
+  } catch (err) {
+    log.error('configPost > failed', err)
+    res.sendStatus(500)
+  }
 }
 
 module.exports = {

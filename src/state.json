@@ -1,12 +1,12 @@
 {
   "config": {
-    "botChannel": {
+    "releaseChannel": {
       "id": "GEL8D0QRG",
-      "name": "release-bot-test"
+      "name": "release-bot"
     },
     "deployChannel": {
       "id": "CEML3BEK0",
-      "name": "release-bot"
+      "name": "release-bot-deploy"
     },
     "releaseManagers": [
       {

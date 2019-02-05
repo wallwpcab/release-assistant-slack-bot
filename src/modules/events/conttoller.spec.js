@@ -37,7 +37,7 @@ describe('Events controller', async () => {
   it('Can handle channel topic change event', async () => {
     const author = '<@USER1|Fred>'
     const managers = ['<@USER2|Kerl>']
-    const generateRequest = eventRequestGenerator('group_topic', mockState.config.botChannel.id)
+    const generateRequest = eventRequestGenerator('group_topic', mockState.config.releaseChannel.id)
     const req = generateRequest({
       text: `${author} set topic to: ${managers.join(', ')} are DevOps for this week`,
       topic: `${managers.join(', ')} are DevOps for this week`

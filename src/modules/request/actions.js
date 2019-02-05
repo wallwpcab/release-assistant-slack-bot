@@ -27,12 +27,12 @@ const {
   requestAlreadyInitiatedView
 } = require('./views')
 
-const createRequest = async (submissionData, user, botChannel) => {
+const createRequest = async (submissionData, user, releaseChannel) => {
   const requestData = getRequestData(submissionData, user)
   const file = await uploadRequestData(
-    requestData, botChannel.id, requestReceivedChannelView(requestData)
+    requestData, releaseChannel.id, requestReceivedChannelView(requestData)
   )
-  const permalink = await getPermalink(botChannel.id, file.thread_ts)
+  const permalink = await getPermalink(releaseChannel.id, file.thread_ts)
   const request = {
     ...requestData,
     permalink,
@@ -48,8 +48,8 @@ const handleIfRequestDialogAction = async ({
   if (callbackId !== Request.callback_id) return
 
   const { config, requests } = await readState()
-  const { releaseManagers, botChannel } = config
-  const request = await createRequest(submission, user, botChannel)
+  const { releaseManagers, releaseChannel } = config
+  const request = await createRequest(submission, user, releaseChannel)
 
   await Promise.all([
     updateState({ requests: updateById(requests, request) }),
@@ -66,7 +66,7 @@ const handleIfInitiateRequestAction = async ({
 
   // eslint-disable-next-line prefer-const
   let { config, requests, deployments } = await readState()
-  const { releaseManagers, botChannel } = config
+  const { releaseManagers, releaseChannel } = config
   // eslint-disable-next-line prefer-const
   let request = pathOr(null, [requestId], requests)
   if (!request) {
@@ -92,7 +92,7 @@ const handleIfInitiateRequestAction = async ({
     updateState({ requests, deployments }),
     sendMessageToUsers(releaseManagers, requestInitiatedManagerView(deployment, user)),
     sendMessageToChannel(
-      botChannel,
+      releaseChannel,
       requestInitiatedChannelView(deployment, user),
       deployment.getRequestThread()
     )
@@ -106,7 +106,7 @@ const handleIfRejectRequestAction = async ({
   if (callbackId !== RequestApproval.callback_id || value !== RequestApproval.reject) return
 
   const { requests, config } = await readState()
-  const { releaseManagers, botChannel } = config
+  const { releaseManagers, releaseChannel } = config
   const request = pathOr(null, [requestId], requests)
   if (!request) {
     await sendEphemeralMessage(user, requestInvalidIdView(requestId))
@@ -123,7 +123,7 @@ const handleIfRejectRequestAction = async ({
   await Promise.all([
     updateState({ requests }, true),
     sendMessageToUsers(releaseManagers, requestRejectedManagerView(request, user)),
-    sendMessageToChannel(botChannel, requestRejectedChannelView(request, user), threadTs)
+    sendMessageToChannel(releaseChannel, requestRejectedChannelView(request, user), threadTs)
   ])
 }
 

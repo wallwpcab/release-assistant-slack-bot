@@ -51,7 +51,7 @@ const handleIfStagingBuildEvent = async (build) => {
 
   // eslint-disable-next-line prefer-const
   let { deployments, config, requests } = await readState()
-  const { releaseManagers, botChannel } = config
+  const { releaseManagers, releaseChannel } = config
   deployments = updateStagingBuild(deployments, build)
   const deployment = findDeployment(deployments, build)
 
@@ -77,7 +77,7 @@ const handleIfStagingBuildEvent = async (build) => {
     updateState({ deployments, requests }),
     sendMessageToUsers(releaseManagers, stagingBuildManagerView(deployment)),
     sendMessageToChannel(
-      botChannel,
+      releaseChannel,
       stagingBuildChannelView(deployment),
       deployment.getRequestThread()
     )
@@ -91,7 +91,7 @@ const handleIfProductionBuildEvent = async (build) => {
 
   // eslint-disable-next-line prefer-const
   let { deployments, requests, config } = await readState()
-  const { botChannel } = config
+  const { releaseChannel } = config
   const deployment = findDeployment(deployments, build)
 
   if (!deployment) {
@@ -113,7 +113,7 @@ const handleIfProductionBuildEvent = async (build) => {
 
   await Promise.all([
     updateState({ deployments, requests }),
-    sendMessageToChannel(botChannel, productionBuildChannelView(deployment))
+    sendMessageToChannel(releaseChannel, productionBuildChannelView(deployment))
   ])
 }
 
