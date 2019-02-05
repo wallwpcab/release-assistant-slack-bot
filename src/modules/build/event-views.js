@@ -122,19 +122,14 @@ const stagingBuildChannelView = ({
 }
 
 const productionBuildChannelView = ({
-  build,
-  requests
+  build, requests
 }) => {
   const {
-    branch,
-    commitId
+    branch, commitId
   } = build
-  const userTags = requests.map(({
-    user
-  }) => slackUserTag(user)).join(', ')
+  const userTags = requests ? `\n//cc ${requests.map(({ user }) => slackUserTag(user)).join(', ')}` : ''
   return {
-    text: `!here *\`${makeTitleCase(DeploymentStatus.production)}\`* build status is *SUCCESS*. :tada:
-//cc ${userTags}`,
+    text: `<!here> *\`${makeTitleCase(DeploymentStatus.production)}\`* build status is *SUCCESS*. :tada:${userTags}`,
     attachments: [{
       text: `Build: ${buildLabel(build)}
 Branch: \`${branch}\`

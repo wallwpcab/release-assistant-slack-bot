@@ -96,6 +96,7 @@ const handleIfProductionBuildEvent = async (build) => {
 
   if (!deployment) {
     log.info(`Build Event > branch:${build.branch} is not found in deployments: ${deployments}`)
+    await sendMessageToChannel(releaseChannel, productionBuildChannelView({ build }))
     return
   }
 
