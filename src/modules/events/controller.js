@@ -44,7 +44,7 @@ const handleIfBuildEvent = async ({
     deployChannel
   } = config
   if (channel !== deployChannel.id) {
-    log.log(`Build Event > channel miss-matched, current: ${channel}, interest: ${deployChannel}`)
+    log.info(`Build Event > channel miss-matched, current: ${channel}, interest: ${deployChannel}`)
     return
   }
 
