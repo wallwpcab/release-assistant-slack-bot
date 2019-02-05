@@ -32,10 +32,12 @@ const branchBuildManagerView = ({
     environment
   } = build
   return {
-    text: `*\`${makeTitleCase(environment)}\`* build status is *SUCCESS*.`,
+    text: `Dear *Release Manager*
+*\`${makeTitleCase(environment)}\`* build status is *SUCCESS*.`,
     attachments: [
       {
-        text: `Branch: \`${branch}\`\nCommit Id: \`${commitId}\``
+        text: `Branch: \`${branch}\`
+Commit Id: \`${commitId}\``
       },
       {
         text: `Click <${triggerLink}|*here*> to promote to \`${makeTitleCase(DeploymentStatus.staging)}\` environment.`
@@ -53,10 +55,13 @@ const stagingBuildManagerView = ({
     triggerLink
   } = build
   return {
-    text: `*\`${makeTitleCase(DeploymentStatus.staging)}\`* build status is *SUCCESS*.`,
+    text: `Dear *Release Manager*
+*\`${makeTitleCase(DeploymentStatus.staging)}\`* build status is *SUCCESS*.`,
     attachments: [
       {
-        text: `Build: ${buildLabel(build)}\nBranch: \`${branch}\`\nCommit Id: \`${commitId}\``
+        text: `Build: ${buildLabel(build)}
+Branch: \`${branch}\`
+Commit Id: \`${commitId}\``
       },
       {
         text: `Click <${triggerLink}|*here*> to promote to \`${makeTitleCase(DeploymentStatus.production)}\` environment.`
@@ -126,9 +131,12 @@ const productionBuildChannelView = ({
     user
   }) => slackUserTag(user)).join(', ')
   return {
-    text: `<@here> *\`${makeTitleCase(DeploymentStatus.production)}\`* build status is *SUCCESS*. :tada:\n//cc ${userTags}`,
+    text: `!here *\`${makeTitleCase(DeploymentStatus.production)}\`* build status is *SUCCESS*. :tada:
+//cc ${userTags}`,
     attachments: [{
-      text: `Build: ${buildLabel(build)}\nBranch: \`${branch}\`\nCommit Id: \`${commitId}\``
+      text: `Build: ${buildLabel(build)}
+Branch: \`${branch}\`
+Commit Id: \`${commitId}\``
     }]
   }
 }

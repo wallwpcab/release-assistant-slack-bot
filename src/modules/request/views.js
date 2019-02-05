@@ -12,16 +12,16 @@ const requestFormView = () => ({
       name: 'requestType',
       type: 'select',
       hint: 'Choose a release type',
-      options: Object.values(RequestType).map(({ label, value }) => ({ label, value }))
-      // value: 'hotfix'
+      options: Object.values(RequestType).map(({ label, value }) => ({ label, value })),
+      value: 'activation'
     },
     {
       label: 'Commits',
       name: 'commits',
       type: 'textarea',
       placeholder: '3ffbe01162a, 1eec6e982e0',
-      hint: 'Put space/comma separated SHA commit ids'
-      // value: 'SHA1 SHA2'
+      hint: 'Put space/comma separated SHA commit ids',
+      value: '3ffbe01162a, 1eec6e982e0'
     },
     {
       label: 'Description',
@@ -29,8 +29,8 @@ const requestFormView = () => ({
       name: 'description',
       optional: true,
       placeholder: 'JIRA ticket link',
-      hint: 'Put description, JIRA ticket link'
-      // value: 'Request description'
+      hint: 'Put description, JIRA ticket link',
+      value: 'No description'
     },
     {
       label: 'Has approval?',
@@ -47,7 +47,8 @@ const requestFormView = () => ({
           value: 'no'
         }
       ],
-      hint: 'Mention if you got aprovals already'
+      hint: 'Mention if you got aprovals already',
+      value: 'no'
     }
   ]
 })

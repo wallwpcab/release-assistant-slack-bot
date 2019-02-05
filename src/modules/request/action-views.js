@@ -13,7 +13,8 @@ const requestReceivedAuthorView = ({
   id, type, commits, permalink
 }) => ({
   response_type: 'ephemeral',
-  text: `We've got your ${requestTypeLabel(type)} request with following commits: ${requestCommitsLabel(commits)}\nYour request id is: ${requestIdLabel({ id, permalink })}.`,
+  text: `We've got your ${requestTypeLabel(type)} request with following commits: ${requestCommitsLabel(commits)}
+Your request id is: ${requestIdLabel({ id, permalink })}.`,
   mrkdwn: true,
   mrkdwn_in: ['text']
 })
@@ -79,20 +80,27 @@ ${gitCherryPickLabel(deployment.requests)}
 
 # Push
 git push origin HEAD
-\`\`\``
+\`\`\`
+
+*Branch*: \`${deployment.build.branch}\`
+`
 })
 
-const requestInitiatedChannelView = ({ requests }, approver) => {
+const requestInitiatedChannelView = ({ requests, build }, approver) => {
   if (requests.length > 1) {
     const userTags = requests.map(({ user }) => slackUserTag(user)).join(', ')
     return {
-      text: `${slackUserTag(approver)} initiated ${requestLabels(requests)} requests.\n//cc ${userTags}`
+      text: `${slackUserTag(approver)} initiated ${requestLabels(requests)} requests.
+Build branch is: \`${build.branch}\`
+//cc ${userTags}`
     }
   }
 
   const [{ user }] = requests
   return {
-    text: `${slackUserTag(approver)} initiated this request.\n//cc ${slackUserTag(user)}`
+    text: `${slackUserTag(approver)} initiated this request.
+Build branch is: \`${build.branch}\`
+//cc ${slackUserTag(user)}`
   }
 }
 
