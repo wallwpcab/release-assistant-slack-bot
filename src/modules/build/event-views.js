@@ -66,7 +66,8 @@ Commit Id: \`${commitId}\``
       {
         text: `Click <${triggerLink}|*here*> to promote to \`${makeTitleCase(DeploymentStatus.production)}\` environment.`
       }
-    ]
+    ],
+    unfurl_links: false
   }
 }
 
@@ -115,7 +116,8 @@ const stagingBuildChannelView = ({
           }
         ]
       }))
-    ]
+    ],
+    unfurl_links: false
   }
 }
 
@@ -137,7 +139,8 @@ const productionBuildChannelView = ({
       text: `Build: ${buildLabel(build)}
 Branch: \`${branch}\`
 Commit Id: \`${commitId}\``
-    }]
+    }],
+    unfurl_links: false
   }
 }
 

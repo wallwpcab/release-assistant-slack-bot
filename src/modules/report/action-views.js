@@ -3,8 +3,7 @@ const {
 } = require('ramda')
 
 const {
-  slackUserTag,
-  makeTitleCase
+  slackUserTag, makeTitleCase
 } = require('../../utils')
 const {
   DeploymentStatus
@@ -42,10 +41,11 @@ Click <${triggerLink}|*here*> to promote to \`${makeTitleCase(DeploymentStatus.p
     text: `
 Dear *Release Manager*
 
-${slackUserTag(user)} reported *${section.label}* section as ${statusLabel(report)} in Build: ${buildLabel(build)}`,
+${slackUserTag(user)} reported *${section.label}* section as ${statusLabel(report)} in *Staging* ${buildLabel(build)}`,
     attachments: [
       getAttachment()
-    ]
+    ],
+    unfurl_links: false
   }
 }
 
@@ -66,12 +66,11 @@ const confirmedReportChannelView = (build, section, report, pendinSections, user
 
   return {
     text: `
-Dear *Release Manager*
-
-${slackUserTag(user)} reported *${section.label}* section as ${statusLabel(report)} in Build: ${buildLabel(build)}`,
+${slackUserTag(user)} reported *${section.label}* section as ${statusLabel(report)} in *Staging* ${buildLabel(build)}`,
     attachments: [
       getAttachment()
-    ]
+    ],
+    unfurl_links: false
   }
 }
 
