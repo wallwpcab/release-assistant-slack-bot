@@ -15,7 +15,8 @@ const {
 const statusLabel = report => (report.ok ? '*Confirmed*. :white_check_mark:' : '*Incorrect*. :no_entry:')
 
 const confirmedReportAuthorView = (section, report) => ({
-  text: `You've reported *${section.label}* section as ${statusLabel(report)}`
+  text: `You've reported *${section.label}* section as ${statusLabel(report)}`,
+  response_type: 'ephemeral'
 })
 
 const confirmedReportManagerView = (build, section, report, pendinSections, user) => {

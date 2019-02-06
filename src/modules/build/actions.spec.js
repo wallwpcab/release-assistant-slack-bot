@@ -104,7 +104,7 @@ describe('Build event actions', async () => {
     const messageApiCallback = ({ text }) => {
       expect([
         buildIncorrectManagerView(mockStagingBuild, mockApprovedRequest, mockUser).text,
-        buildIncorrectChannelView(mockStagingBuild, mockApprovedRequest, mockUser).text
+        buildIncorrectChannelView(mockStagingBuild, mockUser).text
       ]).toContain(text)
       return true
     }

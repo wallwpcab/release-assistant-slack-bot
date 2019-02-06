@@ -9,8 +9,8 @@ const showProgressView = (requests = []) => {
   }
 }
 
-const confirmRequestCancelView = request => {
-  const { callback_id } = RequestProgress
+const confirmRequestCancelView = (request) => {
+  const { callback_id: callbackId } = RequestProgress
   return {
     response_type: 'ephemeral',
     text: '',
@@ -18,29 +18,29 @@ const confirmRequestCancelView = request => {
       {
         text: `Do you like to cancel ${requestIdLabel(request)}?`,
         fallback: "You've got a release request. Please check.",
-        callback_id,
-        color: "#3AA3E3",
-        attachment_type: "default",
+        callback_id: callbackId,
+        color: '#3AA3E3',
+        attachment_type: 'default',
         actions: [
           {
             name: request.id,
-            text: "Yes",
-            type: "button",
-            style: "danger",
+            text: 'Yes',
+            type: 'button',
+            style: 'danger',
             value: RequestProgress.cancel,
             confirm: {
-              title: "Are you sure?",
-              text: "Would you like to cancel?",
-              ok_text: "Yes",
-              dismiss_text: "No"
+              title: 'Are you sure?',
+              text: 'Would you like to cancel?',
+              ok_text: 'Yes',
+              dismiss_text: 'No'
             }
           },
           {
             name: request.id,
-            text: "No",
-            type: "button",
-            style: "primary",
-            value: 'no',
+            text: 'No',
+            type: 'button',
+            style: 'primary',
+            value: 'no'
           }
         ]
       }

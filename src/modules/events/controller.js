@@ -3,13 +3,15 @@ const {
 } = require('ramda')
 
 const {
-  releaseManagerUpdatedView
+  releaseManagerUpdatedManagerView,
+  releaseManagerUpdatedChannelView
 } = require('../build/event-views')
 const {
   readState,
   updateState
 } = require('../../bot-state')
 const {
+  sendMessageToUsers,
   sendMessageToChannel
 } = require('../slack/integration')
 const {
@@ -105,7 +107,8 @@ const handleIfChannelTopicEvent = async ({
 
   await Promise.all([
     updateState({ config }),
-    sendMessageToChannel(releaseChannel, releaseManagerUpdatedView(user, releaseManagers))
+    sendMessageToUsers(releaseManagers, releaseManagerUpdatedManagerView(releaseManagers)),
+    sendMessageToChannel(releaseChannel, releaseManagerUpdatedChannelView(user, releaseManagers))
   ])
 }
 

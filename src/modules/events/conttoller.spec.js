@@ -5,7 +5,7 @@ const { waitForInternalPromises, expressHelper } = require('../../test-utils')
 const { readState, updateState } = require('../../bot-state')
 const { mockMessageApi } = require('../../test-utils/mock-api')
 const { mockState } = require('../../test-utils/mock-data')
-const { releaseManagerUpdatedView } = require('../build/event-views')
+const { releaseManagerUpdatedManagerView, releaseManagerUpdatedChannelView } = require('../build/event-views')
 
 const eventRequestGenerator = (subtype, channel) => props => ({
   body: {
@@ -50,17 +50,24 @@ describe('Events controller', async () => {
     const user = getSlackUser(author)
     const users = managers.map(u => getSlackUser(u))
 
-    const messageApi = mockMessageApi(
-      ({ text }) => {
-        expect(text).toBe(releaseManagerUpdatedView(user, users).text)
-        return true
-      }
-    )
+    const messageApiCallback = ({ text }) => {
+      expect([
+        releaseManagerUpdatedChannelView(user, users).text,
+        releaseManagerUpdatedManagerView(users).text
+      ]).toContain(text)
+      return true
+    }
+
+    /* mock api */
+    const userMessageApi = mockMessageApi(messageApiCallback)
+    const channelMessageApi = mockMessageApi(messageApiCallback)
+    /* mock api */
 
     await eventsPost(req, res)
     await waitForInternalPromises()
 
-    expect(messageApi.isDone()).toEqual(true)
+    expect(userMessageApi.isDone()).toEqual(true)
+    expect(channelMessageApi.isDone()).toEqual(true)
     const { config } = await readState()
     expect(config.releaseManagers).toEqual(users)
   })

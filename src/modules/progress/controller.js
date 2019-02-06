@@ -7,14 +7,6 @@ const { readState } = require('../../bot-state')
 const { splitValues } = require('../../utils')
 const log = require('../../utils/log')
 
-const progressPost = async (req, res) => {
-  const { text } = req.body
-  const args = minimist(splitValues(text))
-
-  handleIfViewProgress(args, res)
-  handleIfCancelProgress(args, res)
-}
-
 const handleIfViewProgress = async (args, res) => {
   if (args.cancel) return
 
@@ -54,6 +46,14 @@ const handleIfCancelProgress = async (args, res) => {
   }
 
   res.send(confirmRequestCancelView(request))
+}
+
+const progressPost = async (req, res) => {
+  const { text } = req.body
+  const args = minimist(splitValues(text))
+
+  handleIfViewProgress(args, res)
+  handleIfCancelProgress(args, res)
 }
 
 module.exports = {

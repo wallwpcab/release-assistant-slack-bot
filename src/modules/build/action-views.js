@@ -14,12 +14,12 @@ const buildConfirmedAuthorView = (build, request) => ({
 
 const buildConfirmedManagerView = (build, request, user) => ({
   text: `Dear *Release Manager*
-${slackUserTag(user)} confirmed :white_check_mark: ${requestIdLabel(request)} in Staging #${buildLabel(build)}`,
+${slackUserTag(user)} confirmed :white_check_mark: ${requestIdLabel(request)} in Staging ${buildLabel(build)}`,
   unfurl_links: false
 })
 
 const buildConfirmedChannelView = (build, request, user) => ({
-  text: `${slackUserTag(user)} confirmed :white_check_mark: ${requestIdLabel(request)} in Staging #${buildLabel(build)}`,
+  text: `${slackUserTag(user)} confirmed :white_check_mark: ${requestIdLabel(request)} in Staging ${buildLabel(build)}`,
   unfurl_links: false
 })
 
@@ -34,8 +34,8 @@ ${slackUserTag(user)} marked ${requestIdLabel(request)} as incorrect :no_entry: 
   unfurl_links: false
 })
 
-const buildIncorrectChannelView = (build, request, user) => ({
-  text: `${slackUserTag(user)} marked ${requestIdLabel(request)} as incorrect :no_entry: in Staging ${buildLabel(build)}`,
+const buildIncorrectChannelView = (build, user) => ({
+  text: `${slackUserTag(user)} marked this request as incorrect :no_entry: in Staging ${buildLabel(build)}`,
   unfurl_links: false
 })
 

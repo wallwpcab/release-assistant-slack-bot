@@ -61,7 +61,7 @@ const handleIfStagingBuildIncorrectAction = async ({ callback_id: callbackId, ac
     sendEphemeralMessage(user, buildIncorrectAuthorView(deployment.build, request)),
     sendMessageToUsers(releaseManagers, buildIncorrectManagerView(deployment.build, request, user)),
     sendMessageToChannel(
-      releaseChannel, buildIncorrectChannelView(deployment.build, request, user), threadId
+      releaseChannel, buildIncorrectChannelView(deployment.build, user), threadId
     )
   ])
 }

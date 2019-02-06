@@ -15,10 +15,19 @@ const {
   buildLabel
 } = require('./action-views')
 
-const releaseManagerUpdatedView = (user, releaseManagers) => {
+const releaseManagerUpdatedChannelView = (user, releaseManagers) => {
   const slackUsers = releaseManagers.map(m => slackUserTag(m)).join(', ')
   return {
-    text: `${slackUserTag(user)} set ${slackUsers} as Release Manager`
+    text: `${slackUserTag(user)} set ${slackUsers} as Release Manager.`
+  }
+}
+
+const releaseManagerUpdatedManagerView = (releaseManagers) => {
+  const slackUsers = releaseManagers.map(m => slackUserTag(m)).join(', ')
+  return {
+    text: `Hello ${slackUsers},
+Congratulations! :tada:
+You are the Release Manager for this week.`
   }
 }
 
@@ -114,7 +123,8 @@ const stagingBuildChannelView = ({
               dismiss_text: 'No'
             }
           }
-        ]
+        ],
+        unfurl_links: false
       }))
     ],
     unfurl_links: false
@@ -140,7 +150,8 @@ Commit Id: \`${commitId}\``
 }
 
 module.exports = {
-  releaseManagerUpdatedView,
+  releaseManagerUpdatedManagerView,
+  releaseManagerUpdatedChannelView,
   branchBuildManagerView,
   stagingBuildManagerView,
   stagingBuildChannelView,

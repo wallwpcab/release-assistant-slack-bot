@@ -2,7 +2,7 @@ const { Report } = require('./mappings')
 const { getReportStatus } = require('./utils')
 
 const reportFormView = sections => ({
-  title: 'Request a relesase',
+  title: 'Daily Report',
   callback_id: Report.callback_id,
   submit_label: 'Submit',
   elements: [
